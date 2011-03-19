@@ -541,8 +541,8 @@ an .ics file that has been downloaded from Google Calendar "
 ;; name can be be a bit different, which would screw up autoconnect
 (erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
-  '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode")
-     (".*\\.gimp.org" "#gimp" "#gimp-users")))
+  '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode")))
+;     (".*\\.gimp.org" "#gimp" "#gimp-users")))
 
 ;; check channels
 (erc-track-mode t)
@@ -559,8 +559,8 @@ an .ics file that has been downloaded from Google Calendar "
 
     (erc-track-switch-buffer 1) ;; yes: switch to last active
     (when (y-or-n-p "Start ERC? ") ;; no: maybe start ERC
-      (erc :server "irc.freenode.net" :port 6667 :nick "poolio" :full-name "kylepoole")
-      (erc :server "irc.gimp.org" :port 6667 :nick "poolio" :full-name "kylepoole"))))
+      (erc :server "irc.freenode.net" :port 6667 :nick "sevfen")
+;      (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
 
 ;;*****SPEEDBAR*****
 ;(setq speedbar-use-imenu-flag nil)
