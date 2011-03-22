@@ -1,0 +1,6 @@
+(define-package "ecb" "22.0"
+  "Icicles Minor Mode"
+  '((synonyms "1.0")
+    (lacarte "22.0")
+    (icomplete+ "21.0")
+    (hexrgb "21.0")))

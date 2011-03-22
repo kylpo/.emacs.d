@@ -21,16 +21,29 @@
 
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/lisp/")
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/contrib/lisp/")
+(add-to-list 'load-path "~/.emacs.d/elisp/rhtml/")
+(add-to-list 'load-path "~/.emacs.d/elisp/")
+;(add-to-list 'load-path "~/.emacs.d/rsense/etc")
 
+;; ruby
+;(setq rsense-home "/home/kp/.emacs.d/rsense/")
+;(add-to-list 'load-path (concat rsense-home "/etc"))
+
+;(setq exec-path (cons "/home/kp/.rvm/rubies/ruby-1.8.7-p334/bin" exec-path))
+;(setenv "PATH"
+;(concat '"/home/kp/.rvm/rubies/ruby-1.8.7-p334/bin:" (getenv "PATH")))
+
+;(require 'rsense)
 (require 'ido)
 (require 'tramp)
 (require 'color-theme)
 (require 'org)
-;(require 'starter-kit-defuns)
 (require 'org-protocol)
 (require 'org-install)
 (require 'org-habit)
 (require 'easymenu) ;for ERC
+(require 'rhtml-mode)
+(require 'auto-complete)
 
 ;;------------------------------------------------
 ;== INIT & CONFIG
@@ -46,12 +59,38 @@
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
 
 ;; We never want to edit Rubinius bytecode
 (add-to-list 'completion-ignored-extensions ".rbc")
+(add-hook 'ruby-mode-hook
+      (lambda()
+        (add-hook 'local-write-file-hooks
+                  '(lambda()
+                     (save-excursion
+                       (untabify (point-min) (point-max))
+                       (delete-trailing-whitespace)
+                       )))
+        (set (make-local-variable 'indent-tabs-mode) 'nil)
+        (set (make-local-variable 'tab-width) 2)
+        (imenu-add-to-menubar "IMENU")
+        (define-key ruby-mode-map "\C-m" 'newline-and-indent) ;Not sure if this line is 100% right!
+     ;   (require 'ruby-electric)
+     ;   (ruby-electric-mode t)
+        ))
+;sort ido filelist by mtime instead of alphabetically
+(add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
+(add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
+
+(add-hook 'rhtml-mode-hook
+     	  (lambda () (rinari-launch)))
+
+
 
 (ido-mode 'both) ; User ido mode for both buffers and files
 (recentf-mode 1)
+(rvm-use-default)
+
 ;(iswitchb-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
 (setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
@@ -60,6 +99,7 @@
 ;(set-language-environment "UTF-8");"Latin-1") ; Default would be utf8
 (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
 
+(setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
 (load "~/.emacs.d/colors/color-theme-wombat")
 (color-theme-wombat)
 ;(load "~/.emacs.d/colors/zenburn")
@@ -83,6 +123,8 @@
 
 ;(put 'narrow-to-page 'disabled nil)
 ;(put 'narrow-to-region 'disabled nil)
+
+(setq rinari-tags-file-name "TAGS")
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -153,6 +195,18 @@
        (progn (goto-char min) (line-beginning-position))
        (progn (goto-char max) (line-end-position))))))
 
+(defun ido-sort-mtime ()
+    (setq ido-temp-list
+          (sort ido-temp-list 
+                (lambda (a b)
+                  (time-less-p
+                   (sixth (file-attributes (concat ido-current-directory b)))
+                   (sixth (file-attributes (concat ido-current-directory a)))))))
+    (ido-to-end  ;; move . files to end (again)
+     (delq nil (mapcar
+                (lambda (x) (and (char-equal (string-to-char x) ?.) x))
+                ido-temp-list))))
+
 (cmd xsteve-ido-choose-from-recentf
   "Use ido to select a recently opened file from the `recentf-list'"
   (let ((home (expand-file-name (getenv "HOME"))))
@@ -163,13 +217,28 @@
                                   recentf-list)
                           nil t))))
 
-(defun org-gcal-sync ()
-  "Export org to ics to be uploaded to Google Calendar and import
-an .ics file that has been downloaded from Google Calendar "
-  (org-export-icalendar-combine-agenda-files)
-  (icalendar-import-file "~/tmp/.basic.ics" "~/tmp/.gcal"))
+(defun ido-find-file-in-tag-files ()
+      (interactive)
+      (save-excursion
+        (let ((enable-recursive-minibuffers t))
+          (visit-tags-table-buffer))
+        (find-file
+         (expand-file-name
+          (ido-completing-read
+           "Project file: " (tags-table-files) nil t)))))
 
-    (defun ido-goto-symbol (&optional symbol-list)
+(defun my-ido-find-tag ()
+    "Find a tag using ido"
+    (interactive)
+    (tags-completion-table)
+    (let (tag-names)
+      (mapc (lambda (x)
+              (unless (integerp x)
+                (push (prin1-to-string x t) tag-names)))
+            tags-completion-table)
+      (find-tag (ido-completing-read "Tag: " tag-names))))
+
+(defun ido-goto-symbol (&optional symbol-list)
       ;;http://www.emacswiki.org/cgi-bin/wiki/ImenuMode#toc10
       "Refresh imenu and jump to a place in the buffer using Ido."
       (interactive)
@@ -217,6 +286,13 @@ an .ics file that has been downloaded from Google Calendar "
                         (string= (car imenu--rescan-item) name))
               (add-to-list 'symbol-names name)
               (add-to-list 'name-and-pos (cons name position))))))))
+
+(defun org-gcal-sync ()
+  "Export org to ics to be uploaded to Google Calendar and import
+an .ics file that has been downloaded from Google Calendar "
+  (org-export-icalendar-combine-agenda-files)
+  (icalendar-import-file "~/tmp/.basic.ics" "~/tmp/.gcal"))
+
 
 (cmd indent-whole-buffer ()
   "indent whole buffer"
@@ -394,7 +470,7 @@ an .ics file that has been downloaded from Google Calendar "
 ;; Resume clocking task on clock-in if the clock is open
 (setq org-clock-in-resume t)
 ;; Change task state to STARTED when clocking in
-(setq org-clock-in-switch-to-state "STARTED")
+;(setq org-clock-in-switch-to-state "STARTED")
 ;; Save clock data and notes in the LOGBOOK drawer
 (setq org-clock-into-drawer t)
 ;; Sometimes I change tasks I'm clocking quickly - this removes
@@ -559,7 +635,7 @@ an .ics file that has been downloaded from Google Calendar "
 
     (erc-track-switch-buffer 1) ;; yes: switch to last active
     (when (y-or-n-p "Start ERC? ") ;; no: maybe start ERC
-      (erc :server "irc.freenode.net" :port 6667 :nick "sevfen")
+      (erc :server "irc.freenode.net" :port 6667 :nick "sevfen"))))
 ;      (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
 
 ;;*****SPEEDBAR*****
@@ -681,6 +757,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-xj" 'join-line)
 (global-set-key "\C-xi" 'ido-goto-symbol) ;own func
 (global-set-key "\C-xf" 'xsteve-ido-choose-from-recentf)
+(global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
 (global-set-key "\C-xs" 'flyspell-on)
@@ -690,15 +767,29 @@ an .ics file that has been downloaded from Google Calendar "
 ;(global-set-key "\C-cb" 'org-iswitchb)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
-
+(global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 
-(bind "C-x M-f" find-file-other-window)
+(bind "C-x M-f" 'find-file-other-window)
 (global-set-key "\M-?" 'comment-or-uncomment-current-line-or-region)
 
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
+;;Window Navigation/Manipulation
+(bind "s-C-n" 'other-window)
+(bind "s-C-p" 'previous-multiframe-window)
+(bind "C-^" 'enlarge-window)
+(bind "C-<" 'shrink-window-horizontally)
+(bind "C->" 'enlarge-window-horizontally)
+
+(bind "s-x" (lambda ()
+       (interactive)
+       (call-interactively
+        (intern
+         (ido-completing-read
+          "M-x "
+          (all-completions "" obarray 'commandp))))))
