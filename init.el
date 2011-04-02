@@ -4,6 +4,8 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+(push "/usr/local/bin" exec-path)
+
 ;;------------------------------------------------
 ;;== LOAD PATH AND AUTOLOADS
 ;;------------------------------------------------
@@ -116,49 +118,6 @@
 (add-hook 'rhtml-mode-hook
      	  (lambda () (rinari-launch)))
 
-;; wanderlust
-;(autoload 'wl "wl" "Wanderlust" t)
-;(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
-;(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-
-;; ;; IMAP
-;; (setq elmo-imap4-default-server "imap.gmail.com")
-;; (setq elmo-imap4-default-user "kep3888@gmail.com")
-;; (setq elmo-imap4-default-authenticate-type 'clear)
-;; (setq elmo-imap4-default-port '993)
-;; (setq elmo-imap4-default-stream-type 'ssl)
-
-;; (setq elmo-imap4-use-modified-utf7 t)
-
-;; ;; SMTP
-;; (setq wl-smtp-connection-type 'starttls)
-;; (setq wl-smtp-posting-port 587)
-;; (setq wl-smtp-authenticate-type "plain")
-;; (setq wl-smtp-posting-user "mattofransen")
-;; (setq wl-smtp-posting-server "smtp.gmail.com")
-;; (setq wl-local-domain "gmail.com")
-
-;; (setq wl-default-folder "%inbox")
-;; (setq wl-default-spec "%")
-;; (setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
-;; (setq wl-trash-folder "%[Gmail]/Trash")
-
-;; (setq wl-folder-check-async t)
-
-;; (setq elmo-imap4-use-modified-utf7 t)
-
-;; (autoload 'wl-user-agent-compose "wl-draft" nil t)
-;; (if (boundp 'mail-user-agent)
-;;     (setq mail-user-agent 'wl-user-agent))
-;; (if (fboundp 'define-mail-user-agent)
-;;     (define-mail-user-agent
-;;       'wl-user-agent
-;;       'wl-user-agent-compose
-;;       'wl-draft-send
-;;       'wl-draft-kill
-;;       'mail-send-hook))
-
-
 
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
@@ -199,9 +158,7 @@
 ;(color-theme-zenburn)
 (global-font-lock-mode 1) ;; Enable syntax highlighting when editing code.
 (show-paren-mode 1) ; Highlight the matching paren
-;(tool-bar-mode -1) ; Remove bloat
-;(menu-bar-mode -1) ; --- || ---
-;(scroll-bar-mode -1)
+
 (setq transient-mark-mode t) ; Highlight selected regions
 ;(setq visible-bell t) ; Flash program border on beep
 (setq inhibit-startup-screen t) ; Dont load the about screen on load
@@ -214,8 +171,8 @@
 (setq scroll-conservatively 10) ; make scroll less jumpy
 (setq scroll-margin 7) ; scroll will start b4 getting to top/bottom of page
 
-;(put 'narrow-to-page 'disabled nil)
-;(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
 
 (setq rinari-tags-file-name "TAGS")
 
