@@ -1,6 +1,6 @@
 (server-start)
 ;;Done at start to load faster
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+;(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
@@ -18,6 +18,8 @@
 ;;Add the user-contributed repository
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/"))
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+
 
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/lisp/")
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/contrib/lisp/")
@@ -44,6 +46,35 @@
 (require 'easymenu) ;for ERC
 (require 'rhtml-mode)
 (require 'auto-complete)
+
+;;------------------------------------------------
+;== Platform Dependencies
+;;------------------------------------------------
+(cond
+ ((string-match "nt" system-configuration)
+
+  )
+ ((string-match "apple" system-configuration)
+
+  )
+ ((string-match "linux" system-configuration)
+  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
+
+  (defun gnome-open-file (filename)
+    "gnome-opens the specified file."
+    (interactive "fFile to open: ")
+    (let ((process-connection-type nil))
+      (start-process "" nil "/usr/bin/gnome-open" filename)))
+
+  (defun dired-gnome-open-file ()
+    "Opens the current file in a Dired buffer."
+    (interactive)
+    (gnome-open-file (dired-get-file-for-visit)))
+
+  (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
+
+  ))
+
 
 ;;------------------------------------------------
 ;== INIT & CONFIG
@@ -85,9 +116,71 @@
 (add-hook 'rhtml-mode-hook
      	  (lambda () (rinari-launch)))
 
+;; wanderlust
+;(autoload 'wl "wl" "Wanderlust" t)
+;(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+;(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;; ;; IMAP
+;; (setq elmo-imap4-default-server "imap.gmail.com")
+;; (setq elmo-imap4-default-user "kep3888@gmail.com")
+;; (setq elmo-imap4-default-authenticate-type 'clear)
+;; (setq elmo-imap4-default-port '993)
+;; (setq elmo-imap4-default-stream-type 'ssl)
+
+;; (setq elmo-imap4-use-modified-utf7 t)
+
+;; ;; SMTP
+;; (setq wl-smtp-connection-type 'starttls)
+;; (setq wl-smtp-posting-port 587)
+;; (setq wl-smtp-authenticate-type "plain")
+;; (setq wl-smtp-posting-user "mattofransen")
+;; (setq wl-smtp-posting-server "smtp.gmail.com")
+;; (setq wl-local-domain "gmail.com")
+
+;; (setq wl-default-folder "%inbox")
+;; (setq wl-default-spec "%")
+;; (setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
+;; (setq wl-trash-folder "%[Gmail]/Trash")
+
+;; (setq wl-folder-check-async t)
+
+;; (setq elmo-imap4-use-modified-utf7 t)
+
+;; (autoload 'wl-user-agent-compose "wl-draft" nil t)
+;; (if (boundp 'mail-user-agent)
+;;     (setq mail-user-agent 'wl-user-agent))
+;; (if (fboundp 'define-mail-user-agent)
+;;     (define-mail-user-agent
+;;       'wl-user-agent
+;;       'wl-user-agent-compose
+;;       'wl-draft-send
+;;       'wl-draft-kill
+;;       'mail-send-hook))
 
 
+
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(set-default 'imenu-auto-rescan t)
+
+;(random t) ;; Seed the random-number generator
+
+;; make emacs use the clipboard
+;(setq x-select-enable-clipboard t)
+
+;(ido-mode t)
 (ido-mode 'both) ; User ido mode for both buffers and files
+(setq ido-enable-prefix nil
+      ido-enable-flex-matching t)
+;      ido-create-new-buffer 'always
+;      ido-use-filename-at-point nil
+;      ido-max-prospects 10)
+
 (recentf-mode 1)
 (rvm-use-default)
 
@@ -97,7 +190,7 @@
 (setq-default indent-tabs-mode nil) ; Dont indent with tabs
 (setq c-basic-offset 3) ; Indenting is 3 spaces
 ;(set-language-environment "UTF-8");"Latin-1") ; Default would be utf8
-(setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
+
 
 (setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
 (load "~/.emacs.d/colors/color-theme-wombat")
@@ -153,12 +246,18 @@
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+(defadvice zap-to-char (after dont-zap-char (arg char))
+  "Doesn't include the char - zaps to the char before it (like vim)."
+  (insert char)
+  (backward-char))
+(ad-activate 'zap-to-char)
+
 (defmacro bind (key fn)
   "shortcut for global-set-key"
   `(global-set-key (kbd ,key)
                    ;; handle unquoted function names and lambdas
                    ,(if (listp fn)
-                        fn 
+                        fn
                       `',fn)))
 
 (defmacro cmd (name &rest body)
@@ -195,9 +294,28 @@
        (progn (goto-char min) (line-beginning-position))
        (progn (goto-char max) (line-end-position))))))
 
+(defun senny-ido-find-work ()
+  (interactive)
+  (let ((project-name (ido-completing-read "Work: "
+                                           (directory-files "~/Work/" nil "^[^.]"))))
+    (senny-persp project-name)
+    (find-file (ido-open-find-directory-files
+                (concat "~/Work/" project-name)))))
+;;TODO
+(defun ido-open-find-directory-files (directory)
+  (let ((directory (concat (expand-file-name directory) "/")))
+    (concat directory (ido-completing-read (concat directory ": ")
+                                           (mapcar (lambda (path)
+                                                     (replace-regexp-in-string (concat "^" (regexp-quote directory) "/") "" path))
+                                                   (split-string
+                                                    (shell-command-to-string
+                                                     (concat
+                                                      "find \"" directory
+                                                      "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
+
 (defun ido-sort-mtime ()
     (setq ido-temp-list
-          (sort ido-temp-list 
+          (sort ido-temp-list
                 (lambda (a b)
                   (time-less-p
                    (sixth (file-attributes (concat ido-current-directory b)))
@@ -306,6 +424,16 @@ an .ics file that has been downloaded from Google Calendar "
    nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
           1 font-lock-warning-face t))))
 
+;; (defun move-cursor-next-pane ()
+;;   "Move cursor to the next pane."
+;;   (interactive)
+;;   (other-window 1))
+
+;; (defun move-cursor-previous-pane ()
+;;   "Move cursor to the previous pane."
+;;   (interactive)
+;;   (other-window -1))
+
 (defun toggle-fullscreen ()
   (interactive)
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
@@ -328,32 +456,31 @@ an .ics file that has been downloaded from Google Calendar "
 (set-frame-parameter nil 'fullscreen
 (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
 
-  (defun darkroom-mode ()
-	"Make things simple-looking by removing decoration 
+(defun darkroom-mode ()
+  "Make things simple-looking by removing decoration
 	 and choosing a simple theme."
-        (interactive)
-        (switch-full-screen 1)     ;; requires above function 
-	;;(color-theme-retro-green)  ;; requires color-theme
-        (setq left-margin 30)
-        (setq fill-column 100)
-        (menu-bar-mode -1)
-        (tool-bar-mode -1)
-        (scroll-bar-mode -1)
-        (transient-mark-mode 1)
-        (move-to-left-margin 0 1)
-        (auto-fill-mode)
-        (setq text-mode-hook 'darkroom-mode))
+  (interactive)
+  (switch-full-screen 1)     ;; requires above function
+  ;;(color-theme-retro-green)  ;; requires color-theme
+  (setq left-margin 30)
+  (setq fill-column 100)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (transient-mark-mode 1)
+  (move-to-left-margin 0 1)
+  (auto-fill-mode)
+  (setq text-mode-hook 'darkroom-mode))
 
-
- (defun darkroom-mode-reset ()
-   (interactive)
-   (switch-full-screen -1)
-   ;;(color-theme-subtle-hacker) ;; Choose your favorite theme
-   (menu-bar-mode 1)
-   (tool-bar-mode 1)
-   (scroll-bar-mode 1)
-   (auto-fill-mode 0)
-   (setq left-margin 0))
+(defun darkroom-mode-reset ()
+  (interactive)
+  (switch-full-screen -1)
+  ;;(color-theme-subtle-hacker) ;; Choose your favorite theme
+  (menu-bar-mode 1)
+  (tool-bar-mode 1)
+  (scroll-bar-mode 1)
+  (auto-fill-mode 0)
+  (setq left-margin 0))
 
 (defun write-room ()
   "Make a frame without any bling."
@@ -384,21 +511,55 @@ an .ics file that has been downloaded from Google Calendar "
     (when (fboundp 'w32-send-sys-command)
       (w32-send-sys-command 61488 frame))))
 
-    (defun run-theater (command)
-      "Open an Emacs frame with nothing other than the executed command."
-      (interactive "CEnter command: ")
-      (select-frame (new-frame '((width . 72) (height . 20)
-                                 (menu-bar-lines . 0)
-                                 (minibuffer . nil)
-                                 (toolbar . nil))))
-      (setq-default mode-line-format nil)
-      (call-interactively command))
+(defun run-theater (command)
+  "Open an Emacs frame with nothing other than the executed command."
+  (interactive "CEnter command: ")
+  (select-frame (new-frame '((width . 72) (height . 20)
+                             (menu-bar-lines . 0)
+                             (minibuffer . nil)
+                             (toolbar . nil))))
+  (setq-default mode-line-format nil)
+  (call-interactively command))
 
-(defun gnome-open-file (filename)
-  "gnome-opens the specified file."
-  (interactive "fFile to open: ")
-  (let ((process-connection-type nil))
-    (start-process "" nil "/usr/bin/gnome-open" filename)))
+(defun sudo-edit (&optional arg)
+  (interactive "p")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+(defun lorem ()
+  "Insert a lorem ipsum."
+  (interactive)
+  (insert "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
+          "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim"
+          "ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
+          "aliquip ex ea commodo consequat. Duis aute irure dolor in "
+          "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
+          "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+          "culpa qui officia deserunt mollit anim id est laborum."))
+
+(defun insert-date ()
+  "Insert a time-stamp according to locale's date and time format."
+  (interactive)
+  (insert (format-time-string "%c" (current-time))))
+
+(defun senny-grep-project (pattern)
+(interactive (list (read-string "Pattern: "
+(if (symbol-at-point)
+(symbol-name (symbol-at-point))
+""))))
+(rgrep pattern "*" (textmate-project-root)))
+
+(defun view-url ()
+  "Open a new buffer containing the contents of URL."
+  (interactive)
+  (let* ((default (thing-at-point-url-at-point))
+         (url (read-from-minibuffer "URL: " default)))
+    (switch-to-buffer (url-retrieve-synchronously url))
+    (rename-buffer url t)
+    ;; TODO: switch to nxml/nxhtml mode
+    (cond ((search-forward "<?xml" nil t) (xml-mode))
+          ((search-forward "<html" nil t) (html-mode)))))
 
 ;;------------------------------------------------
 ;;==Plugins
@@ -406,12 +567,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****Dired & Tramp*****
 (setq tramp-default-method "ssh")
-(add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
 
-(defun dired-gnome-open-file ()
-  "Opens the current file in a Dired buffer."
-  (interactive)
-  (gnome-open-file (dired-get-file-for-visit)))
 
 ;;*****ORG-MODE*****
 ;;Checkout the latest version of org mode, if I don't already have it.
@@ -487,8 +643,6 @@ an .ics file that has been downloaded from Google Calendar "
 (setq org-clock-into-drawer "CLOCK")
 (setq org-log-into-drawer t)
 
-
-
 ;; Custom keywords
 (setq org-todo-keyword-faces
       '(("TODO"  . (:foreground "red" :weight bold))
@@ -504,7 +658,7 @@ an .ics file that has been downloaded from Google Calendar "
 ))
 
 (setq org-agenda-custom-commands'(
-;("P" "Projects" 
+;("P" "Projects"
  ;    ((tags "PROJECT")))
 
 ("H" "Office and Home Lists"
@@ -562,9 +716,9 @@ an .ics file that has been downloaded from Google Calendar "
              "* TODO %?  %i")
         ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal.org"))
             ; "** %?")
-        ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" ) 
+        ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
              "** %U - %^{Activity}  :TIME:")
-        ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal.org") 
+        ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal.org")
              "* Tracker \n| Item | Count |
               %?|-+-|
               | Pull||
@@ -747,6 +901,8 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-n") 'next-buffer)
 (global-set-key (kbd "M-p") 'previous-buffer)
+;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
+;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
 (global-set-key (kbd "M-/") 'hippie-expand)
 ;(global-set-key (kbd "C-z") 'set-mark-command)
 ;(global-set-key [C-tab] 'other-window)
