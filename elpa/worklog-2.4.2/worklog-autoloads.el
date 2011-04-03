@@ -6,7 +6,7 @@
 ;;;### (autoloads (worklog-summarize-tasks-between-dates worklog-summarize-tasks
 ;;;;;;  worklog-quick-stop worklog-quick-start worklog-task-done
 ;;;;;;  worklog-task-stop worklog-task-begin worklog-do-task) "worklog"
-;;;;;;  "worklog.el" (19839 32673))
+;;;;;;  "worklog.el" (19863 47718))
 ;;; Generated autoloads from worklog.el
 
 (autoload 'worklog-do-task "worklog" "\
@@ -55,7 +55,7 @@ and the second is an unsorted compendium of all tasks and total durations.
 Durations are measured in hours.  If invoked non-interactively (i.e., \"emacs
 --batch\"), the display buffer is sent to `message'.
 
-This summary is displayed over the entire worklog file, it is an convenience 
+This summary is displayed over the entire worklog file, it is an convenience
 function for `worklog-do-summarize-tasks-between-dates'
 
 \(fn)" t nil)
@@ -67,14 +67,14 @@ and the second is an unsorted compendium of all tasks and total durations.
 Durations are measured in hours.  If invoked non-interactively (i.e., \"emacs
 --batch\"), the display buffer is sent to `message'.
 
-This summary is displayed over a section of the worklog file, it is an convenience 
+This summary is displayed over a section of the worklog file, it is an convenience
 function for `worklog-summarize-tasks-between-dates'
 
 \(fn FROM TO)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil nil ("worklog-pkg.el") (19839 32674 91925))
+;;;### (autoloads nil nil ("worklog-pkg.el") (19863 47718 499203))
 
 ;;;***
 
