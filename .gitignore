@@ -1,6 +1,6 @@
-/auto-save-list/
-/tramp
-/.emacs.BAK
-/.org-id-locations
-/el-get/
-/ac-comphist.dat
+auto-save-list/
+tramp
+.emacs.BAK
+.org-id-locations
+el-get/
+ac-comphist.dat

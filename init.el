@@ -227,8 +227,6 @@
 (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
-
-
 ;; sort ido filelist by mtime instead of alphabetically
 (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
 (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
@@ -249,8 +247,6 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (set-default 'imenu-auto-rescan t)
 
-
-
 (recentf-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
 (setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
@@ -266,6 +262,7 @@
 (put 'upcase-region 'disabled nil)
 
 (setq rinari-tags-file-name "TAGS")
+(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
