@@ -161,7 +161,7 @@
 
 (require 'ido)
 (require 'tramp)
-;(require 'redo+) ;;from elpa
+(require 'redo+) ;;from elpa
 ;(require 'color-theme)
 ;(require 'org)
 ;(require 'org-protocol)
