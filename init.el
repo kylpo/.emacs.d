@@ -4,40 +4,60 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(push "/usr/local/bin" exec-path)
+(push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 
 ;;------------------------------------------------
-;;== LOAD PATH AND AUTOLOADS
+;;== LOAD PATH AND AUTOLOADS AND REQUIRES
 ;;------------------------------------------------
+
+ (when
+     (load
+      (expand-file-name "~/.emacs.d/elpa/package.el"))
+   (package-initialize))
+
+;;*****EL-GET INIT*****
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(setq package-archives
+      '(("original" . "http://tromey.com/elpa/")
+        ("gnu" . "http://elpa.gnu.org/packages/")
+        ("marmalade" . "http://marmalade-repo.org/packages/")
+        ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
+        ))
+
+(if (require 'el-get nil t)
+    (progn
+      (message "el-get is already installed, try M-x el-get-update")
+      (load "~/.emacs.d/el-get/el-get-sources"))
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp)
+     (load "~/.emacs.d/el-get/el-get-sources"))))
+
+
 ;;*****ELPA****
 ;;early in .emacs to be able to use plugins later down
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
-;;Add the original Emacs Lisp Package Archive
-(add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
-;;Add the user-contributed repository
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+;; (when
+;;     (load
+;;      (expand-file-name "~/.emacs.d/elpa/package.el"))
+;;   (package-initialize))
+;; ;;Add the original Emacs Lisp Package Archive
+;; (add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
+;; ;;Add the user-contributed repository
+;; (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; (add-to-list 'package-archives '("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/"))
+;; (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 
 
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/lisp/")
 (add-to-list 'load-path "~/.emacs.d/elisp/org-mode/contrib/lisp/")
-(add-to-list 'load-path "~/.emacs.d/elisp/rhtml/")
+;(add-to-list 'load-path "~/.emacs.d/elisp/rhtml/")
 (add-to-list 'load-path "~/.emacs.d/elisp/")
-;(add-to-list 'load-path "~/.emacs.d/rsense/etc")
+;(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-;; ruby
-;(setq rsense-home "/home/kp/.emacs.d/rsense/")
-;(add-to-list 'load-path (concat rsense-home "/etc"))
-
-;(setq exec-path (cons "/home/kp/.rvm/rubies/ruby-1.8.7-p334/bin" exec-path))
-;(setenv "PATH"
-;(concat '"/home/kp/.rvm/rubies/ruby-1.8.7-p334/bin:" (getenv "PATH")))
-
-;(require 'rsense)
+;(require 'el-get)
 (require 'ido)
 (require 'tramp)
 (require 'color-theme)
@@ -46,8 +66,8 @@
 (require 'org-install)
 (require 'org-habit)
 (require 'easymenu) ;for ERC
-(require 'rhtml-mode)
-(require 'auto-complete)
+;(require 'rhtml-mode)
+;(require 'auto-complete)
 
 ;;------------------------------------------------
 ;== Platform Dependencies
@@ -55,10 +75,17 @@
 (cond
  ((string-match "nt" system-configuration)
 
-  )
+  );;end windows
  ((string-match "apple" system-configuration)
+  (defun dired-do-shell-mac-open-vqn ()
+    (interactive)
+    (save-window-excursion
+      (dired-do-async-shell-command
+       "open" current-prefix-arg
+       (dired-get-marked-files t current-prefix-arg))))
 
-  )
+  (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-do-shell-mac-open-vqn)))
+  );;end apple
  ((string-match "linux" system-configuration)
   (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
 
@@ -74,8 +101,8 @@
     (gnome-open-file (dired-get-file-for-visit)))
 
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
-
-  ))
+  );;end linux
+ )
 
 
 ;;------------------------------------------------
@@ -171,8 +198,10 @@
 (setq scroll-conservatively 10) ; make scroll less jumpy
 (setq scroll-margin 7) ; scroll will start b4 getting to top/bottom of page
 
-(put 'narrow-to-page 'disabled nil)
+;; activate disabled features
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
 
 (setq rinari-tags-file-name "TAGS")
 
@@ -225,6 +254,12 @@
      ;; and couldn't get it to work. should be possible
      (interactive)
      ,@(if (stringp (car body)) (cdr `,body) body)))
+
+(defun isearch-occur ()
+      "Invoke `occur' from within isearch."
+      (interactive)
+      (let ((case-fold-search isearch-case-fold-search))
+        (occur (if isearch-regexp isearch-string (regexp-quote isearch-string)))))
 
 (cmd scroll-down-keep-cursor
   "Scroll the text one line down while keeping the cursor"
@@ -646,6 +681,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 ("P" "Projects" tags "/!PROJECT" ((org-use-tag-inheritance nil)))
 ("s" "Started Tasks" todo "STARTED" ((org-agenda-todo-ignore-with-date nil)))
+("o" "ONGOING Tasks" todo "ONGOING" ((org-agenda-todo-ignore-with-date nil)))
 ("Q" "Questions" tags "QUESTION" nil)
 ("w" "Tasks waiting on something" tags "WAITING" ((org-use-tag-inheritance nil)))
 ("r" "Refile New Notes and Tasks" tags "REFILE" ((org-agenda-todo-ignore-with-date nil)))
@@ -866,7 +902,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\r" 'newline-and-indent)
 ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
 ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
-;(global-set-key "\C-xq" 'anything)
+(global-set-key "\C-xq" 'anything)
 (global-set-key "\C-xj" 'join-line)
 (global-set-key "\C-xi" 'ido-goto-symbol) ;own func
 (global-set-key "\C-xf" 'xsteve-ido-choose-from-recentf)
@@ -906,3 +942,5 @@ an .ics file that has been downloaded from Google Calendar "
          (ido-completing-read
           "M-x "
           (all-completions "" obarray 'commandp))))))
+
+(define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
