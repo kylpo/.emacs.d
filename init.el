@@ -42,8 +42,24 @@
 (setq
  el-get-sources ;order does matter for some of these
  '(el-get
-   auto-complete
    ack
+   (:name auto-complete :after
+          (lambda ()
+            ;; (setq ac-auto-start nil
+            ;;       ac-modes '(erlang-mode
+            ;;                  espresso-mode
+            ;;                  js2-mode
+            ;;                  sql-mode
+            ;;                  ruby-mode
+            ;;                  haml-mode
+            ;;                  sass-mode
+            ;;                  css-mode
+            ;;                  lisp-interaction-mode
+            ;;                  emacs-lisp-mode
+            ;;                  css-mode
+            ;;                  sql-interactive-mode))
+            (define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
+            (define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
    magit
    magithub
    rvm
@@ -55,7 +71,11 @@
    (:name idle-highlight :type elpa)
    (:name org-mode :after
           (lambda ()
+            (require 'org-habit)
             (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
+   (:name inf-ruby  :type elpa)
+   (:name ruby-compilation :type elpa)
+   (:name ruby-electric :type elpa)
    (:name ruby-mode
           :type elpa
           :after
@@ -87,12 +107,10 @@
                         (set (make-local-variable 'indent-tabs-mode) 'nil)
                         (set (make-local-variable 'tab-width) 2)
                         (imenu-add-to-menubar "IMENU")
-                                        ;   (require 'ruby-electric)
-                                        ;   (ruby-electric-mode t)
+                        (local-set-key "\r" 'newline-and-indent);ret indents
+                        (require 'ruby-electric)
+                        (ruby-electric-mode t)
                         ))))
-
- (:name inf-ruby  :type elpa)
- (:name ruby-compilation :type elpa)
  (:name css-mode
         :type elpa
         :after
@@ -116,6 +134,8 @@
         :after (lambda ()
                  (add-hook 'rhtml-mode-hook
                            (lambda () (rinari-launch)))))
+ ruby-end ;necessary to place after ruby-mode
+ flymake-ruby
  (:name senny-perspective
         :type git
         :features perspective
@@ -135,18 +155,18 @@
                  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
                  (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
- ruby-end ;necessary to place after ruby-mode
  ))
 
 (el-get 'sync)
 
 (require 'ido)
 (require 'tramp)
+(require 'redo+) ;;from elpa
 ;(require 'color-theme)
 ;(require 'org)
 ;(require 'org-protocol)
 ;(require 'org-install)
-(require 'org-habit)
+;(require 'org-habit)
 (require 'easymenu) ;for ERC
 
 ;(require 'yaml-mode);doesn't auto init from elpa
@@ -217,8 +237,26 @@
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 (setq c-basic-offset 3) ; Indenting is 3 spaces
-(global-font-lock-mode 1) ;; Enable syntax highlighting when editing code.
+(global-font-lock-mode 1) ; Enable syntax highlighting when editing code.
 (show-paren-mode 1) ; Highlight the matching paren
+;;show line of matching paren when off buffer
+(defadvice show-paren-function
+      (after show-matching-paren-offscreen activate)
+      "If the matching paren is offscreen, show the matching line in the
+        echo area. Has no effect if the character before point is not of
+        the syntax class ')'."
+      (interactive)
+      (if (not (minibuffer-prompt))
+          (let ((matching-text nil))
+            ;; Only call `blink-matching-open' if the character before point
+            ;; is a close parentheses type character. Otherwise, there's not
+            ;; really any point, and `blink-matching-open' would just echo
+            ;; "Mismatched parentheses", which gets really annoying.
+            (if (char-equal (char-syntax (char-before (point))) ?\))
+                (setq matching-text (blink-matching-open)))
+            (if (not (null matching-text))
+                (message matching-text)))))
+
 (setq transient-mark-mode t) ; Highlight selected regions
 (setq inhibit-startup-screen t) ; Dont load the about screen on load
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -281,7 +319,6 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
-; '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Droid Sans Mono"))))
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
@@ -669,17 +706,18 @@ an .ics file that has been downloaded from Google Calendar "
 ;; Resume clocking task on clock-in if the clock is open
 (setq org-clock-in-resume t)
 ;; Change task state to STARTED when clocking in
-                                        ;(setq org-clock-in-switch-to-state "STARTED")
+;; (setq org-clock-in-switch-to-state "STARTED")
+
+;; Save the running clock and all clock history when exiting Emacs, load it on startup
+(setq org-clock-persistence-insinuate t)
+(setq org-clock-persist t)
+(setq org-clock-in-resume t)
+
 ;; Save clock data and notes in the LOGBOOK drawer
 (setq org-clock-into-drawer t)
 ;; Sometimes I change tasks I'm clocking quickly - this removes
 ;; clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
-;; Don't clock out when moving task to a done state
-                                        ;(setq org-clock-out-when-done nil)
-;; Save the running clock and all clock history when exiting Emacs,
-;; load it on startup
-(setq org-clock-persist t)
 ;; Separate drawers for clocking and logs
 (setq org-drawers (quote ("PROPERTIES" "LOGBOOK" "CLOCK")))
 ;; Save clock data in the CLOCK drawer and state changes and notes in the LOGBOOK drawer
@@ -1069,6 +1107,11 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "s-k" 'windmove-up)
 (bind "s-h" 'windmove-left)
 (bind "s-l" 'windmove-right)
+(global-set-key (kbd "M-0") 'delete-window)
+(global-set-key (kbd "M-1") 'delete-other-windows)
+(global-set-key (kbd "M-2") 'split-window-vertically)
+(global-set-key (kbd "M-3") 'split-window-horizontally)
+(global-set-key (kbd "M-4") 'balance-windows)
 
 (bind "s-x" (lambda ()
        (interactive)
