@@ -10,6 +10,7 @@
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
 ;;*****ELPA****
+
 ;;early in .emacs to be able to use plugins later down
  (when
      (load
@@ -17,7 +18,6 @@
    (package-initialize))
 ;;Packages Installed through elpa:
   ;;worklog | ruby-mode |
-
 
 ;;*****EL-GET INIT*****
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
@@ -50,10 +50,11 @@
    sunrise-commander
    sunrise-x-buttons
    yasnippet
-   yaml-mode
-   (:name org-mode
-          :after (lambda ()
-                   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
+   (:name worklog :type elpa)
+   (:name idle-highlight :type elpa)
+   (:name org-mode :after
+          (lambda ()
+            (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
    (:name ruby-mode
           :type elpa
           :after
@@ -100,10 +101,6 @@
                     '(lambda ()
                        (setq css-indent-level 2)
                        (setq css-indent-offset 2)))))
-; (:name textmate
-;        :type git
-;        :url "git://github.com/defunkt/textmate.el"
-;        :load "textmate.el")
  (:name rhtml-mode
         :after
         (lambda ()
@@ -118,16 +115,26 @@
         :after (lambda ()
                  (add-hook 'rhtml-mode-hook
                            (lambda () (rinari-launch)))))
- ;; (:name yaml-mode
- ;;        :type git
- ;;        :url "http://github.com/yoshiki/yaml-mode.git"
- ;;        :features yaml-mode
- ;;        :after (lambda ()
- ;;                 (autoload 'yaml-mode "yaml-mode" nil t)
- ;;                 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
- ;;                 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
- ;;                 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
- ruby-end
+ (:name senny-perspective
+        :type git
+        :features perspective
+        :url "https://github.com/nex3/perspective-el.git"
+        :after (lambda () (persp-mode)))
+ (:name senny-rspec-mode
+        :type git
+        :url "https://github.com/pezra/rspec-mode.git"
+        :compile "rspec-mode.el"
+        :features rspec-mode)
+ (:name yaml-mode
+        :type git
+        :url "http://github.com/yoshiki/yaml-mode.git"
+        :features yaml-mode
+        :after (lambda ()
+                 (autoload 'yaml-mode "yaml-mode" nil t)
+                 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+                 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+                 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
+ ruby-end ;necessary to place after ruby-mode
  ))
 
 (el-get 'sync)
@@ -141,10 +148,10 @@
 (require 'org-habit)
 (require 'easymenu) ;for ERC
 
-(require 'yaml-mode);doesn't auto init from elpa
-(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+;(require 'yaml-mode);doesn't auto init from elpa
+;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+;(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 ;; We never want to edit Rubinius bytecode
@@ -192,60 +199,60 @@
 ;;------------------------------------------------
 ;== INIT & CONFIG
 ;;------------------------------------------------
+;;Display
+;; Use a vertical bar as cursor
+(blink-cursor-mode 1)
+(setq-default cursor-type '(bar . 2))
+(setq-default indicate-empty-lines t)
 
-
-;sort ido filelist by mtime instead of alphabetically
-(add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
-(add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
-
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(set-default 'imenu-auto-rescan t)
-
-;(random t) ;; Seed the random-number generator
-
-;; make emacs use the clipboard
-;(setq x-select-enable-clipboard t)
-
-;(ido-mode t)
-(ido-mode 'both) ; User ido mode for both buffers and files
-(setq ido-enable-prefix nil
-      ido-enable-flex-matching t)
-;      ido-create-new-buffer 'always
-;      ido-use-filename-at-point nil
-;      ido-max-prospects 10)
-
-(recentf-mode 1)
-(rvm-use-default)
-
-;(iswitchb-mode 1)
-(setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
-(setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
-(setq-default indent-tabs-mode nil) ; Dont indent with tabs
-(setq c-basic-offset 3) ; Indenting is 3 spaces
-;(set-language-environment "UTF-8");"Latin-1") ; Default would be utf8
-
-(setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
 (load "~/.emacs.d/colors/color-theme-wombat")
 (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;(load "~/.emacs.d/colors/zenburn")
 ;(color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq c-basic-offset 3) ; Indenting is 3 spaces
 (global-font-lock-mode 1) ;; Enable syntax highlighting when editing code.
 (show-paren-mode 1) ; Highlight the matching paren
-
 (setq transient-mark-mode t) ; Highlight selected regions
-;(setq visible-bell t) ; Flash program border on beep
 (setq inhibit-startup-screen t) ; Dont load the about screen on load
-(setq scroll-step 1) ; Only scroll down 1 line at a time
-;(setq font-use-system-font t)
 (fset 'yes-or-no-p 'y-or-n-p)
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
 (display-time-mode t)
 (display-battery-mode t)
+(global-hl-line-mode t) ; Highlight the current line
+
+
+
+;; sort ido filelist by mtime instead of alphabetically
+(add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
+(add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
+
+(ido-mode 'both) ; User ido mode for both buffers and files
+(setq ido-enable-prefix nil
+      ido-enable-flex-matching t
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point nil)
+;;      ido-max-prospects 10)
+
+;; Display ido results vertically, rather than horizontally
+;; (setq ido-decorations (quote ("" "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+;; (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
+;; (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
+
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(set-default 'imenu-auto-rescan t)
+
+
+
+(recentf-mode 1)
+(setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
+(setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
+(setq-default indent-tabs-mode nil) ; Dont indent with tabs
+(setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
+(setq scroll-step 1) ; Only scroll down 1 line at a time
 (setq scroll-conservatively 10) ; make scroll less jumpy
 (setq scroll-margin 7) ; scroll will start b4 getting to top/bottom of page
 
@@ -261,7 +268,6 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
-  '(ido-create-new-buffer (quote always))
   '(speedbar-hide-button-brackets-flag t)
  '(speedbar-indentation-width 2)
  '(speedbar-show-unknown-files t)
@@ -278,8 +284,6 @@
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
-
-
 
 ;;------------------------------------------------
 ;;== Custom Functions
@@ -590,8 +594,7 @@ an .ics file that has been downloaded from Google Calendar "
 (defun senny-grep-project (pattern)
 (interactive (list (read-string "Pattern: "
 (if (symbol-at-point)
-(symbol-name (symbol-at-point))
-""))))
+(symbol-name (symbol-at-point))""))))
 (rgrep pattern "*" (textmate-project-root)))
 
 (defun view-url ()
@@ -611,24 +614,19 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****Dired & Tramp*****
 (setq tramp-default-method "ssh")
-
+(setq dired-omit-files
+      (concat dired-omit-files "\\|^\\..+$"))
+(setq dired-listing-switches "-lXGh --group-directories-first")
 
 ;;*****ORG-MODE*****
-;;Checkout the latest version of org mode, if I don't already have it.
-;(unless (file-exists-p "~/.emacs.d/elisp/org-mode/")
-;  (let ((default-directory "~/.emacs.d/elisp/"))
-;    (shell-command "git clone git://repo.or.cz/org-mode.git")
-;    (shell-command "make -C org-mode/")
-;    (normal-top-level-add-subdirs-to-load-path)))
-
 (defun planner ()
-    (interactive)
-    (find-file "~/Dropbox/doc/planner.org")
-)
+  (interactive)
+  (find-file "~/Dropbox/doc/planner.org")
+  )
 (defun journal()
-    (interactive)
-    (find-file "~/Dropbox/doc/journal.org")
-)
+  (interactive)
+  (find-file "~/Dropbox/doc/journal.org")
+  )
 
 (setq org-habit-graph-column 60)
 (setq org-log-done 'time)
@@ -657,7 +655,7 @@ an .ics file that has been downloaded from Google Calendar "
 (setq org-reverse-note-order t)
 (setq org-tags-column -78)
 (setq org-tags-match-list-sublevels nil)
-;(setq org-time-stamp-rounding-minutes 5)
+;; (setq org-time-stamp-rounding-minutes 5)
 (setq org-use-fast-todo-selection t)
 (setq org-use-tag-inheritance nil)
 (setq org-fontify-done-headline t) ;;newly added
@@ -670,14 +668,14 @@ an .ics file that has been downloaded from Google Calendar "
 ;; Resume clocking task on clock-in if the clock is open
 (setq org-clock-in-resume t)
 ;; Change task state to STARTED when clocking in
-;(setq org-clock-in-switch-to-state "STARTED")
+                                        ;(setq org-clock-in-switch-to-state "STARTED")
 ;; Save clock data and notes in the LOGBOOK drawer
 (setq org-clock-into-drawer t)
 ;; Sometimes I change tasks I'm clocking quickly - this removes
 ;; clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
 ;; Don't clock out when moving task to a done state
-;(setq org-clock-out-when-done nil)
+                                        ;(setq org-clock-out-when-done nil)
 ;; Save the running clock and all clock history when exiting Emacs,
 ;; load it on startup
 (setq org-clock-persist t)
@@ -699,104 +697,104 @@ an .ics file that has been downloaded from Google Calendar "
         ("DONE"  . (:foreground "forest green" :weight bold))
         ("DISMISSED"  . (:foreground "forest green" :weight bold))
         ("CANCELLED"  . (:foreground "forest green" :weight bold))
-))
+        ))
 
-(setq org-agenda-custom-commands'(
-;("P" "Projects"
- ;    ((tags "PROJECT")))
+(setq org-agenda-custom-commands
+      '(;; ("P" "Projects"
+        ;; ((tags "PROJECT")))
 
-("H" "Office and Home Lists"
-     ((agenda)
+        ("H" "Office and Home Lists"
+         ((agenda)
           (tags-todo "OFFICE")
           (tags-todo "HOME")
           (tags-todo "COMPUTER")
           (tags-todo "DVD")
           (tags-todo "READING")))
 
-("d" "Daily Action List"
-     ((agenda "" ((org-agenda-ndays 1)
+        ("d" "Daily Action List"
+         ((agenda "" ((org-agenda-ndays 1)
                       (org-agenda-sorting-strategy
                        (quote ((agenda time-up priority-down tag-up) )))
-                    ;;  (org-deadline-warning-days 0)
+                      ;;  (org-deadline-warning-days 0)
                       ))))
 
-;("c" todo "DONE|DEFERRED|CANCELLED" nil)
+        ;; ("c" todo "DONE|DEFERRED|CANCELLED" nil)
 
-;("w" todo "WAITING" nil)
+        ;; ("w" todo "WAITING" nil)
+        ("o" todo "ONGOING" nil)
 
-("A" agenda ""
-        ((org-agenda-skip-function
-          (lambda nil
-        (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
-         (org-agenda-ndays 1)
-         (org-agenda-overriding-header "Today's Priority #A tasks: ")))
+        ("A" agenda ""
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
+          (org-agenda-ndays 1)
+          (org-agenda-overriding-header "Today's Priority #A tasks: ")))
 
-("P" "Projects" tags "/!PROJECT" ((org-use-tag-inheritance nil)))
-("s" "Started Tasks" todo "STARTED" ((org-agenda-todo-ignore-with-date nil)))
-("o" "ONGOING Tasks" todo "ONGOING" ((org-agenda-todo-ignore-with-date nil)))
-("Q" "Questions" tags "QUESTION" nil)
-("w" "Tasks waiting on something" tags "WAITING" ((org-use-tag-inheritance nil)))
-("r" "Refile New Notes and Tasks" tags "REFILE" ((org-agenda-todo-ignore-with-date nil)))
-("n" "Notes" tags "NOTES" nil)
-("c" "Schedule" agenda ""
-        ((org-agenda-ndays 7)
-         (org-agenda-start-on-weekday 1)
-         (org-agenda-time-grid nil)
-         (org-agenda-prefix-format " %12:t ")
-         (org-agenda-include-all-todo nil)
-         (org-agenda-repeating-timekstamp-show-all t)
-         (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-("u" "Upcoming deadlines (6 months)" agenda ""
-        ((org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
-         (org-agenda-ndays 1)
-         (org-agenda-include-all-todo nil)
-         (org-deadline-warning-days 180)
-         (org-agenda-time-grid nil)))
-))
+        ("P" "Projects" tags "/!PROJECT" ((org-use-tag-inheritance nil)))
+        ("s" "Started Tasks" todo "STARTED" ((org-agenda-todo-ignore-with-date nil)))
+        ("Q" "Questions" tags "QUESTION" nil)
+        ("w" "Tasks waiting on something" tags "WAITING" ((org-use-tag-inheritance nil)))
+        ("r" "Refile New Notes and Tasks" tags "REFILE" ((org-agenda-todo-ignore-with-date nil)))
+        ("n" "Notes" tags "NOTES" nil)
+        ("c" "Schedule" agenda ""
+         ((org-agenda-ndays 7)
+          (org-agenda-start-on-weekday 1)
+          (org-agenda-time-grid nil)
+          (org-agenda-prefix-format " %12:t ")
+          (org-agenda-include-all-todo nil)
+          (org-agenda-repeating-timekstamp-show-all t)
+          (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+        ("u" "Upcoming deadlines (6 months)" agenda ""
+         ((org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
+          (org-agenda-ndays 1)
+          (org-agenda-include-all-todo nil)
+          (org-deadline-warning-days 180)
+          (org-agenda-time-grid nil)))
+        ))
 
 ;;*****Capture*****
 (setq org-capture-templates
-     '(("t" "Todo" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
-;             "* TODO %?\n----Entered on %U\n  %i")
-             "* TODO %?  %i")
+      '(("t" "Todo" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
+                                        ;             "* TODO %?\n----Entered on %U\n  %i")
+         "* TODO %?  %i")
         ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal.org"))
-            ; "** %?")
+                                        ; "** %?")
         ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
-             "** %U - %^{Activity}  :TIME:")
+         "** %U - %^{Activity}  :TIME:")
         ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal.org")
-             "* Tracker \n| Item | Count |
+         "* Tracker \n| Item | Count |
               %?|-+-|
               | Pull||
               | Push||
               | Crunch||
               | Back||\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
-             )
+         )
         ("w" "" entry ;; 'w' for 'org-protocol'
          (file+headline "~/Dropbox/doc/www.org" "Notes`")
          "* %^{Title}\n\n  Source: %u, %c\n\n  %i")
         ("m" "movie" entry (file+headline "~/Dropbox/doc/media.org" "Movies")
          "* %? \n----Entered on %U\n  %i")
         ("b" "book" entry (file+headline "~/Dropbox/doc/media.org" "Books")
-                 "* %? \n----Entered on %U\n  %i")
+         "* %? \n----Entered on %U\n  %i")
         ))
-;(setq org-capture-templates
-;      (quote (("w" "web note" entry (file+headline "~/org/web.org" "Notes") "* Source: %u, %c\n  %i")
-;              ("l" "scriptjure political or economic references" entry (file+headline "~/org/scripture-study.org" "Politics or Economic")
-;               "* %c %^{Type|descriptive|prescriptive|other} %U\n  %i\n\n   Notes: %^{Notes}")
-;              ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %c %U\n  %i")
-;              ("x" "co template" entry (file+headline "~/org/co.org" "co") "* %c\n" :immediate-finish 1)
-;              ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
- ;             ("t" "todo" entry (file+headline "~/org/todo.org" "Tasks") "* TODO %?")
-  ;            ("c" "calendar" entry (file+headline "~/org/calendar.org" "Events") "* %?\n  %^t")
-   ;           ("p" "phone-calls" entry (file+headline "~/doc/phone-calls.org" "Phone Calls") "* %T %?")
-;              ("j" "journal" entry (file+headline "~/doc/personal/journal.org" "Journal") "* %U\n%?")
-;              ("m" "music" entry (file+headline "~/org/music.org" "Music to checkout") "* :%^{Field|song|artist|album} %^{Value} :%^{Field|song|artist|album} %^{Value}")
-;              ("v" "movie" entry (file+headline "~/org/movies.org" "Movies to see") "* %^{Movie name}")
-;              ("n" "note" entry (file+headline "~/org/notes.org" "Notes") "* %U\n  %?")
-;              ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %U\n  - %?")
-;              ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
-;              ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
-;              ("o" "other" entry (file+headline "~/remember.org" "") "* %a\n%i"))))
+;; (setq org-capture-templates
+;;      (quote (("w" "web note" entry (file+headline "~/org/web.org" "Notes") "* Source: %u, %c\n  %i")
+;;              ("l" "scriptjure political or economic references" entry (file+headline "~/org/scripture-study.org" "Politics or Economic")
+;;               "* %c %^{Type|descriptive|prescriptive|other} %U\n  %i\n\n   Notes: %^{Notes}")
+;;              ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %c %U\n  %i")
+;;              ("x" "co template" entry (file+headline "~/org/co.org" "co") "* %c\n" :immediate-finish 1)
+;;              ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
+;;             ("t" "todo" entry (file+headline "~/org/todo.org" "Tasks") "* TODO %?")
+;;            ("c" "calendar" entry (file+headline "~/org/calendar.org" "Events") "* %?\n  %^t")
+;;           ("p" "phone-calls" entry (file+headline "~/doc/phone-calls.org" "Phone Calls") "* %T %?")
+;;              ("j" "journal" entry (file+headline "~/doc/personal/journal.org" "Journal") "* %U\n%?")
+;;              ("m" "music" entry (file+headline "~/org/music.org" "Music to checkout") "* :%^{Field|song|artist|album} %^{Value} :%^{Field|song|artist|album} %^{Value}")
+;;              ("v" "movie" entry (file+headline "~/org/movies.org" "Movies to see") "* %^{Movie name}")
+;;              ("n" "note" entry (file+headline "~/org/notes.org" "Notes") "* %U\n  %?")
+;;              ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %U\n  - %?")
+;;              ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
+;;              ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
+;;              ("o" "other" entry (file+headline "~/remember.org" "") "* %a\n%i"))))
 
 
 ;;*****CALENDAR/DIARY MODE*****
@@ -855,6 +853,74 @@ an .ics file that has been downloaded from Google Calendar "
                              width 24
                              unsplittable t))
 
+;;;; Perspective
+(eval-after-load 'perspective
+  '(progn
+
+     ;; Perspective Setup
+     (defmacro senny-persp (name &rest body)
+       `(let ((initialize (not (gethash ,name perspectives-hash)))
+              (current-perspective persp-curr))
+          (persp-switch ,name)
+          (when initialize ,@body)
+          (setq persp-last current-perspective)))
+
+     (defun persp-format-name (name)
+       "Format the perspective name given by NAME for display in `persp-modestring'."
+       (let ((string-name (format "%s" name)))
+         (if (equal name (persp-name persp-curr))
+             (propertize string-name 'face 'persp-selected-face))))
+
+     (defun persp-update-modestring ()
+       "Update `persp-modestring' to reflect the current perspectives.
+Has no effect when `persp-show-modestring' is nil."
+       (when persp-show-modestring
+         (setq persp-modestring
+               (append '("[")
+                       (persp-intersperse (mapcar 'persp-format-name (persp-names)) "")
+                       '("]")))))
+
+     ;; Perspective Defuns
+     (defun senny-persp-last ()
+       (interactive)
+       (persp-switch (persp-name persp-last)))
+
+
+;;;; Perspective Definitions
+     ;; (defun senny-persp/jabber ()
+     ;;   (interactive)
+     ;;   (senny-persp "@Jabber"
+     ;;                (jabber-connect-all)
+     ;;                (call-interactively 'jabber-display-roster)
+     ;;                (switch-to-buffer jabber-roster-buffer)))
+
+     (defun senny-persp/irc ()
+       (interactive)
+       (senny-persp "@IRC"
+                    (erc)
+                    (dolist (channel '("emacs" "ruby" "cucumber"))
+                      (erc-join-channel channel))))
+
+     (defun senny-persp/terminal ()
+       (interactive)
+       (senny-persp "@terminal"
+                    (multi-term-next)
+                    (jone-term-binding-fix)))
+
+     (defun senny-persp/emacs ()
+       (interactive)
+       (senny-persp "@Emacs"))
+
+     (defun senny-persp/org ()
+       (interactive)
+       (senny-persp "@org"
+                    (find-file (first org-agenda-files))))
+
+     (defun senny-persp/main ()
+       (interactive)
+       (senny-persp "main"))
+     ))
+
 
 ;;------------------------------------------------
 ;== GLOBAL KEYBINDS
@@ -904,6 +970,13 @@ an .ics file that has been downloaded from Google Calendar "
 ;(bind "<f6> d" 'color-theme-wombat)
 ;(bind "<f6> l" 'color-theme-active)
 ;(bind "<f6> n" 'linum-mode)
+(global-set-key (kbd "<f6> e") 'senny-persp/emacs)
+(global-set-key (kbd "<f6> t") 'senny-persp/terminal)
+(global-set-key (kbd "<f6> m") 'senny-persp/main)
+(global-set-key (kbd "<f6> i") 'senny-persp/irc)
+(global-set-key (kbd "<f6> o") 'senny-persp/org)
+(global-set-key (kbd "<f6> s") 'persp-switch)
+(global-set-key (kbd "<f6> p") 'senny-persp-last)
 
 ;;-----------------------------------------------------------------------------
 ;; F9: Emacs programs
@@ -969,8 +1042,8 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
-
 (global-set-key (kbd "C-x g") 'magit-status)
+
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 
