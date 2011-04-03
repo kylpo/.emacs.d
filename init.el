@@ -7,13 +7,17 @@
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 
 ;;------------------------------------------------
-;;== LOAD PATH AND AUTOLOADS AND REQUIRES
+;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
-
+;;*****ELPA****
+;;early in .emacs to be able to use plugins later down
  (when
      (load
       (expand-file-name "~/.emacs.d/elpa/package.el"))
    (package-initialize))
+;;Packages Installed through elpa:
+  ;;worklog | ruby-mode |
+
 
 ;;*****EL-GET INIT*****
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
@@ -27,47 +31,124 @@
 
 (if (require 'el-get nil t)
     (progn
-      (message "el-get is already installed, try M-x el-get-update")
-      (load "~/.emacs.d/el-get/el-get-sources"))
+      (message "el-get already installed"))
+;      (load "~/.emacs.d/el-get/el-get-sources"))
   (url-retrieve
    "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
-     (eval-print-last-sexp)
-     (load "~/.emacs.d/el-get/el-get-sources"))))
+     (eval-print-last-sexp))))
 
+(setq
+ el-get-sources ;order does matter for some of these
+ '(el-get
+   auto-complete
+   ack
+   magit
+   magithub
+   rvm
+   sunrise-commander
+   sunrise-x-buttons
+   yasnippet
+   yaml-mode
+   (:name org-mode
+          :after (lambda ()
+                   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
+   (:name ruby-mode
+          :type elpa
+          :after
+          (lambda ()
+            (autoload 'ruby-mode "ruby-mode" nil t)
+            (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
+            (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+            (add-hook 'ruby-mode-hook
+                      '(lambda ()
+                         (setq ruby-deep-arglist t)
+                         (setq ruby-deep-indent-paren nil)
+                         (setq c-tab-always-indent nil)
+                         (require 'inf-ruby)
+                         (require 'ruby-compilation)))
+            (add-hook 'ruby-mode-hook
+                      (lambda()
+                        (add-hook 'local-write-file-hooks
+                                  '(lambda()
+                                     (save-excursion
+                                       (untabify (point-min) (point-max))
+                                       (delete-trailing-whitespace)
+                                       )))
+                        (set (make-local-variable 'indent-tabs-mode) 'nil)
+                        (set (make-local-variable 'tab-width) 2)
+                        (imenu-add-to-menubar "IMENU")
+                                        ;   (require 'ruby-electric)
+                                        ;   (ruby-electric-mode t)
+                        ))))
 
-;;*****ELPA****
-;;early in .emacs to be able to use plugins later down
-;; (when
-;;     (load
-;;      (expand-file-name "~/.emacs.d/elpa/package.el"))
-;;   (package-initialize))
-;; ;;Add the original Emacs Lisp Package Archive
-;; (add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
-;; ;;Add the user-contributed repository
-;; (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-;; (add-to-list 'package-archives '("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/"))
-;; (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+ (:name inf-ruby  :type elpa)
+ (:name ruby-compilation :type elpa)
+ (:name css-mode
+        :type elpa
+        :after
+        (lambda ()
+          (autoload 'css-mode "css-mode" nil t)
+          (add-hook 'css-mode-hook
+                    '(lambda ()
+                       (setq css-indent-level 2)
+                       (setq css-indent-offset 2)))))
+; (:name textmate
+;        :type git
+;        :url "git://github.com/defunkt/textmate.el"
+;        :load "textmate.el")
+ (:name rhtml-mode
+        :after
+        (lambda ()
+          (autoload 'rhtml-mode "rhtml-mode" nil t)
+          (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
+          (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
+          (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
+          (add-hook 'rhtml-mode
+                    '(lambda ()
+                       (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
+ (:name rinari
+        :after (lambda ()
+                 (add-hook 'rhtml-mode-hook
+                           (lambda () (rinari-launch)))))
+ ;; (:name yaml-mode
+ ;;        :type git
+ ;;        :url "http://github.com/yoshiki/yaml-mode.git"
+ ;;        :features yaml-mode
+ ;;        :after (lambda ()
+ ;;                 (autoload 'yaml-mode "yaml-mode" nil t)
+ ;;                 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+ ;;                 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+ ;;                 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
+ ruby-end
+ ))
 
+(el-get 'sync)
 
-(add-to-list 'load-path "~/.emacs.d/elisp/org-mode/lisp/")
-(add-to-list 'load-path "~/.emacs.d/elisp/org-mode/contrib/lisp/")
-;(add-to-list 'load-path "~/.emacs.d/elisp/rhtml/")
-(add-to-list 'load-path "~/.emacs.d/elisp/")
-;(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
-;(require 'el-get)
 (require 'ido)
 (require 'tramp)
 (require 'color-theme)
-(require 'org)
-(require 'org-protocol)
-(require 'org-install)
+;(require 'org)
+;(require 'org-protocol)
+;(require 'org-install)
 (require 'org-habit)
 (require 'easymenu) ;for ERC
-;(require 'rhtml-mode)
-;(require 'auto-complete)
+
+(require 'yaml-mode);doesn't auto init from elpa
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
+;; We never want to edit Rubinius bytecode
+(add-to-list 'completion-ignored-extensions ".rbc")
 
 ;;------------------------------------------------
 ;== Platform Dependencies
@@ -87,7 +168,10 @@
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-do-shell-mac-open-vqn)))
   );;end apple
  ((string-match "linux" system-configuration)
+  ;;start LINUX
   (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
+  ;;10pt font aka :height 10*10=100
+  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
@@ -108,43 +192,11 @@
 ;;------------------------------------------------
 ;== INIT & CONFIG
 ;;------------------------------------------------
-;(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
 
-;; We never want to edit Rubinius bytecode
-(add-to-list 'completion-ignored-extensions ".rbc")
-(add-hook 'ruby-mode-hook
-      (lambda()
-        (add-hook 'local-write-file-hooks
-                  '(lambda()
-                     (save-excursion
-                       (untabify (point-min) (point-max))
-                       (delete-trailing-whitespace)
-                       )))
-        (set (make-local-variable 'indent-tabs-mode) 'nil)
-        (set (make-local-variable 'tab-width) 2)
-        (imenu-add-to-menubar "IMENU")
-        (define-key ruby-mode-map "\C-m" 'newline-and-indent) ;Not sure if this line is 100% right!
-     ;   (require 'ruby-electric)
-     ;   (ruby-electric-mode t)
-        ))
+
 ;sort ido filelist by mtime instead of alphabetically
 (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
 (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
-
-(add-hook 'rhtml-mode-hook
-     	  (lambda () (rinari-launch)))
-
 
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
@@ -177,12 +229,11 @@
 (setq c-basic-offset 3) ; Indenting is 3 spaces
 ;(set-language-environment "UTF-8");"Latin-1") ; Default would be utf8
 
-
 (setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
 (load "~/.emacs.d/colors/color-theme-wombat")
-(color-theme-wombat)
+(color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;(load "~/.emacs.d/colors/zenburn")
-;(color-theme-zenburn)
+;(color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
 (global-font-lock-mode 1) ;; Enable syntax highlighting when editing code.
 (show-paren-mode 1) ; Highlight the matching paren
 
@@ -217,12 +268,13 @@
  '(speedbar-update-flag nil t)
  '(speedbar-use-images nil)
  )
+
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Droid Sans Mono"))))
+; '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "unknown" :family "Droid Sans Mono"))))
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
@@ -563,11 +615,11 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****ORG-MODE*****
 ;;Checkout the latest version of org mode, if I don't already have it.
-(unless (file-exists-p "~/.emacs.d/elisp/org-mode/")
-  (let ((default-directory "~/.emacs.d/elisp/"))
-    (shell-command "git clone git://repo.or.cz/org-mode.git")
-    (shell-command "make -C org-mode/")
-    (normal-top-level-add-subdirs-to-load-path)))
+;(unless (file-exists-p "~/.emacs.d/elisp/org-mode/")
+;  (let ((default-directory "~/.emacs.d/elisp/"))
+;    (shell-command "git clone git://repo.or.cz/org-mode.git")
+;    (shell-command "make -C org-mode/")
+;    (normal-top-level-add-subdirs-to-load-path)))
 
 (defun planner ()
     (interactive)
