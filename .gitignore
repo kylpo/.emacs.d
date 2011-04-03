@@ -1,4 +1,5 @@
 auto-save-list/
+elpa/archives/
 tramp
 .emacs.BAK
 .org-id-locations
