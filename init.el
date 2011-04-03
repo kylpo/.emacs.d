@@ -50,6 +50,7 @@
    sunrise-commander
    sunrise-x-buttons
    yasnippet
+   color-theme
    (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
    (:name org-mode :after
@@ -141,7 +142,7 @@
 
 (require 'ido)
 (require 'tramp)
-(require 'color-theme)
+;(require 'color-theme)
 ;(require 'org)
 ;(require 'org-protocol)
 ;(require 'org-install)
