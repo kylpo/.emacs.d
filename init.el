@@ -165,7 +165,9 @@
  ((string-match "nt" system-configuration)
 
   );;end windows
+
  ((string-match "apple" system-configuration)
+;  (add-to-list 'el-get-sources 'color-theme)
   (defun dired-do-shell-mac-open-vqn ()
     (interactive)
     (save-window-excursion
@@ -175,6 +177,7 @@
 
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-do-shell-mac-open-vqn)))
   );;end apple
+
  ((string-match "linux" system-configuration)
   ;;start LINUX
   (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
@@ -1054,12 +1057,21 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
-;;Window Navigation/Manipulation
-(bind "s-C-n" 'other-window)
-(bind "s-C-p" 'previous-multiframe-window)
+
+;; Window Navigation/Manipulation
+;(bind "s-C-n" 'other-window)
+;(bind "s-C-p" 'previous-multiframe-window)
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
+(global-unset-key (kbd "s-j"))
+(global-unset-key (kbd "s-k"))
+(global-unset-key (kbd "s-h"))
+(global-unset-key (kbd "s-l"))
+(bind "s-j" 'windmove-down)
+(bind "s-k" 'windmove-up)
+(bind "s-h" 'windmove-left)
+(bind "s-l" 'windmove-right)
 
 (bind "s-x" (lambda ()
        (interactive)
