@@ -300,7 +300,7 @@
 (put 'upcase-region 'disabled nil)
 
 (setq rinari-tags-file-name "TAGS")
-(setq next-line-add-newlines t);C-n at end of buffer will create new line
+;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -983,6 +983,7 @@ Has no effect when `persp-show-modestring' is nil."
 (set-key-find-file "<f2> b" "~/.xbindkeysrc")
 (set-key-find-file "<f2> r" "~/.Xresources")
 (set-key-find-file "<f2> m" "~/.Xmodmap")
+(set-key-find-file "<f2> h" "~/Dropbox/notes/emacs/hotkeys.org")
 
 (global-set-key (kbd "<f2> w") 'webjump)
 
