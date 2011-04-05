@@ -1,6 +1,6 @@
 (server-start)
 ;;Done at start to load faster
-;(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
@@ -16,8 +16,6 @@
     (load
      (expand-file-name "~/.emacs.d/elpa/package.el"))
   (package-initialize))
-;;Packages Installed through elpa:
-  ;;worklog | ruby-mode |
 
 ;;*****EL-GET INIT*****
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
@@ -32,7 +30,6 @@
 (if (require 'el-get nil t)
     (progn
       (message "el-get already installed"))
-;      (load "~/.emacs.d/el-get/el-get-sources"))
   (url-retrieve
    "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
    (lambda (s)
@@ -60,7 +57,7 @@
             ;;                  sql-interactive-mode))
             ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
             ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
-))
+            ))
    magit
    magithub
    rvm
@@ -71,21 +68,21 @@
    wrap-region
    yari
    (:name senny-textmate
-       :type git
-       :url "https://github.com/defunkt/textmate.el.git"
-       :features textmate
+          :type git
+          :url "https://github.com/defunkt/textmate.el.git"
+          :features textmate
 
-       ;; customization
-       :after (lambda ()
-                (textmate-mode t)))
+          ;; customization
+          :after (lambda ()
+                   (textmate-mode t)))
    (:name senny-popwin
-       :features popwin
-       :type git
-       :url "https://github.com/m2ym/popwin-el.git"
-       :load-path "."
-       :after (lambda ()
-                (setq display-buffer-function 'popwin:display-buffer)
-                (setq popwin:special-display-config '(("*Ido Completions*")))))
+          :features popwin
+          :type git
+          :url "https://github.com/m2ym/popwin-el.git"
+          :load-path "."
+          :after (lambda ()
+                   (setq display-buffer-function 'popwin:display-buffer)
+                   (setq popwin:special-display-config '(("*Ido Completions*")))))
    (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
    (:name org-mode :after
@@ -128,78 +125,79 @@
                         (imenu-add-to-menubar "IMENU")
                         (local-set-key "\r" 'newline-and-indent);ret indents
                         (require 'ruby-electric)
+                        (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
                         (ruby-electric-mode t)
                         ))))
- (:name css-mode
-        :type elpa
-        :after
-        (lambda ()
-          (autoload 'css-mode "css-mode" nil t)
-          (add-hook 'css-mode-hook
-                    '(lambda ()
-                       (setq css-indent-level 2)
-                       (setq css-indent-offset 2)))))
- (:name rhtml-mode
-        :after
-        (lambda ()
-          (autoload 'rhtml-mode "rhtml-mode" nil t)
-          (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
-          (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
-          (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
-          (add-hook 'rhtml-mode
-                    '(lambda ()
-                       (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
- (:name rinari
-        :after (lambda ()
-                 (add-hook 'rhtml-mode-hook
-                           (lambda () (rinari-launch)))))
- ruby-end ;necessary to place after ruby-mode
- flymake-ruby
- (:name senny-perspective
-        :type git
-        :features perspective
-        :url "https://github.com/nex3/perspective-el.git"
-        :after (lambda () (persp-mode)))
- (:name senny-rspec-mode
-        :type git
-        :url "https://github.com/pezra/rspec-mode.git"
-        :compile "rspec-mode.el"
-        :features rspec-mode)
- (:name yaml-mode
-        :type git
-        :url "http://github.com/yoshiki/yaml-mode.git"
-        :features yaml-mode
-        :after (lambda ()
-                 (autoload 'yaml-mode "yaml-mode" nil t)
-                 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-                 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-                 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
- ))
+   (:name css-mode
+          :type elpa
+          :after
+          (lambda ()
+            (autoload 'css-mode "css-mode" nil t)
+            (add-hook 'css-mode-hook
+                      '(lambda ()
+                         (setq css-indent-level 2)
+                         (setq css-indent-offset 2)))))
+   (:name rhtml-mode
+          :after
+          (lambda ()
+            (autoload 'rhtml-mode "rhtml-mode" nil t)
+            (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
+            (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
+            (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
+            (add-hook 'rhtml-mode
+                      '(lambda ()
+                         (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
+   (:name rinari
+          :after (lambda ()
+                   (add-hook 'rhtml-mode-hook
+                             (lambda () (rinari-launch)))))
+   ruby-end ;necessary to place after ruby-mode
+   flymake-ruby
+   (:name senny-perspective
+          :type git
+          :features perspective
+          :url "https://github.com/nex3/perspective-el.git"
+          :after (lambda () (persp-mode)))
+   (:name senny-rspec-mode
+          :type git
+          :url "https://github.com/pezra/rspec-mode.git"
+          :compile "rspec-mode.el"
+          :features rspec-mode)
+   (:name yaml-mode
+          :type git
+          :url "http://github.com/yoshiki/yaml-mode.git"
+          :features yaml-mode
+          :after (lambda ()
+                   (autoload 'yaml-mode "yaml-mode" nil t)
+                   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+                   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+                   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
+   ))
 
 (el-get 'sync)
 
 (require 'ido)
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;(require 'flyspell)
-;(require 'color-theme)
-;(require 'org)
-;(require 'org-protocol)
-;(require 'org-install)
-;(require 'org-habit)
+                                        ;(require 'flyspell)
+                                        ;(require 'color-theme)
+                                        ;(require 'org)
+                                        ;(require 'org-protocol)
+                                        ;(require 'org-install)
+                                        ;(require 'org-habit)
 (require 'easymenu) ;for ERC
 
-;(require 'yaml-mode);doesn't auto init from elpa
-;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-;(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+                                        ;(require 'yaml-mode);doesn't auto init from elpa
+                                        ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+                                        ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+                                        ;(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 ;; We never want to edit Rubinius bytecode
 (add-to-list 'completion-ignored-extensions ".rbc")
 
 ;;------------------------------------------------
-;== Platform Dependencies
+                                        ;== Platform Dependencies
 ;;------------------------------------------------
 (cond
  ((string-match "nt" system-configuration)
@@ -207,7 +205,7 @@
   );;end windows
 
  ((string-match "apple" system-configuration)
-;  (add-to-list 'el-get-sources 'color-theme)
+                                        ;  (add-to-list 'el-get-sources 'color-theme)
   (defun dired-do-shell-mac-open-vqn ()
     (interactive)
     (save-window-excursion
@@ -238,7 +236,19 @@
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
   ;;doesn't work in os x
   (setq dired-listing-switches "-lXGh --group-directories-first")
+
   ;; sort ido filelist by mtime instead of alphabetically
+  (defun ido-sort-mtime ()
+    (setq ido-temp-list
+          (sort ido-temp-list
+                (lambda (a b)
+                  (time-less-p
+                   (sixth (file-attributes (concat ido-current-directory b)))
+                   (sixth (file-attributes (concat ido-current-directory a)))))))
+    (ido-to-end  ;; move . files to end (again)
+     (delq nil (mapcar
+                (lambda (x) (and (char-equal (string-to-char x) ?.) x))
+                ido-temp-list))))
   (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
   (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
   );;end linux
@@ -246,7 +256,7 @@
 
 
 ;;------------------------------------------------
-;== INIT & CONFIG
+                                        ;== INIT & CONFIG
 ;;------------------------------------------------
 ;;Display
 ;; Use a vertical bar as cursor
@@ -256,8 +266,8 @@
 
 (load "~/.emacs.d/colors/color-theme-wombat")
 (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
-;(load "~/.emacs.d/colors/zenburn")
-;(color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
+;; (load "~/.emacs.d/colors/zenburn")
+;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
@@ -266,21 +276,21 @@
 (show-paren-mode 1) ; Highlight the matching paren
 ;;show line of matching paren when off buffer
 (defadvice show-paren-function
-      (after show-matching-paren-offscreen activate)
-      "If the matching paren is offscreen, show the matching line in the
+  (after show-matching-paren-offscreen activate)
+  "If the matching paren is offscreen, show the matching line in the
         echo area. Has no effect if the character before point is not of
         the syntax class ')'."
-      (interactive)
-      (if (not (minibuffer-prompt))
-          (let ((matching-text nil))
-            ;; Only call `blink-matching-open' if the character before point
-            ;; is a close parentheses type character. Otherwise, there's not
-            ;; really any point, and `blink-matching-open' would just echo
-            ;; "Mismatched parentheses", which gets really annoying.
-            (if (char-equal (char-syntax (char-before (point))) ?\))
-                (setq matching-text (blink-matching-open)))
-            (if (not (null matching-text))
-                (message matching-text)))))
+  (interactive)
+  (if (not (minibuffer-prompt))
+      (let ((matching-text nil))
+        ;; Only call `blink-matching-open' if the character before point
+        ;; is a close parentheses type character. Otherwise, there's not
+        ;; really any point, and `blink-matching-open' would just echo
+        ;; "Mismatched parentheses", which gets really annoying.
+        (if (char-equal (char-syntax (char-before (point))) ?\))
+            (setq matching-text (blink-matching-open)))
+        (if (not (null matching-text))
+            (message matching-text)))))
 
 (setq transient-mark-mode t) ; Highlight selected regions
 (setq inhibit-startup-screen t) ; Dont load the about screen on load
@@ -290,21 +300,11 @@
 (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
-
-
-
-(defun eshell/emacs (tags) ;;eshell rtags alias
-          (rtags --recurse .))
-
-(defun rtags ()
-	(interactive)
-	(shell-command "rtags --recurse ."))
-
 (ido-mode 'both) ; User ido mode for both buffers and files
 (setq ido-enable-prefix nil
       ido-enable-flex-matching t
-      ido-create-new-buffer 'always
-      ido-use-filename-at-point nil)
+      ido-create-new-buffer 'always)
+;;      ido-use-filename-at-point nil)
 ;;      ido-max-prospects 10)
 
 ;; Display ido results vertically, rather than horizontally
@@ -334,11 +334,11 @@
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  '(speedbar-hide-button-brackets-flag t)
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(speedbar-hide-button-brackets-flag t)
  '(speedbar-indentation-width 2)
  '(speedbar-show-unknown-files t)
  '(speedbar-update-flag nil t)
@@ -346,10 +346,10 @@
  )
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
@@ -357,6 +357,16 @@
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+(defun ruby-interpolate ()
+  "In a double quoted string, interpolate."
+  (interactive)
+  (insert "#")
+  (when (and
+         (looking-back "\".*")
+         (looking-at ".*\""))
+    (insert "{}")
+    (backward-char 1)))
+
 (defadvice zap-to-char (after dont-zap-char (arg char))
   "Doesn't include the char - zaps to the char before it (like vim)."
   (insert char)
@@ -380,19 +390,47 @@
      (interactive)
      ,@(if (stringp (car body)) (cdr `,body) body)))
 
+(defun eshell/emacs (tags) ;;eshell rtags alias
+  (rtags --recurse .))
+
+(defun rtags ()
+  (interactive)
+  (shell-command "rtags --recurse ."))
+
 (defun isearch-occur ()
-      "Invoke `occur' from within isearch."
-      (interactive)
-      (let ((case-fold-search isearch-case-fold-search))
-        (occur (if isearch-regexp isearch-string (regexp-quote isearch-string)))))
+  "Invoke `occur' from within isearch."
+  (interactive)
+  (let ((case-fold-search isearch-case-fold-search))
+    (occur (if isearch-regexp isearch-string (regexp-quote isearch-string)))))
+
+(defun backward-buffer () (interactive)
+  "Switch to previously selected buffer."
+  (let* ((list (cdr (buffer-list)))
+         (buffer (car list)))
+    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
+      (progn
+        (setq list (cdr list))
+        (setq buffer (car list))))
+    (bury-buffer)
+    (switch-to-buffer buffer)))
+
+(defun forward-buffer () (interactive)
+  "Opposite of backward-buffer."
+  (let* ((list (reverse (buffer-list)))
+         (buffer (car list)))
+    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
+      (progn
+        (setq list (cdr list))
+        (setq buffer (car list))))
+    (switch-to-buffer buffer)))
 
 (cmd scroll-down-keep-cursor
-  "Scroll the text one line down while keeping the cursor"
-  (scroll-down 1))
+     "Scroll the text one line down while keeping the cursor"
+     (scroll-down 1))
 
 (cmd scroll-up-keep-cursor
-  "Scroll the text one line up while keeping the cursor"
-  (scroll-up 1))
+     "Scroll the text one line up while keeping the cursor"
+     (scroll-up 1))
 
 (cmd isearch-other-window
      ;; thank you leo2007!
@@ -401,15 +439,15 @@
        (isearch-forward)))
 
 (cmd comment-or-uncomment-current-line-or-region
-  "Comments or uncomments current current line or whole lines in region."
-  (save-excursion
-    (let (min max)
-      (if (and transient-mark-mode mark-active)
-          (setq min (region-beginning) max (region-end))
-        (setq min (point) max (point)))
-      (comment-or-uncomment-region
-       (progn (goto-char min) (line-beginning-position))
-       (progn (goto-char max) (line-end-position))))))
+     "Comments or uncomments current current line or whole lines in region."
+     (save-excursion
+       (let (min max)
+         (if (and transient-mark-mode mark-active)
+             (setq min (region-beginning) max (region-end))
+           (setq min (point) max (point)))
+         (comment-or-uncomment-region
+          (progn (goto-char min) (line-beginning-position))
+          (progn (goto-char max) (line-end-position))))))
 
 (defun senny-ido-find-work ()
   (interactive)
@@ -430,97 +468,85 @@
                                                       "find \"" directory
                                                       "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
 
-(defun ido-sort-mtime ()
-    (setq ido-temp-list
-          (sort ido-temp-list
-                (lambda (a b)
-                  (time-less-p
-                   (sixth (file-attributes (concat ido-current-directory b)))
-                   (sixth (file-attributes (concat ido-current-directory a)))))))
-    (ido-to-end  ;; move . files to end (again)
-     (delq nil (mapcar
-                (lambda (x) (and (char-equal (string-to-char x) ?.) x))
-                ido-temp-list))))
-
 (cmd xsteve-ido-choose-from-recentf
-  "Use ido to select a recently opened file from the `recentf-list'"
-  (let ((home (expand-file-name (getenv "HOME"))))
-    (find-file
-     (ido-completing-read "Recentf open: "
-                          (mapcar (lambda (path)
-                                    (replace-regexp-in-string home "~" path))
-                                  recentf-list)
-                          nil t))))
+     "Use ido to select a recently opened file from the `recentf-list'"
+     (let ((home (expand-file-name (getenv "HOME"))))
+       (find-file
+        (ido-completing-read "Recentf open: "
+                             (mapcar (lambda (path)
+                                       (replace-regexp-in-string home "~" path))
+                                     recentf-list)
+                             nil t))))
 
 (defun ido-find-file-in-tag-files ()
-      (interactive)
-      (save-excursion
-        (let ((enable-recursive-minibuffers t))
-          (visit-tags-table-buffer))
-        (find-file
-         (expand-file-name
-          (ido-completing-read
-           "Project file: " (tags-table-files) nil t)))))
+  (interactive)
+  (save-excursion
+    (let ((enable-recursive-minibuffers t))
+      (visit-tags-table-buffer))
+    (find-file
+     (expand-file-name
+      (ido-completing-read
+       "Project file: " (tags-table-files) nil t)))))
 
 (defun my-ido-find-tag ()
-    "Find a tag using ido"
-    (interactive)
-    (tags-completion-table)
-    (let (tag-names)
-      (mapc (lambda (x)
-              (unless (integerp x)
-                (push (prin1-to-string x t) tag-names)))
-            tags-completion-table)
-      (find-tag (ido-completing-read "Tag: " tag-names))))
+  "Find a tag using ido"
+  (interactive)
+  (tags-completion-table)
+  (let (tag-names)
+    (mapc (lambda (x)
+            (unless (integerp x)
+              (push (prin1-to-string x t) tag-names)))
+          tags-completion-table)
+    (find-tag (ido-completing-read "Tag: " tag-names))))
 
 (defun ido-goto-symbol (&optional symbol-list)
-      ;;http://www.emacswiki.org/cgi-bin/wiki/ImenuMode#toc10
-      "Refresh imenu and jump to a place in the buffer using Ido."
-      (interactive)
-      (unless (featurep 'imenu)
-        (require 'imenu nil t))
+  ;;http://www.emacswiki.org/cgi-bin/wiki/ImenuMode#toc10
+  "Refresh imenu and jump to a place in the buffer using Ido."
+  (interactive)
+  (unless (featurep 'imenu)
+    (require 'imenu nil t))
+  (cond
+   ((not symbol-list)
+    (let ((ido-mode ido-mode)
+          (ido-enable-flex-matching
+           (if (boundp 'ido-enable-flex-matching)
+               ido-enable-flex-matching t))
+          name-and-pos symbol-names position)
+      (unless ido-mode
+        (ido-mode 1)
+        (setq ido-enable-flex-matching t))
+      (while (progn
+               (imenu--cleanup)
+               (setq imenu--index-alist nil)
+               (ido-goto-symbol (imenu--make-index-alist))
+               (setq selected-symbol
+                     (ido-completing-read "Symbol? " symbol-names))
+               (string= (car imenu--rescan-item) selected-symbol)))
+      (unless (and (boundp 'mark-active) mark-active)
+        (push-mark nil t nil))
+      (setq position (cdr (assoc selected-symbol name-and-pos)))
       (cond
-       ((not symbol-list)
-        (let ((ido-mode ido-mode)
-              (ido-enable-flex-matching
-               (if (boundp 'ido-enable-flex-matching)
-                   ido-enable-flex-matching t))
-              name-and-pos symbol-names position)
-          (unless ido-mode
-            (ido-mode 1)
-            (setq ido-enable-flex-matching t))
-          (while (progn
-                   (imenu--cleanup)
-                   (setq imenu--index-alist nil)
-                   (ido-goto-symbol (imenu--make-index-alist))
-                   (setq selected-symbol
-                         (ido-completing-read "Symbol? " symbol-names))
-                   (string= (car imenu--rescan-item) selected-symbol)))
-          (unless (and (boundp 'mark-active) mark-active)
-            (push-mark nil t nil))
-          (setq position (cdr (assoc selected-symbol name-and-pos)))
-          (cond
-           ((overlayp position)
-            (goto-char (overlay-start position)))
-           (t
-            (goto-char position)))))
-       ((listp symbol-list)
-        (dolist (symbol symbol-list)
-          (let (name position)
-            (cond
-             ((and (listp symbol) (imenu--subalist-p symbol))
-              (ido-goto-symbol symbol))
-             ((listp symbol)
-              (setq name (car symbol))
-              (setq position (cdr symbol)))
-             ((stringp symbol)
-              (setq name symbol)
-              (setq position
-                    (get-text-property 1 'org-imenu-marker symbol))))
-            (unless (or (null position) (null name)
-                        (string= (car imenu--rescan-item) name))
-              (add-to-list 'symbol-names name)
-              (add-to-list 'name-and-pos (cons name position))))))))
+       ((overlayp position)
+        (goto-char (overlay-start position)))
+       (t
+        (goto-char position)))))
+   ((listp symbol-list)
+    (dolist (symbol symbol-list)
+      (let (name position)
+        (cond
+         ((and (listp symbol) (imenu--subalist-p symbol))
+          (ido-goto-symbol symbol))
+         ((listp symbol)
+          (setq name (car symbol))
+          (setq position (cdr symbol)))
+         ((stringp symbol)
+          (setq name symbol)
+          (setq position
+                (get-text-property 1 'org-imenu-marker symbol))))
+        (unless (or (null position) (null name)
+                    (string= (car imenu--rescan-item) name))
+          (add-to-list 'symbol-names name)
+          (add-to-list 'name-and-pos (cons name position))))))))
 
 (defun org-gcal-sync ()
   "Export org to ics to be uploaded to Google Calendar and import
@@ -530,16 +556,32 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 (cmd indent-whole-buffer ()
-  "indent whole buffer"
-  (delete-trailing-whitespace)
-  (indent-region (point-min) (point-max) nil)
-  (untabify (point-min) (point-max)))
+     "indent whole buffer"
+     (delete-trailing-whitespace)
+     (indent-region (point-min) (point-max) nil)
+     (untabify (point-min) (point-max)))
 (defalias 'iwb 'indent-whole-buffer)
 
 (defun add-watchwords ()
   (font-lock-add-keywords
    nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
           1 font-lock-warning-face t))))
+
+(defun untabify-buffer ()
+  (interactive)
+  (untabify (point-min) (point-max)))
+
+(defun indent-buffer ()
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
+
+(defun cleanup-buffer ()
+  "Perform a bunch of operations on the whitespace content of a buffer."
+  (interactive)
+  (indent-buffer)
+  (untabify-buffer)
+  (delete-trailing-whitespace))
 
 ;; (defun move-cursor-next-pane ()
 ;;   "Move cursor to the next pane."
@@ -554,13 +596,13 @@ an .ics file that has been downloaded from Google Calendar "
 (defun toggle-fullscreen ()
   (interactive)
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-	    		 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
+                         '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-	    		 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-)
+                         '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
+  )
 
- (defun switch-full-screen (&optional ii)
-   (interactive "p")
+(defun switch-full-screen (&optional ii)
+  (interactive "p")
   (if (> ii 0)
       (shell-command "wmctrl -r :ACTIVE: -badd,fullscreen"))
   (if (< ii 0)
@@ -569,13 +611,13 @@ an .ics file that has been downloaded from Google Calendar "
       (shell-command "wmctrl -r :ACTIVE: -btoggle,fullscreen")))
 
 (defun switch-full-screen-toggle ()
-(interactive)
-(set-frame-parameter nil 'fullscreen
-(if (frame-parameter nil 'fullscreen) nil 'fullboth)))
+  (interactive)
+  (set-frame-parameter nil 'fullscreen
+                       (if (frame-parameter nil 'fullscreen) nil 'fullboth)))
 
 (defun darkroom-mode ()
   "Make things simple-looking by removing decoration
-	 and choosing a simple theme."
+         and choosing a simple theme."
   (interactive)
   (switch-full-screen 1)     ;; requires above function
   ;;(color-theme-retro-green)  ;; requires color-theme
@@ -605,22 +647,22 @@ an .ics file that has been downloaded from Google Calendar "
   ;; to restore:
   ;; (setq mode-line-format (default-value 'mode-line-format))
   (let ((frame (make-frame '((minibuffer . nil)
-			     (vertical-scroll-bars . nil)
-			     (left-fringe . 0); no fringe
-			     (right-fringe . 0)
-			     (background-mode . dark)
-			     (background-color . "black")
-			     (foreground-color . "green")
-			     (cursor-color . "green")
-			     (border-width . 0)
-			     (border-color . "black"); should be unnecessary
-			     (internal-border-width . 64); whitespace!
-			     (cursor-type . box)
-			     (menu-bar-lines . 0)
-			     (tool-bar-lines . 0)
-;			     (mode-line-format . nil) ; dream on... has no effect
-			     (fullscreen . fullboth)  ; this should work
-			     (unsplittable . t)))))
+                             (vertical-scroll-bars . nil)
+                             (left-fringe . 0); no fringe
+                             (right-fringe . 0)
+                             (background-mode . dark)
+                             (background-color . "black")
+                             (foreground-color . "green")
+                             (cursor-color . "green")
+                             (border-width . 0)
+                             (border-color . "black"); should be unnecessary
+                             (internal-border-width . 64); whitespace!
+                             (cursor-type . box)
+                             (menu-bar-lines . 0)
+                             (tool-bar-lines . 0)
+                                        ;                            (mode-line-format . nil) ; dream on... has no effect
+                             (fullscreen . fullboth)  ; this should work
+                             (unsplittable . t)))))
     (select-frame frame)
     (find-file "~/emacs.d/NOTES")
     (setq mode-line-format nil); is buffer local unfortunately
@@ -661,10 +703,10 @@ an .ics file that has been downloaded from Google Calendar "
   (insert (format-time-string "%c" (current-time))))
 
 (defun senny-grep-project (pattern)
-(interactive (list (read-string "Pattern: "
-(if (symbol-at-point)
-(symbol-name (symbol-at-point))""))))
-(rgrep pattern "*" (textmate-project-root)))
+  (interactive (list (read-string "Pattern: "
+                                  (if (symbol-at-point)
+                                      (symbol-name (symbol-at-point))""))))
+  (rgrep pattern "*" (textmate-project-root)))
 
 (defun view-url ()
   "Open a new buffer containing the contents of URL."
@@ -867,11 +909,11 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;*****CALENDAR/DIARY MODE*****
- (setq view-diary-entries-initially t
-         mark-diary-entries-in-calendar t
-	        number-of-diary-entries 7)
-  (add-hook 'diary-display-hook 'fancy-diary-display)
-  (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+(setq view-diary-entries-initially t
+      mark-diary-entries-in-calendar t
+      number-of-diary-entries 7)
+(add-hook 'diary-display-hook 'fancy-diary-display)
+(add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
 
 ;;*****ERC STUFF*****
@@ -883,14 +925,14 @@ an .ics file that has been downloaded from Google Calendar "
 ;; name can be be a bit different, which would screw up autoconnect
 (erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
-  '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode")))
-;     (".*\\.gimp.org" "#gimp" "#gimp-users")))
+      '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode")))
+                                        ;     (".*\\.gimp.org" "#gimp" "#gimp-users")))
 
 ;; check channels
 (erc-track-mode t)
 (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
 
-                                 "324" "329" "332" "333" "353" "477"))
+                                "324" "329" "332" "333" "353" "477"))
 ;; don't show any of this
 (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 
@@ -899,28 +941,28 @@ an .ics file that has been downloaded from Google Calendar "
   (interactive)
   (if (get-buffer "irc.freenode.net:6667") ;; ERC already active?
 
-    (erc-track-switch-buffer 1) ;; yes: switch to last active
+      (erc-track-switch-buffer 1) ;; yes: switch to last active
     (when (y-or-n-p "Start ERC? ") ;; no: maybe start ERC
       (erc :server "irc.freenode.net" :port 6667 :nick "sevfen"))))
-;      (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
+;; (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
 
 ;;*****SPEEDBAR*****
-;(setq speedbar-use-imenu-flag nil)
-;(setq speedbar-fetch-etags-command "/usr/bin/ctags-exuberant")
-;(setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
+;; (setq speedbar-use-imenu-flag nil)
+;; (setq speedbar-fetch-etags-command "/usr/bin/ctags-exuberant")
+;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
 
 ;;Setup speedbar, an additional frame for viewing source files
 (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
 (autoload 'speedbar-get-focus "speedbar" "Jump to speedbar frame" t)
 (autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
 (setq speedbar-frame-plist '(minibuffer nil
-                             border-width 0
-                             internal-border-width 0
-                             menu-bar-lines 0
-                             modeline t
-                             name "SpeedBar"
-                             width 24
-                             unsplittable t))
+                                        border-width 0
+                                        internal-border-width 0
+                                        menu-bar-lines 0
+                                        modeline t
+                                        name "SpeedBar"
+                                        width 24
+                                        unsplittable t))
 
 ;;;; Perspective
 (eval-after-load 'perspective
@@ -992,7 +1034,7 @@ Has no effect when `persp-show-modestring' is nil."
 
 
 ;;------------------------------------------------
-;== GLOBAL KEYBINDS
+                                        ;== GLOBAL KEYBINDS
 ;;------------------------------------------------
 
 ;;-----------------------------------------------------------------------------
@@ -1026,7 +1068,7 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "<f5> o" org-clock-out)
 (bind "<f5> r" org-refile)
 (bind "<f5> f" org-occur)
-;(bind "<f5> r" org-remember)
+                                        ;(bind "<f5> r" org-remember)
 (bind "<f5> v" org-archive-subtree)
 (bind "<f5> t" my-org-todo)
 (bind "<f5> w" widen)
@@ -1034,12 +1076,12 @@ Has no effect when `persp-show-modestring' is nil."
 ;;-----------------------------------------------------------------------------
 ;; F6: Emacs functions
 ;;-----------------------------------------------------------------------------
-;(bind "<f6> t" 'visit-tags-table)
-;(bind "<f6> h" 'jao-toggle-selective-display)
-;(bind "<f6> h" 'hs-org/minor-mode)
-;(bind "<f6> d" 'color-theme-wombat)
-;(bind "<f6> l" 'color-theme-active)
-;(bind "<f6> n" 'linum-mode)
+                                        ;(bind "<f6> t" 'visit-tags-table)
+                                        ;(bind "<f6> h" 'jao-toggle-selective-display)
+                                        ;(bind "<f6> h" 'hs-org/minor-mode)
+                                        ;(bind "<f6> d" 'color-theme-wombat)
+                                        ;(bind "<f6> l" 'color-theme-active)
+                                        ;(bind "<f6> n" 'linum-mode)
 (global-set-key (kbd "<f6> e") 'senny-persp/emacs)
 (global-set-key (kbd "<f6> t") 'senny-persp/terminal)
 (global-set-key (kbd "<f6> m") 'senny-persp/main)
@@ -1051,13 +1093,13 @@ Has no effect when `persp-show-modestring' is nil."
 ;;-----------------------------------------------------------------------------
 ;; F9: Emacs programs
 ;;-----------------------------------------------------------------------------
-;(bind "<f9> e" eshell)
-;(bind "<f9> f" rgrep)
-;(bind "<f9> h" (lambda () (interactive) (dired "~")))
-;(bind "<f9> c" calendar)
-;(bind "<f9> r" org-remember)
-;(bind "<f9> g" gnus)
-;(bind "<f9> M-g" gnus-unplugged)
+                                        ;(bind "<f9> e" eshell)
+                                        ;(bind "<f9> f" rgrep)
+                                        ;(bind "<f9> h" (lambda () (interactive) (dired "~")))
+                                        ;(bind "<f9> c" calendar)
+                                        ;(bind "<f9> r" org-remember)
+                                        ;(bind "<f9> g" gnus)
+                                        ;(bind "<f9> M-g" gnus-unplugged)
 
 
 ;;-----------------------------------------------------------------------------
@@ -1089,14 +1131,14 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-n") 'next-buffer)
 (global-set-key (kbd "M-p") 'previous-buffer)
-;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
-;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
+                                        ;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
+                                        ;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
 (global-set-key (kbd "M-/") 'hippie-expand)
-;(global-set-key (kbd "C-z") 'set-mark-command)
-;(global-set-key [C-tab] 'other-window)
+                                        ;(global-set-key (kbd "C-z") 'set-mark-command)
+                                        ;(global-set-key [C-tab] 'other-window)
 (global-set-key "\r" 'newline-and-indent)
-;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
-;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
+                                        ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
+                                        ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
 (global-set-key "\C-xq" 'anything)
 (global-set-key "\C-xj" 'join-line)
 (global-set-key "\C-xi" 'ido-goto-symbol) ;own func
@@ -1104,11 +1146,12 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
-(global-set-key "\C-xs" 'flyspell-mode)
-;(global-set-key "\C-xc" 'search)
+                                        ;(global-set-key "\C-xs" 'flyspell-mode)
+(global-set-key "\C-xs" 'sunrise)
+                                        ;(global-set-key "\C-xc" 'search)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
-;(global-set-key "\C-cb" 'org-iswitchb)
+                                        ;(global-set-key "\C-cb" 'org-iswitchb)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
@@ -1125,8 +1168,8 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "C-S-n" scroll-up-keep-cursor)
 
 ;; Window Navigation/Manipulation
-;(bind "s-C-n" 'other-window)
-;(bind "s-C-p" 'previous-multiframe-window)
+                                        ;(bind "s-C-n" 'other-window)
+                                        ;(bind "s-C-p" 'previous-multiframe-window)
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
@@ -1145,11 +1188,11 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "M-4") 'balance-windows)
 
 (bind "s-x" (lambda ()
-       (interactive)
-       (call-interactively
-        (intern
-         (ido-completing-read
-          "M-x "
-          (all-completions "" obarray 'commandp))))))
+              (interactive)
+              (call-interactively
+               (intern
+                (ido-completing-read
+                 "M-x "
+                 (all-completions "" obarray 'commandp))))))
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
