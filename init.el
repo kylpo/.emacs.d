@@ -162,6 +162,7 @@
 (require 'ido)
 (require 'tramp)
 (require 'redo+) ;;from elpa
+;(require 'flyspell)
 ;(require 'color-theme)
 ;(require 'org)
 ;(require 'org-protocol)
@@ -303,7 +304,7 @@
 (put 'upcase-region 'disabled nil)
 
 (setq rinari-tags-file-name "TAGS")
-(setq next-line-add-newlines t);C-n at end of buffer will create new line
+;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -985,6 +986,7 @@ Has no effect when `persp-show-modestring' is nil."
 (set-key-find-file "<f2> b" "~/.xbindkeysrc")
 (set-key-find-file "<f2> r" "~/.Xresources")
 (set-key-find-file "<f2> m" "~/.Xmodmap")
+(set-key-find-file "<f2> h" "~/Dropbox/notes/emacs/hotkeys.org")
 
 (global-set-key (kbd "<f2> w") 'webjump)
 
@@ -1075,7 +1077,7 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
-(global-set-key "\C-xs" 'flyspell-on)
+(global-set-key "\C-xs" 'flyspell-mode)
 ;(global-set-key "\C-xc" 'search)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
@@ -1101,14 +1103,14 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
-(global-unset-key (kbd "s-j"))
-(global-unset-key (kbd "s-k"))
-(global-unset-key (kbd "s-h"))
-(global-unset-key (kbd "s-l"))
-(bind "s-j" 'windmove-down)
-(bind "s-k" 'windmove-up)
-(bind "s-h" 'windmove-left)
-(bind "s-l" 'windmove-right)
+(global-unset-key (kbd "M-j"))
+(global-unset-key (kbd "M-k"))
+(global-unset-key (kbd "M-h"))
+(global-unset-key (kbd "M-l"))
+(bind "M-j" 'windmove-down)
+(bind "M-k" 'windmove-up)
+(bind "M-h" 'windmove-left)
+(bind "M-l" 'windmove-right)
 (global-set-key (kbd "M-0") 'delete-window)
 (global-set-key (kbd "M-1") 'delete-other-windows)
 (global-set-key (kbd "M-2") 'split-window-vertically)
