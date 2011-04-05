@@ -12,10 +12,10 @@
 ;;*****ELPA****
 
 ;;early in .emacs to be able to use plugins later down
- (when
-     (load
-      (expand-file-name "~/.emacs.d/elpa/package.el"))
-   (package-initialize))
+(when
+    (load
+     (expand-file-name "~/.emacs.d/elpa/package.el"))
+  (package-initialize))
 ;;Packages Installed through elpa:
   ;;worklog | ruby-mode |
 
@@ -58,8 +58,9 @@
             ;;                  emacs-lisp-mode
             ;;                  css-mode
             ;;                  sql-interactive-mode))
-            (define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
-            (define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
+            ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
+            ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
+))
    magit
    magithub
    rvm
@@ -67,6 +68,24 @@
    sunrise-x-buttons
    yasnippet
    color-theme
+   wrap-region
+   yari
+   (:name senny-textmate
+       :type git
+       :url "https://github.com/defunkt/textmate.el.git"
+       :features textmate
+
+       ;; customization
+       :after (lambda ()
+                (textmate-mode t)))
+   (:name senny-popwin
+       :features popwin
+       :type git
+       :url "https://github.com/m2ym/popwin-el.git"
+       :load-path "."
+       :after (lambda ()
+                (setq display-buffer-function 'popwin:display-buffer)
+                (setq popwin:special-display-config '(("*Ido Completions*")))))
    (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
    (:name org-mode :after
@@ -272,6 +291,14 @@
 (global-hl-line-mode t) ; Highlight the current line
 
 
+
+
+(defun eshell/emacs (tags) ;;eshell rtags alias
+          (rtags --recurse .))
+
+(defun rtags ()
+	(interactive)
+	(shell-command "rtags --recurse ."))
 
 (ido-mode 'both) ; User ido mode for both buffers and files
 (setq ido-enable-prefix nil
