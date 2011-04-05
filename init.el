@@ -216,6 +216,11 @@
     (gnome-open-file (dired-get-file-for-visit)))
 
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
+  ;;doesn't work in os x
+  (setq dired-listing-switches "-lXGh --group-directories-first")
+  ;; sort ido filelist by mtime instead of alphabetically
+  (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
+  (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
   );;end linux
  )
 
@@ -265,9 +270,7 @@
 (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
-;; sort ido filelist by mtime instead of alphabetically
-(add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
-(add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
+
 
 (ido-mode 'both) ; User ido mode for both buffers and files
 (setq ido-enable-prefix nil
@@ -654,7 +657,6 @@ an .ics file that has been downloaded from Google Calendar "
 (setq tramp-default-method "ssh")
 (setq dired-omit-files
       (concat dired-omit-files "\\|^\\..+$"))
-(setq dired-listing-switches "-lXGh --group-directories-first")
 
 ;;*****ORG-MODE*****
 (defun planner ()
