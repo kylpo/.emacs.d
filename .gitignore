@@ -5,5 +5,6 @@ tramp
 .org-id-locations
 el-get/
 ac-comphist.dat
+org-clock-save.el
 
 
