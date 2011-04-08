@@ -222,7 +222,7 @@
 
  ((string-match "linux" system-configuration)
   ;;start LINUX
-  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
+;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
   (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
 
@@ -242,19 +242,19 @@
   (setq dired-listing-switches "-lXGh --group-directories-first")
 
   ;; sort ido filelist by mtime instead of alphabetically
-  (defun ido-sort-mtime ()
-    (setq ido-temp-list
-          (sort ido-temp-list
-                (lambda (a b)
-                  (time-less-p
-                   (sixth (file-attributes (concat ido-current-directory b)))
-                   (sixth (file-attributes (concat ido-current-directory a)))))))
-    (ido-to-end  ;; move . files to end (again)
-     (delq nil (mapcar
-                (lambda (x) (and (char-equal (string-to-char x) ?.) x))
-                ido-temp-list))))
-  (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
-  (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
+  ;; (defun ido-sort-mtime ()
+  ;;   (setq ido-temp-list
+  ;;         (sort ido-temp-list
+  ;;               (lambda (a b)
+  ;;                 (time-less-p
+  ;;                  (sixth (file-attributes (concat ido-current-directory b)))
+  ;;                  (sixth (file-attributes (concat ido-current-directory a)))))))
+  ;;   (ido-to-end  ;; move . files to end (again)
+  ;;    (delq nil (mapcar
+  ;;               (lambda (x) (and (char-equal (string-to-char x) ?.) x))
+  ;;               ido-temp-list))))
+  ;; (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
+  ;; (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
   );;end linux
  )
 
@@ -400,6 +400,10 @@
 (defun rtags ()
   (interactive)
   (shell-command "rtags --recurse ."))
+
+(defun etags ()
+  (interactive)
+  (shell-command "etags -a -f TAGS *"))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
