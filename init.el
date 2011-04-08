@@ -58,11 +58,14 @@
             ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
             ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
             ))
+   bookmark+ ;;http://www.emacswiki.org/emacs/BookmarkPlus#toc2
+   dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    magit
    magithub
    rvm
    sunrise-commander
    sunrise-x-buttons
+   todochiku
    yasnippet
    color-theme
    wrap-region
@@ -179,6 +182,7 @@
 (require 'ido)
 (require 'tramp)
 (require 'redo+) ;;from elpa
+
                                         ;(require 'flyspell)
                                         ;(require 'color-theme)
                                         ;(require 'org)
