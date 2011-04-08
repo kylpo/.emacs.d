@@ -1,10 +1,11 @@
 auto-save-list/
-elpa/archives/
+elpa/archives/*
 tramp
 .emacs.BAK
 .org-id-locations
 el-get/
 ac-comphist.dat
 org-clock-save.el
+url/
 
 
