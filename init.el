@@ -60,6 +60,13 @@
             ))
    bookmark+ ;;http://www.emacswiki.org/emacs/BookmarkPlus#toc2
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
+   (:name dot-mode
+    :type git
+    :url "https://github.com/emacsmirror/dot-mode.git"
+    :features dot-mode
+    :after (lambda ()
+             (require 'dot-mode)
+             (add-hook 'find-file-hooks 'dot-mode-on)))
    magit
    magithub
    rvm
@@ -190,6 +197,8 @@
                                         ;(require 'org-install)
                                         ;(require 'org-habit)
 (require 'easymenu) ;for ERC
+;(require 'viper)
+;(require 'dot-mode)
 
                                         ;(require 'yaml-mode);doesn't auto init from elpa
                                         ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
@@ -337,6 +346,8 @@
 (setq rinari-tags-file-name "TAGS")
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
+(setq windmove-wrap-around t) ;windmove-wrap
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -361,6 +372,35 @@
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+;; Behave like vi's o command
+(defun open-next-line (arg)
+  "Move to the next line and then opens a line.
+    See also `newline-and-indent'."
+  (interactive "p")
+  (end-of-line)
+  (open-line arg)
+  (next-line 1)
+  (when newline-and-indent
+    (indent-according-to-mode)))
+
+;; Behave like vi's O command
+(defun open-previous-line (arg)
+  "Open a new line before the current one.
+     See also `newline-and-indent'."
+  (interactive "p")
+  (beginning-of-line)
+  (open-line arg)
+  (when newline-and-indent
+    (indent-according-to-mode)))
+
+;; Autoindent open-*-lines
+(defvar newline-and-indent t
+  "Modify the behavior of the open-*-line functions to cause them to autoindent.")
+
+(defun my-delete-backward-to-ws ()
+  (interactive)
+  (delete-region (point) (save-excursion (skip-syntax-backward "^ ") (point))))
+
 (defun ruby-interpolate ()
   "In a double quoted string, interpolate."
   (interactive)
@@ -1035,6 +1075,11 @@ Has no effect when `persp-show-modestring' is nil."
        (senny-persp "@org"
                     (find-file (first org-agenda-files))))
 
+     (defun senny-persp/koans ()
+       (interactive)
+       (senny-persp "@koans"
+                    (find-file ("~/Dropbox/koans/"))))
+
      (defun senny-persp/main ()
        (interactive)
        (senny-persp "main"))
@@ -1204,3 +1249,5 @@ Has no effect when `persp-show-modestring' is nil."
                  (all-completions "" obarray 'commandp))))))
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
+(global-set-key [S-return]   'open-next-line)
+(global-set-key [C-S-return] 'open-previous-line)
