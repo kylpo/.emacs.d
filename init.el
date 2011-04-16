@@ -93,7 +93,7 @@
   ;;         :after (lambda ()
   ;;                  (setq display-buffer-function 'popwin:display-buffer)
   ;;                  (setq popwin:special-display-config '(("*Ido Completions*")))))
-   (:name worklog :type elpa)
+;   (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
    (:name org-mode :after
           (lambda ()
@@ -197,9 +197,6 @@
                                         ;(require 'org-install)
                                         ;(require 'org-habit)
 (require 'easymenu) ;for ERC
-;(require 'viper)
-;(require 'dot-mode)
-
                                         ;(require 'yaml-mode);doesn't auto init from elpa
                                         ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                                         ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
@@ -208,6 +205,9 @@
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 ;; We never want to edit Rubinius bytecode
 (add-to-list 'completion-ignored-extensions ".rbc")
+
+;; Deal with colors in shell mode correctly
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;;------------------------------------------------
                                         ;== Platform Dependencies
@@ -271,6 +271,35 @@
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
+
+;; save a list of open files in ~/.emacs.desktop
+;; save the desktop file automatically if it already exists
+;;(setq desktop-save 'if-exists)
+;;(desktop-save-mode 1)
+
+;; save a bunch of variables to the desktop file
+;; for lists specify the len of the maximal saved data also
+;; (setq desktop-globals-to-save
+;;       (append '((extended-command-history . 30)
+;;                 (file-name-history        . 100)
+;;                 (grep-history             . 30)
+;;                 (compile-history          . 30)
+;;                 (minibuffer-history       . 50)
+;;                 (query-replace-history    . 60)
+;;                 (read-expression-history  . 60)
+;;                 (regexp-history           . 60)
+;;                 (regexp-search-ring       . 20)
+;;                 (search-ring              . 20)
+;;                 (shell-command-history    . 50)
+;;                 tags-file-name
+;;                 register-alist)))
+
+(setq ibuffer-shrink-to-minimum-size t)
+(setq ibuffer-always-show-last-buffer nil)
+(setq ibuffer-sorting-mode 'recency)
+(setq ibuffer-use-header-line t)
+
+
 ;;Display
 ;; Use a vertical bar as cursor
 (blink-cursor-mode 1)
@@ -349,22 +378,21 @@
 (setq windmove-wrap-around t) ;windmove-wrap
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  '(speedbar-hide-button-brackets-flag t)
  '(speedbar-indentation-width 2)
  '(speedbar-show-unknown-files t)
  '(speedbar-update-flag nil t)
- '(speedbar-use-images nil)
- )
+ '(speedbar-use-images nil))
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
@@ -400,6 +428,51 @@
 (defun my-delete-backward-to-ws ()
   (interactive)
   (delete-region (point) (save-excursion (skip-syntax-backward "^ ") (point))))
+
+(defun window-half-height () ;taken from http://www.emacswiki.org/emacs/HalfScrolling
+  (max 1 (/ (1- (window-height (selected-window))) 2)))
+
+(defun sfp-page-down ()
+  (interactive)
+  (setq this-command 'next-line)
+  (next-line
+   (- (window-text-height)
+      next-screen-context-lines)))
+
+(defun sfp-page-up ()
+  (interactive)
+  (setq this-command 'previous-line)
+  (previous-line
+   (- (window-text-height)
+      next-screen-context-lines)))
+
+(defun kylpo-page-down-half ()
+  (interactive)
+  (setq this-command 'next-line)
+  (next-line (window-half-height)))
+
+(defun kylpo-page-up-half ()
+  (interactive)
+  (setq this-command 'previous-line)
+  (previous-line (window-half-height)))
+
+(defun scroll-up-half ()
+  (interactive)
+  (scroll-up (window-half-height)))
+
+(defun scroll-down-half ()
+  (interactive)
+  (scroll-down (window-half-height)))
+
+   ;; (global-set-key [next] 'scroll-up-half)
+   ;; (global-set-key [prior] 'scroll-down-half)
+
+;; kill entire word, even if in middle of word
+(defun my-kill-word ()
+  (interactive)
+  (backward-word)
+  (kill-word 1))
+;;(global-set-key (kbd "M-d") 'my-kill-word)
 
 (defun ruby-interpolate ()
   "In a double quoted string, interpolate."
@@ -926,7 +999,9 @@ an .ics file that has been downloaded from Google Calendar "
               | Pull||
               | Push||
               | Crunch||
-              | Back||\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
+              | Back||
+              |-|
+              | Anki||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
          )
         ("w" "" entry ;; 'w' for 'org-protocol'
          (file+headline "~/Dropbox/doc/www.org" "Notes`")
@@ -991,7 +1066,7 @@ an .ics file that has been downloaded from Google Calendar "
 
       (erc-track-switch-buffer 1) ;; yes: switch to last active
     (when (y-or-n-p "Start ERC? ") ;; no: maybe start ERC
-      (erc :server "irc.freenode.net" :port 6667 :nick "sevfen"))))
+      (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
 ;; (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
 
 ;;*****SPEEDBAR*****
@@ -1056,9 +1131,10 @@ Has no effect when `persp-show-modestring' is nil."
      (defun senny-persp/irc ()
        (interactive)
        (senny-persp "@IRC"
-                    (erc)
-                    (dolist (channel '("emacs" "ruby" "cucumber"))
-                      (erc-join-channel channel))))
+                    (djcb-erc-start-or-switch)
+                    ;; (dolist (channel '("emacs" "ruby" "cucumber"))
+                    ;;   (erc-join-channel channel))
+                    ))
 
      (defun senny-persp/terminal ()
        (interactive)
@@ -1073,7 +1149,8 @@ Has no effect when `persp-show-modestring' is nil."
      (defun senny-persp/org ()
        (interactive)
        (senny-persp "@org"
-                    (find-file (first org-agenda-files))))
+                    (find-file (first org-agenda-files))
+                    (org-agenda-list 1)))
 
      (defun senny-persp/koans ()
        (interactive)
@@ -1183,7 +1260,7 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-n") 'next-buffer)
-(global-set-key (kbd "M-p") 'previous-buffer)
+;(global-set-key (kbd "M-p") 'previous-buffer)
                                         ;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
                                         ;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
 (global-set-key (kbd "M-/") 'hippie-expand)
@@ -1251,3 +1328,22 @@ Has no effect when `persp-show-modestring' is nil."
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
 (global-set-key [C-S-return] 'open-previous-line)
+
+(global-set-key [next] 'sfp-page-down)
+(global-set-key [prior] 'sfp-page-up)
+(global-unset-key (kbd "M-S-v"))
+(global-unset-key (kbd "C-S-v"))
+(global-set-key (kbd "M-S-v") 'kylpo-page-up-half)
+(global-set-key (kbd "C-S-v") 'kylpo-page-down-half)
+(global-set-key (kbd "C-v") 'sfp-page-down)
+(global-set-key (kbd "M-v") 'sfp-page-up)
+
+
+;(global-unset-key (kbd "C-x x i"))
+(global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
+(global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
+(global-set-key (kbd "C-x SPC m") 'senny-persp/main)
+(global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
+(global-set-key (kbd "C-x SPC o") 'senny-persp/org)
+;(global-set-key (kbd "M-p s") 'persp-switch)
+(global-set-key (kbd "C-x SPC p") 'senny-persp-last)
