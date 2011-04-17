@@ -59,6 +59,12 @@
             ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
             ))
    bookmark+ ;;http://www.emacswiki.org/emacs/BookmarkPlus#toc2
+   (:name buffer-move ; have to add your own keys
+          :after (lambda ()
+                   (global-set-key (kbd "<C-S-up>") 'buf-move-up)
+                   (global-set-key (kbd "<C-S-down>") 'buf-move-down)
+                   (global-set-key (kbd "<C-S-left>") 'buf-move-left)
+                   (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    (:name dot-mode
     :type git
@@ -67,9 +73,21 @@
     :after (lambda ()
              (require 'dot-mode)
              (add-hook 'find-file-hooks 'dot-mode-on)))
-   magit
+   (:name goto-last-change ; move pointer back to last change
+          :after (lambda ()
+                   ;; when using AZERTY keyboard, consider C-x C-_
+                   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
+   (:name magit
+          :after (lambda ()
+                   (global-set-key (kbd "C-x g") 'magit-status)))
    magithub
    rvm
+   (:name smex ; a better (ido like) M-x
+          :after (lambda ()
+                   (setq smex-save-file "~/.emacs.d/.smex-items")
+                   (global-set-key (kbd "M-x") 'smex)
+                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+
    sunrise-commander
    sunrise-x-buttons
    todochiku
@@ -207,6 +225,7 @@
 (add-to-list 'completion-ignored-extensions ".rbc")
 
 ;; Deal with colors in shell mode correctly
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;;------------------------------------------------
@@ -237,7 +256,7 @@
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
-    (interactive "fFile to open: ")
+    (interactive "File to open: ")
     (let ((process-connection-type nil))
       (start-process "" nil "/usr/bin/gnome-open" filename)))
 
@@ -299,6 +318,10 @@
 (setq ibuffer-sorting-mode 'recency)
 (setq ibuffer-use-header-line t)
 
+;; whenever an external process changes a file underneath emacs, and there
+;; was no unsaved changes in the corresponding buffer, just revert its
+;; content to reflect what's on-disk.
+(global-auto-revert-mode 1)
 
 ;;Display
 ;; Use a vertical bar as cursor
@@ -345,8 +368,10 @@
 (ido-mode 'both) ; User ido mode for both buffers and files
 (setq ido-enable-prefix nil
       ido-enable-flex-matching t
-      ido-create-new-buffer 'always)
-;;      ido-use-filename-at-point nil)
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point 'guess
+      ido-show-dot-for-dired t
+      ido-save-directory-list-file "~/.emacs.d/.ido.last")
 ;;      ido-max-prospects 10)
 
 ;; Display ido results vertically, rather than horizontally
@@ -1285,7 +1310,7 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
-(global-set-key (kbd "C-x g") 'magit-status)
+;; (global-set-key (kbd "C-x g") 'magit-status)
 
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
