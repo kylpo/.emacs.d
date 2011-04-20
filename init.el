@@ -1048,8 +1048,8 @@ an .ics file that has been downloaded from Google Calendar "
 ;; name can be be a bit different, which would screw up autoconnect
 (erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
-      '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode")))
-                                        ;     (".*\\.gimp.org" "#gimp" "#gimp-users")))
+      '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails")))
+;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
 
 ;; check channels
 (erc-track-mode t)
