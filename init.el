@@ -211,7 +211,7 @@
                                         ;(require 'org-protocol)
                                         ;(require 'org-install)
                                         ;(require 'org-habit)
-(require 'easymenu) ;for ERC
+;(require 'easymenu) ;for ERC
                                         ;(require 'yaml-mode);doesn't auto init from elpa
                                         ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                                         ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
@@ -1062,7 +1062,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;*****ERC STUFF*****
-(easy-menu-add-item  nil '("tools") ["IRC with ERC" erc t])
+;(easy-menu-add-item  nil '("tools") ["IRC with ERC" erc t])
 
 ;; joining && autojoing
 
@@ -1070,8 +1070,8 @@ an .ics file that has been downloaded from Google Calendar "
 ;; name can be be a bit different, which would screw up autoconnect
 (erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
-      '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode")))
-                                        ;     (".*\\.gimp.org" "#gimp" "#gimp-users")))
+      '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails")))
+;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
 
 ;; check channels
 (erc-track-mode t)
