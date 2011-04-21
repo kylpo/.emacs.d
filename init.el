@@ -214,7 +214,7 @@
                                         ;(require 'org-protocol)
                                         ;(require 'org-install)
                                         ;(require 'org-habit)
-(require 'easymenu) ;for ERC
+;(require 'easymenu) ;for ERC
                                         ;(require 'yaml-mode);doesn't auto init from elpa
                                         ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                                         ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
@@ -1065,7 +1065,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;*****ERC STUFF*****
-(easy-menu-add-item  nil '("tools") ["IRC with ERC" erc t])
+;(easy-menu-add-item  nil '("tools") ["IRC with ERC" erc t])
 
 ;; joining && autojoing
 
