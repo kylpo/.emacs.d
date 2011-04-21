@@ -207,10 +207,7 @@
 (require 'ido)
 (require 'tramp)
 (require 'redo+) ;;from elpa
-
-                                        ;(require 'flyspell)
-                                        ;(require 'color-theme)
-                                        ;(require 'org)
+                      ;(require 'org)
                                         ;(require 'org-protocol)
                                         ;(require 'org-install)
                                         ;(require 'org-habit)
@@ -1175,6 +1172,7 @@ Has no effect when `persp-show-modestring' is nil."
        (interactive)
        (senny-persp "@org"
                     (find-file (first org-agenda-files))
+                    (find-file "~/Dropbox/doc/ci.org")
                     (org-agenda-list 1)))
 
      (defun senny-persp/koans ()
