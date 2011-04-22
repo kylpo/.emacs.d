@@ -66,6 +66,7 @@
                    (global-set-key (kbd "<C-S-left>") 'buf-move-left)
                    (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
+   erc-highlight-nicknames
    (:name dot-mode
     :type git
     :url "https://github.com/emacsmirror/dot-mode.git"
@@ -91,7 +92,16 @@
    sunrise-commander
    sunrise-x-buttons
    todochiku
-   yasnippet
+   (:name yasnippet
+       :type svn
+       :url "http://yasnippet.googlecode.com/svn/trunk/"
+       :features "yasnippet"
+       :post-init (lambda ()
+                    (yas/initialize)
+;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
+;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
+                    (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
+                    (yas/reload-all)))
    color-theme
    wrap-region
    yari
@@ -287,6 +297,10 @@
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
+
+;; (yas/initialize)
+;; (yas/load-directory
+ ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
 ;; save a list of open files in ~/.emacs.desktop
 ;; save the desktop file automatically if it already exists
