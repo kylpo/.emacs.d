@@ -226,6 +226,11 @@
                                         ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                                         ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
                                         ;(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+
+;; (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name))
+;;       dropbox-dir (concat dotfiles-dir "../Dropbox")
+;;       journal-pictures-dir (concat dropbox-dir "/doc/journal_pics"))
+
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 ;; We never want to edit Rubinius bytecode
@@ -892,7 +897,7 @@ an .ics file that has been downloaded from Google Calendar "
   )
 (defun journal()
   (interactive)
-  (find-file "~/Dropbox/doc/journal.org")
+  (find-file "~/Dropbox/doc/journal/journal.org")
   )
 
 (setq org-habit-graph-column 60)
@@ -1025,11 +1030,11 @@ an .ics file that has been downloaded from Google Calendar "
       '(("t" "Todo" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
                                         ;             "* TODO %?\n----Entered on %U\n  %i")
          "* TODO %?  %i")
-        ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal.org"))
+        ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal/journal.org"))
                                         ; "** %?")
         ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
          "** %U - %^{Activity}  :TIME:")
-        ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal.org")
+        ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
          "* Tracker \n| Item | Count |
               %?|-+-|
               | Pull||
@@ -1037,7 +1042,9 @@ an .ics file that has been downloaded from Google Calendar "
               | Crunch||
               | Back||
               |-|
-              | Anki||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
+              | Anki||
+              | Climbed||
+              | Ran||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
          )
         ("w" "" entry ;; 'w' for 'org-protocol'
          (file+headline "~/Dropbox/doc/www.org" "Notes`")
