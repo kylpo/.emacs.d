@@ -427,7 +427,8 @@
  '(speedbar-indentation-width 2)
  '(speedbar-show-unknown-files t)
  '(speedbar-update-flag nil t)
- '(speedbar-use-images nil))
+ '(speedbar-use-images nil)
+ '(sr-show-file-attributes nil))
 
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
