@@ -185,10 +185,10 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   (:name rinari
-          :after (lambda ()
-                   (add-hook 'rhtml-mode-hook
-                             (lambda () (rinari-launch)))))
+   ;; (:name rinari
+   ;;        :after (lambda ()
+   ;;                 (add-hook 'rhtml-mode-hook
+   ;;                           (lambda () (rinari-launch)))))
    ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    (:name senny-perspective
@@ -413,7 +413,7 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-(setq rinari-tags-file-name "TAGS")
+;; (setq rinari-tags-file-name "TAGS")
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
 (setq windmove-wrap-around t) ;windmove-wrap
@@ -1038,10 +1038,10 @@ an .ics file that has been downloaded from Google Calendar "
         ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
          "* Tracker \n| Item | Count |
               %?|-+-|
-              | Pull||
-              | Push||
-              | Crunch||
-              | Back||
+              | Pull 20||
+              | Push 20||
+              | Crunch 16/15/1m||
+              | Back 10||
               |-|
               | Anki||
               | Climbed||
