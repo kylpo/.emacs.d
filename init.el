@@ -526,11 +526,17 @@
     (insert "{}")
     (backward-char 1)))
 
-(defadvice zap-to-char (after dont-zap-char (arg char))
-  "Doesn't include the char - zaps to the char before it (like vim)."
-  (insert char)
-  (backward-char))
-(ad-activate 'zap-to-char)
+;; (defadvice zap-to-char (after dont-zap-char (arg char))
+;;   "Doesn't include the char - zaps to the char before it (like vim)."
+;;   (insert char)
+;;   (backward-char))
+;; (ad-activate 'zap-to-char)
+(defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
+    "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
+  you are deleting forward, the CHAR is replaced and the point is
+  put before CHAR"
+    (insert char)
+    (if (< 0 arg) (forward-char -1)))
 
 (defmacro bind (key fn)
   "shortcut for global-set-key"
