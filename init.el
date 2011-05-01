@@ -10,7 +10,6 @@
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
 ;;*****ELPA****
-
 ;;early in .emacs to be able to use plugins later down
 (when
     (load
@@ -247,7 +246,7 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;;------------------------------------------------
-                                        ;== Platform Dependencies
+;; == Platform Dependencies
 ;;------------------------------------------------
 (cond
  ((string-match "nt" system-configuration)
@@ -448,6 +447,19 @@
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+
+(defun kylpo-zap-back-to-char (arg char)
+       "Kill up to and including ARG'th occurrence of CHAR.
+     Case is ignored if `case-fold-search' is non-nil in the current buffer.
+     Goes backward if ARG is negative; error if CHAR not found."
+       (interactive "p\ncZap back to char: ")
+       (if (char-table-p translation-table-for-input)
+           (setq char (or (aref translation-table-for-input char) char)))
+       (kill-region (point) (progn
+                              (search-backward (char-to-string char)
+                                              nil nil arg)
+                              (point))))
+
 ;; Behave like vi's o command
 (defun open-next-line (arg)
   "Move to the next line and then opens a line.
@@ -543,6 +555,13 @@
   put before CHAR"
     (insert char)
     (if (< 0 arg) (forward-char -1)))
+
+(defadvice kylpo-zap-back-to-char (after my-back-zap-to-char-advice (arg char) activate)
+    "e ARG'th occurence of CHAR, and leave CHAR. If
+  you are deleting forward, the CHAR is replaced and the point is
+  put before CHAR"
+    (insert char))
+    ;; (forward-char -1))
 
 (defmacro bind (key fn)
   "shortcut for global-set-key"
@@ -847,7 +866,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 (defun run-theater (command)
   "Open an Emacs frame with nothing other than the executed command."
-  (interactive "CEnter command: ")
+  (interactive "Enter command: ")
   (select-frame (new-frame '((width . 72) (height . 20)
                              (menu-bar-lines . 0)
                              (minibuffer . nil)
@@ -1313,7 +1332,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key [f11] 'switch-full-screen-toggle)
 (global-set-key [f12]         'org-capture)
 (global-set-key (kbd "C-c e") 'djcb-erc-start-or-switch) ;; switch to ERC
-;; (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-n") 'next-buffer)
@@ -1360,14 +1378,10 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
-(global-unset-key (kbd "M-j"))
-(global-unset-key (kbd "M-k"))
-(global-unset-key (kbd "M-h"))
-(global-unset-key (kbd "M-l"))
-(bind "M-j" 'windmove-down)
-(bind "M-k" 'windmove-up)
-(bind "M-h" 'windmove-left)
-(bind "M-l" 'windmove-right)
+(global-set-key (kbd "M-j") 'windmove-down)
+(global-set-key (kbd "M-k") 'windmove-up)
+(global-set-key (kbd "M-h") 'windmove-left)
+(global-set-key (kbd "M-l") 'windmove-right)
 (global-set-key (kbd "M-0") 'delete-window)
 (global-set-key (kbd "M-1") 'delete-other-windows)
 (global-set-key (kbd "M-2") 'split-window-vertically)
@@ -1388,15 +1402,11 @@ Has no effect when `persp-show-modestring' is nil."
 
 (global-set-key [next] 'sfp-page-down)
 (global-set-key [prior] 'sfp-page-up)
-(global-unset-key (kbd "M-S-v"))
-(global-unset-key (kbd "C-S-v"))
 (global-set-key (kbd "M-S-v") 'kylpo-page-up-half)
 (global-set-key (kbd "C-S-v") 'kylpo-page-down-half)
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
-
-;(global-unset-key (kbd "C-x x i"))
 (global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
 (global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
 (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
@@ -1407,3 +1417,4 @@ Has no effect when `persp-show-modestring' is nil."
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
 (global-set-key "\C-w" 'tinyeat-backward)
+(global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
