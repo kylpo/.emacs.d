@@ -201,6 +201,7 @@
           :url "https://github.com/pezra/rspec-mode.git"
           :compile "rspec-mode.el"
           :features rspec-mode)
+
    (:name yaml-mode
           :type git
           :url "http://github.com/yoshiki/yaml-mode.git"
@@ -214,9 +215,12 @@
 
 (el-get 'sync)
 
+(add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
+(require 'tinyeat)
 (require 'ido)
 (require 'tramp)
 (require 'redo+) ;;from elpa
+;; (require 'viper)
                       ;(require 'org)
                                         ;(require 'org-protocol)
                                         ;(require 'org-install)
@@ -230,6 +234,8 @@
 ;; (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name))
 ;;       dropbox-dir (concat dotfiles-dir "../Dropbox")
 ;;       journal-pictures-dir (concat dropbox-dir "/doc/journal_pics"))
+
+
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
@@ -1307,7 +1313,7 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key [f11] 'switch-full-screen-toggle)
 (global-set-key [f12]         'org-capture)
 (global-set-key (kbd "C-c e") 'djcb-erc-start-or-switch) ;; switch to ERC
-(global-set-key "\C-w" 'backward-kill-word)
+;; (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-n") 'next-buffer)
@@ -1320,7 +1326,7 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\r" 'newline-and-indent)
                                         ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
-(global-set-key "\C-xq" 'anything)
+;; (global-set-key "\C-xq" 'anything)
 (global-set-key "\C-xj" 'join-line)
 (global-set-key "\C-xi" 'ido-goto-symbol) ;own func
 (global-set-key "\C-xf" 'xsteve-ido-choose-from-recentf)
@@ -1398,3 +1404,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
 ;(global-set-key (kbd "M-p s") 'persp-switch)
 (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
+
+(global-set-key (kbd "M-d") 'tinyeat-forward)
+(global-set-key "\C-w" 'tinyeat-backward)

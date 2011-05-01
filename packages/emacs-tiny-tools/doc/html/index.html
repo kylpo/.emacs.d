@@ -1,0 +1,742 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+
+<HEAD>
+
+    <TITLE>
+        Emacs Tiny Tools Project homepage
+    </TITLE>
+
+
+    <!--   ................................................................
+            META TAGS (FOR SEARCH ENGINES)
+            ................................................................
+    -->
+
+
+
+  <META HTTP-EQUIV="keywords"
+        CONTENT="Emacs, Lisp, Perl, Keybinding, Distribution, programming">
+
+  <META HTTP-EQUIV="description"
+        CONTENT="Emacs Tiny Tools Project. Emacs is powerful programming environment for which there are many plug-in tools available. This Tools collection includes support for all Emacs platforms: Win32/Unix/Emacs/XEmacs and contains utilities for automatic mail handling, UBE fighting, Emacs startup configuration, URL handling and much more. Over 50+ utilities to select from.">
+
+
+    <STYLE TYPE="text/css">
+
+        body
+        {
+            /* font-family: "Georgia", sans-serif; */
+        }
+
+        a
+        {
+            text-decoration: none;
+        }
+
+        span.stylish
+        {
+            font-family: Garamond;
+            font-style: italic;
+        }
+
+        span.link
+        {
+            color: teal;
+            font-size:  0.7em;
+            font-family: verdana, sans-serif;
+        }
+
+        .sans
+        {
+            font-family: tahoma, verdana, sans-serif;
+        }
+
+        .small
+        {
+            font-family: tahoma, verdana, sans-serif;
+            font-size: 10px;
+            line-height: 13px;
+        }
+
+        span.title
+        {
+            font-family: Times;
+            /* font-style: italic; */
+            font-size: 3.5em;
+        }
+
+        address
+        {
+            font-size: 0.8em;
+        }
+
+        samp.file
+        {
+            color: blue;
+        }
+
+        samp.code
+        {
+            color: navy;
+        }
+
+        span.cmd
+        {
+            /* color: #5595C0; */
+            font-weight: bolder;
+        }
+
+        span.cmd-opt
+        {
+            color: #5595C0;
+        }
+
+        span.cmd-rest
+        {
+            color: #399C6A;
+            font-weight: bolder;
+        }
+
+        a:hover
+        {
+            text-decoration: none;
+            color:           purple;
+            background:      #afb;
+        }
+
+        a.main:hover
+        {
+            text-decoration: none;
+            color:           purple;
+            background:      #afb;
+            /* font-weight:     bolder; */
+            /* font-style: italic; */
+        }
+
+        span.note2
+        {
+            font-family: "verdana", sans-serif;
+            font-size:  0.8em;
+            color: #CC66FF;
+        }
+
+        span.note
+        {
+            color: #228B00;
+        }
+
+        div.picture
+        {
+            font-style: italic;
+        }
+
+    </STYLE>
+
+
+    <SCRIPT SRC="http://js-tools.sourceforge.net/lib/libtime-bmt.js"
+            type="text/javascript"></SCRIPT>
+
+    <SCRIPT type="text/javascript">
+        var bmt = new LibTimeBMT();
+        bmt.activate(7000);
+    </SCRIPT>
+
+</HEAD>
+
+
+
+<BODY>
+
+<!--  .......................................................................
+
+      PROJECT TITLE
+
+      .......................................................................
+-->
+
+<HR NOSHADE SIZE=1>
+
+        <TABLE BORDER="0"
+               bgcolor="#EEEEF8"
+               WIDTH="100%"
+               CELLPADDING="2"
+               CELLSPACING="0"
+               >
+
+            <TR>
+            <TD ALIGN="center">
+
+            </TD>
+            <TD ALIGN="center">
+
+                    <SPAN class="title">
+                        Emacs Tiny Tools Project
+                    </SPAN>
+            </TD>
+            </TR>
+        </TABLE>
+
+<HR NOSHADE SIZE="1">
+
+<!--  .......................................................................
+      START OF BODY TEXT
+      .......................................................................
+-->
+
+<a name="links" id="links"></a>
+<H1> Links and download </H1>
+
+
+<em>
+Note, that the most up to date version is in version control. See
+instructions at the end of this page.
+</em>
+
+<UL>
+
+    <LI>
+        <A HREF="http://freshmeat.net/projects/emacs-tiny-tools"
+        CLASS="main">
+	Main project page
+        </A>
+	(never changes; bookmark this one)
+
+    <LI>
+	<a name="devel" id="devel"></a>
+        <A HREF="https://savannah.nongnu.org/projects/emacs-tiny-tools"
+        CLASS="main">
+	Development page
+        </A>
+	(Source code, bug tracker etc.)
+
+    <LI>
+	Downloads:
+        <A HREF="http://git.savannah.gnu.org/cgit/emacs-tiny-tools.git/snapshot/emacs-tiny-tools-devel.tar.gz"
+        class="main">
+	latest snapshot
+        </A>,
+        <A HREF="https://savannah.nongnu.org/files/?group=emacs-tiny-tools"
+        class="main">
+	releases
+        </A>
+
+    <LI>
+        <A HREF="install/"
+        class="main">
+	Install instructions
+        </A>
+
+<!--
+    <LI><B> TinyPath manual</B> for automatic Emacs environment configuration
+
+        <A HREF="emacs-tinypath.html"
+        class="main">
+        http://tiny-tools.sourceforge.net/emacs-tinypath.html
+        </A>
+
+-->
+    <LI>
+        <A HREF="manual/"
+        class="main">
+	Documentation
+        </A>
+
+<!--
+    <LI>Tiny Tools PGP and Remail interface manual. Note, this is old package
+    and not currently maintained.
+
+        <A HREF="emacs-tinypgp.html"
+        class="main">
+        http://tiny-tools.sourceforge.net/emacs-tinypgp.html
+        </A>
+-->
+
+    <LI>
+        <A HREF="http://git.savannah.gnu.org/gitweb/?p=emacs-tiny-tools.git&a=blob_plain&f=lisp/ChangeLog&hb=devel"
+        CLASS="main">
+        ChangeLog
+        </A>
+        Generated by editing the code in Emacs and pressing
+        key binding (C-x 4 a).
+        <SPAN
+        class="link">
+	http://git.savannah.gnu.org/gitweb/?p=emacs-tiny-tools.git&a=blob_plain&f=lisp/ChangeLog&hb=devel
+        </SPAN>
+
+</UL>
+
+Links and more information about Emacs
+
+<UL>
+
+    <LI>
+        <A HREF="resources/"
+        class="main">
+        Emacs resources
+        </A>
+	(old, needs update)
+
+    <LI>
+        <A HREF="keybindings/"
+        class="main">
+	Keybindings
+        </A>
+
+    <LI>
+        <A HREF="font/"
+        class="main">
+        Font tips
+        </A>
+
+    <LI>
+        <A HREF="packages/"
+        class="main">
+        Making packages
+        </A>
+
+    </UL>
+
+Other pages
+
+<UL>
+
+    <LI>
+        <A HREF="elisp-coding/">
+	Emacs Lisp
+        </A>
+	programming thougts (old, needs update)
+
+    <LI>
+        <A HREF="devel/">
+	Developer information
+        </A>
+
+
+    <LI>
+        To build Emacs lisp package hierarchy
+        <SAMP>/usr/local/share/emacs/site-lisp/net</SAMP> by pulling Emacs Lisp
+        developers' packages from the Net, see project:
+
+        <A HREF="http://freshmeat.net/projects/perlwebget">
+	http://freshmeat.net/projects/perlwebget
+        </A>
+
+
+<!--
+    <LI>Project announcements at
+        <A HREF="announcement.html">
+        http://tiny-tools.sourceforge.net/announcement.html
+        </A>
+-->
+
+</UL>
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+<H1>
+<a name="exerpts" id="exerpts"></a>
+Excerpts
+</H1>
+
+
+    <TABLE>
+        <TR> <TD align="left" valign="middle">
+                 <IMG src="pic/emacs-tinytf.jpg"
+                      border=0
+                      alt="[Picture. Emacs 21.2 tinytf.el package in action]"
+                      >
+             </TD>
+        </TR>
+        <TR> <TD>
+                 <I>
+                 White paper management package, <SPAN
+                 class="note2">tinytf.el</SPAN>, in action (photo from
+                 Windows native Emacs 21.2). Many pages in this site have
+                 been created with it.
+                 </I>
+             </TD>
+        </TR>
+    </TABLE>
+
+
+    <P>
+
+
+    <TABLE>
+        <TR> <TD align="left" valign="middle">
+                 <IMG src="pic/emacs-tinypath.jpg"
+                      border="0"
+                      alt="[Picture. Emacs 21.2 tinypath.el package in action]"
+                      >
+             </TD>
+        </TR>
+
+
+        <TR> <TD align="left" valign="middle">
+                 <IMG src="pic/emacs-tinypath-diagram.jpg"
+                      border="0"
+                      alt="[Picture. Emacs 21.2 tinypath.el package in action]"
+                      >
+             </TD>
+        </TR>
+
+        <TR> <TD>
+                 <I>
+                 Above; File monitoring package, <SPAN
+                 class="note2">tinypath.el</SPAN>, in action (photo from
+                 Windows native Emacs 21.2). You can divide lisp
+                 package files to separate directories and there is no
+                 need to manually update variables <SPAN
+                 class="note2">load-path</SPAN> and <SPAN
+                 class="note2">Info-default-directory-list</SPAN>.
+                 Install new packages and run <SPAN
+                 class="note2">M-x tinypath-cache-regenerate</SPAN>
+                 and your Emacs is up to date. The cache also speeds
+                 up loading packages with <SPAN
+                 class="note2">require, load, load-library, load-file</SPAN>.
+                 Refer to above link <B>install</B> for more information.
+
+                 </I>
+             </TD>
+        </TR>
+
+    </TABLE>
+
+
+        <P>
+
+    <TABLE>
+        <TR> <TD align="left" valign="middle">
+                 <IMG src="pic/emacs-tinyirc.jpg"
+                      border="0"
+                      alt="[Picture. Emacs 21.2 tinyirc.el package in action]"
+                      >
+             </TD>
+        </TR>
+        <TR> <TD>
+                 <I>
+
+                 Pastebot server interface in action from package <SPAN
+                 class="note2">tinyirc.el</SPAN> (photo from Windows native
+                 Emacs 21.2). PasteBot servers can be used as semi-pemanent
+                 stores for code examples, showing system error messages or
+                 sharing configuration tips. The PasteBot servers are handy
+                 in IRC channels where bigger texts (over 10 line) can be
+                 sent for review. Supports
+                 numbering lines in the messages for more detailled
+                 inspection of the problem: "Hey, look at line 19".
+                 <B>Note:</B> PasteBot servers are independent
+                 from IRC servers and can be used for any textual
+                 information exchange.
+
+                 </I>
+             </TD>
+        </TR>
+    </TABLE>
+
+
+
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+<a name="news" id="news"></a>
+<H1>
+News
+</H1>
+
+        <P> Future: Major changes in the installation and overall
+        package structure is being planned. Installation and package
+        activation will become more modular and easier to use.
+        Utilities can be activated one by one basis. Monolithic
+        tiny-setup.el will be phased out and split into separate
+        files. Proper Debian packages.
+
+	<p>
+        2008-08: Savannah transition completed. Development continues
+        with new distributed version control software
+
+        <P>
+        2007-08: Sourcefoge project move started. Project transition
+        started to Savannah under more powerful Git version control
+        sofware.
+
+        <P>
+        2003-05: Library cleanup continues. More functions have been
+        checked and converted to prpoper prefixed to avoid possible
+        clashes in Emacs (hasn't happened for many years though).
+        Extensive speedup improvements to tinypath.el's load time.
+
+        <P>
+        2002-09: Emacs 21.x compatibility issues are under work.
+        library cleanup is in progress. XEmacs compatibility is under
+        testing.
+
+        <P>
+        2001-12: The CVS structure and package's directory structure
+        has been redesigned. The HTML documentation is now bundled
+        as well as the plain/text source. The namespace cleanup work
+        has been finished and kit should now be free of any possible
+        clashing functions. The setup center <I>tiny-setup.el</I> has
+        been made better and more automatic. More features are now
+        enabled. There are no known Emacs 21.1 compatibility problems.
+
+        <P>
+        2001-07: a "namespace-cleanup" work was started to ensure that all
+        custom functions contain a proper library prefix. This cleanup work
+        is necessary to isolate the tools from other, possibly conflicting,
+        namespaces. It has no user visible chnages, but due to massive work
+        that it needs, expect to see weird bugs in snapshots stamped after
+        this date.
+
+        Work is in progress to polish package build and release methods
+        so that everything would be automatic.  Latest releases of the code
+        can be found only from CVS.
+
+<!--
+
+        <P> <B> Debian support: </B> Debian (.deb) packages are currently
+        provided as "beta" quality. The packaging method currently does not
+        sophisticatedly activate features under Debian. The Debian
+        packaging is maintained by Vincent Beffara &lt;vbeffara AT free fr&gt;.
+        Add following to <SAMP>/etc/apt/sources.list</SAMP>:
+
+<P>
+<PRE>
+        deb http://vbeffara.free.fr/debian/ ./
+</PRE
+
+-->
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+<a name="history" id="history"></a>
+<H1>
+Brief History
+</H1>
+
+    All the programs in Tiny Tools kit are released under GPL
+
+<A HREF="http://www.gnu.org/copyleft/gpl.html">
+http://www.gnu.org/copyleft/gpl.html</A>.
+
+    Tiny Tools is an on-going "hobby", that started with one Emacs
+    package, then next, and next in 1994 to help use Emacs more
+    conveniently in daily work. Last Unix-only kit was released at the
+    beginning of 1999 using Emacs 19.28 and 20.1. It had very little
+    Win32 Emacs support and even more little XEmacs support (19.14).
+    There has been period of inactivity, due to normal requirements in
+    daily work. The Operating systems, version control software and
+    repositories have chnaged multiple times.
+
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+<a name="platform" id="platform"></a>
+<H1>
+Platform Support
+</H1>
+
+    These utilities support quite well cross platform Emacs / XEmacs in
+    all Windows Native / Cygwin and Unix environments.
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+<a name="compatibility" id="compatibility"></a>
+<H1>
+Emacs Version Compatibility
+</H1>
+
+    Operating systems currently supported are, in order of importance, are
+    below. The <A HREF="http://www.cygwin.com">Cygwin</A> environment is
+    almost identical to Unix, but it requires special handling especially
+    when both Emacs version can use it (Windows native Emacs and Cygwin
+    Emacs). For example package <SPAN class="note2">tinyigrep.el</SPAN> can
+    be used to grep recursively through many defined databases to locate
+    and replace files in full project tree in both Windows and Cygwin Emacs
+    versions.
+
+<PRE>
+    Linux/Unix: Emacs and XEmacs
+    Windows native environment (NT Emacs and NT XEmacs)
+    Windows Cygwin environment (Cygwin Emacs and Cygwin XEmacs)
+</PRE>
+
+    The minimum criterias for versions are:
+
+<PRE>
+    Emacs   20.1+   ( 21.2+ preferred )
+    XEmacs: 20.4+   ( 21.4+ preferred )
+</PRE>
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+<a name="contact" id="contact"></a>
+<H1>
+Contact
+</H1>
+
+    There no mailing list for the project. Contact maintainer as
+    needed by including "tiny-tools" in the subject (otherwise message
+    may be classified as spam by the filters). Report suggestions and
+    problems
+    to <a href="https://savannah.nongnu.org/projects/emacs-tiny-tools">bug
+    tracker</a>. In order to use trackers, a Savannah account is needed.
+
+<!--  .......................................................................
+      HEADING
+      .......................................................................
+-->
+
+
+<a name="source" id="source"></a>
+<a name="version_control" id="version_control"></a>
+<H1>
+Version Control
+</H1>
+
+       To download and install sources from development tree
+       with <a href="http://git-scm.org">git</a> (see link
+       <a href="http://www.kernel.org/pub/software/scm/git/docs/gittutorial.html">"the tutorial"</a>
+       for quick guide).
+
+<PRE>
+        $ <SPAN class="cmd">cd</SPAN> <SPAN class="cmd-rest">$HOME/elisp/packages</SPAN>
+        $ <SPAN class="cmd">git</SPAN> clone <SPAN class="cmd-rest">git://git.savannah.nongnu.org/emacs-tiny-tools.git emacs-tiny-tools.git</SPAN>
+        $ <SPAN class="cmd">git</SPAN> checkout <SPAN class="cmd-opt">--track -b</SPAN> <SPAN class="cmd-rest">devel origin/devel</SPAN>
+
+	... to get new updates from time to time
+        $ <SPAN class="cmd">git</SPAN> pull
+</PRE>
+
+<a name="source_install" id="source_install"></a>
+<p>
+To install, add following lines to ~/.emacs startup file:
+<PRE>
+        (require 'cl)
+        (push "~/elisp/packages/emacs-tiny-tools.git/lisp/tiny" 'load-path :test 'string=)
+        (push "~/elisp/packages/emacs-tiny-tools.git/lisp/other" 'load-path :test 'string=)
+</PRE>
+
+
+<!-- FOOTER -->
+
+
+<HR NOSHADE SIZE="1">
+
+    <TABLE BORDER        = "0"
+           WIDTH         = "100%"
+           bgcolor       = "#C6C6C6"
+           CELLPADDING   = "2"
+           CELLSPACING   = "0"
+           >
+        <TR>
+
+	    <!-- http://www.gnu.org/graphics/behroze/behroze-gnu-button2.png
+	    -->
+
+		     <!--
+                     width  = "100"
+                     height = "40"
+		     -->
+
+            <TD>
+                <A REL="license" HREF="http://www.gnu.org/licenses">
+                <IMG ALT    = "GNU GPL"
+                     BORDER = "0"
+                     SRC    = "pic/gnu.png">
+                </A>
+            </TD>
+
+            <TD WIDTH="100%">
+                All files in this project are licensed under
+                <A REL="license"
+                HREF="http://www.gnu.org/licenses/">
+                GNU GPL</A>.
+            </TD>
+
+        </TR>
+    </TABLE>
+
+    <TABLE BORDER="0"
+           bgcolor="#EEEEF8"
+           WIDTH="100%"
+           CELLPADDING="2"
+           CELLSPACING="0"
+           >
+        <TR>
+          <TD>
+
+              <A HREF="http://www.sanannah.org">
+              <IMG SRC      ="http://www.gnu.org/graphics/meditate-tiny.jpg"
+                  width     ="60"
+                  height    ="60"
+                  border    ="0"
+                  alt       ="Savannah Logo"
+                  >
+              </A>
+
+          </TD>
+          <TD WIDTH="100%">
+              <FONT SIZE="-1">
+                  <I>
+                  This project, as well as many other opensource projects,
+                  is hosted by
+                  <A HREF="http://www.savannah.org">Savannah</A>.
+                  </I>
+              </FONT>
+          </TD>
+        </TR>
+    </TABLE>
+
+    <TABLE BORDER="0"
+           bgcolor="#EEEEF8"
+           WIDTH="100%"
+           CELLPADDING="2"
+           CELLSPACING="0"
+           >
+        <TR>
+          <TD>
+              <A HREF="http://validator.w3.org/check?uri=referer">
+              <IMG SRC      ="http://www.w3.org/Icons/valid-html401-blue"
+                  width     ="81"
+                  height    ="31"
+                  border    ="0"
+                  alt       ="Savannah Logo"
+                  >
+              </A>
+
+          </TD>
+          <TD WIDTH="100%">
+              <FONT SIZE="-1">
+                  <I>
+                  <A HREF="http://www.w3c.org">
+                  W3C
+                  </A>
+                  validated.
+                  </I>
+              </FONT>
+          </TD>
+        </TR>
+    </TABLE>
+
+</BODY>
+</HTML>
