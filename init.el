@@ -449,16 +449,17 @@
 ;;------------------------------------------------
 
 (defun kylpo-zap-back-to-char (arg char)
-       "Kill up to and including ARG'th occurrence of CHAR.
+       "Kill up to ARG'th occurrence of CHAR.
      Case is ignored if `case-fold-search' is non-nil in the current buffer.
-     Goes backward if ARG is negative; error if CHAR not found."
+     Goes forward if ARG is negative; error if CHAR not found."
        (interactive "p\ncZap back to char: ")
        (if (char-table-p translation-table-for-input)
            (setq char (or (aref translation-table-for-input char) char)))
        (kill-region (point) (progn
                               (search-backward (char-to-string char)
-                                              nil nil arg)
-                              (point))))
+                                               nil nil arg)
+                              (point)))
+       (insert char))
 
 ;; Behave like vi's o command
 (defun open-next-line (arg)
@@ -555,13 +556,6 @@
   put before CHAR"
     (insert char)
     (if (< 0 arg) (forward-char -1)))
-
-(defadvice kylpo-zap-back-to-char (after my-back-zap-to-char-advice (arg char) activate)
-    "e ARG'th occurence of CHAR, and leave CHAR. If
-  you are deleting forward, the CHAR is replaced and the point is
-  put before CHAR"
-    (insert char))
-    ;; (forward-char -1))
 
 (defmacro bind (key fn)
   "shortcut for global-set-key"
