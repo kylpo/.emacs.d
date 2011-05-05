@@ -200,6 +200,15 @@
           :url "https://github.com/pezra/rspec-mode.git"
           :compile "rspec-mode.el"
           :features rspec-mode)
+   (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
+          :after (lambda ()
+                   (require 'framemove)
+                   (setq framemove-hook-into-windmove t)
+                   ;; (global-set-key (kbd "s-j") 'fm-down-frame)
+                   ;; (global-set-key (kbd "s-k") 'fm-up-frame)
+                   ;; (global-set-key (kbd "s-h") 'fm-left-frame)
+                   ;; (global-set-key (kbd "s-l") 'fm-right-frame)
+                   ))
 
    (:name yaml-mode
           :type git
@@ -352,6 +361,8 @@
 
 (load "~/.emacs.d/colors/color-theme-wombat")
 (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
+;; (load "~/.emacs.d/colors/color-theme-railscasts")
+;; (color-theme-railscasts);https://github.com/olegshaldybin/color-theme-railscasts/blob/master/color-theme-railscasts.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
 (set-terminal-coding-system 'utf-8)
@@ -421,7 +432,7 @@
 ;; (setq rinari-tags-file-name "TAGS")
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 
-(setq windmove-wrap-around t) ;windmove-wrap
+;; (setq windmove-wrap-around t) ;windmove-wrap
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
