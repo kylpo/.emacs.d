@@ -399,12 +399,19 @@
 
 (ido-mode 'both) ; User ido mode for both buffers and files
 (setq ido-enable-prefix nil
+      ido-case-fold  t ; be case-insensitive
+      ido-enable-last-directory-history t ; remember last used dirs
+      ido-max-work-directory-list 30   ; should be enough
+      ido-max-work-file-list      50   ; remember many
       ido-enable-flex-matching t
       ido-create-new-buffer 'always
-      ido-use-filename-at-point 'guess
+      ido-use-filename-at-point nil
       ido-show-dot-for-dired t
-      ido-save-directory-list-file "~/.emacs.d/.ido.last")
-;;      ido-max-prospects 10)
+      ido-save-directory-list-file "~/.emacs.d/.ido.last"
+      ido-max-prospects 10)
+
+;; when using ido, the confirmation is rather annoying...
+(setq confirm-nonexistent-file-or-buffer nil)
 
 ;; Display ido results vertically, rather than horizontally
 ;; (setq ido-decorations (quote ("" "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
@@ -1081,7 +1088,8 @@ an .ics file that has been downloaded from Google Calendar "
               |-|
               | Anki||
               | Climbed||
-              | Ran||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
+              | Ran||
+         |Biked to work ||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
          )
         ("w" "" entry ;; 'w' for 'org-protocol'
          (file+headline "~/Dropbox/doc/www.org" "Notes`")
@@ -1120,7 +1128,22 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;*****ERC STUFF*****
-;(easy-menu-add-item  nil '("tools") ["IRC with ERC" erc t])
+;; Use libnotify
+(defun clean-message (s)
+  (setq s (replace-regexp-in-string "'" "&apos;"
+  (replace-regexp-in-string "\"" "&quot;"
+  (replace-regexp-in-string "&" "&"
+  (replace-regexp-in-string "<" "&lt;"
+  (replace-regexp-in-string ">" "&gt;" s)))))))
+
+(defun call-libnotify (matched-type nick msg)
+  (let* ((cmsg  (split-string (clean-message msg)))
+        (nick   (first (split-string nick "!")))
+        (msg    (mapconcat 'identity (rest cmsg) " ")))
+    (shell-command-to-string
+     (format "notify-send -u critical '%s says:' '%s'" nick msg))))
+
+(add-hook 'erc-text-matched-hook 'call-libnotify)
 
 ;; joining && autojoing
 
@@ -1133,8 +1156,14 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;; check channels
 (erc-track-mode t)
-(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
 
+;; Only track my nick(s)
+(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
+  (if (erc-query-buffer-p)
+      (setq ad-return-value (intern "erc-current-nick-face"))
+    ad-do-it))
+;; (setq erc-keywords '("kylpo" "kp"))
+(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
                                 "324" "329" "332" "333" "353" "477"))
 ;; don't show any of this
 (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
