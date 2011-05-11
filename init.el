@@ -359,12 +359,18 @@
 (setq-default cursor-type '(bar . 2))
 (setq-default indicate-empty-lines t)
 
-(load "~/.emacs.d/colors/color-theme-wombat")
-(color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
+
+(add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized/")
+(require 'color-theme-solarized)
+(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+
+;; (load "~/.emacs.d/colors/color-theme-wombat")
+;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;; (load "~/.emacs.d/colors/color-theme-railscasts")
 ;; (color-theme-railscasts);https://github.com/olegshaldybin/color-theme-railscasts/blob/master/color-theme-railscasts.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
+
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
