@@ -4,6 +4,8 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+(setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
+
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 
 ;;------------------------------------------------
@@ -82,12 +84,16 @@
                    (global-set-key (kbd "C-x g") 'magit-status)))
    magithub
    rvm
-   (:name smex ; a better (ido like) M-x
-          :after (lambda ()
-                   (setq smex-save-file "~/.emacs.d/.smex-items")
-                   (global-set-key (kbd "M-x") 'smex)
-                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-
+   (:name kylpo-smex
+       :type git
+       :url "http://github.com/nonsequitur/smex.git"
+       :features smex
+       :post-init (lambda ()
+                    (setq smex-save-file "~/.emacs.d/.smex-items")
+                    (smex-initialize))
+       :after (lambda ()
+                (global-set-key (kbd "M-x") 'smex)
+                (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
    sunrise-commander
    sunrise-x-buttons
    todochiku
@@ -108,7 +114,6 @@
           :type git
           :url "https://github.com/defunkt/textmate.el.git"
           :features textmate
-
           ;; customization
           :after (lambda ()
                    (textmate-mode t)))
@@ -225,9 +230,12 @@
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
 (require 'tinyeat)
-(require 'ido)
+
 (require 'tramp)
 (require 'redo+) ;;from elpa
+;; (require 'smex)
+;; (setq smex-save-file "~/.emacs.d/.smex-items")
+;; (smex-initialize)
 ;; (require 'viper)
                       ;(require 'org)
                                         ;(require 'org-protocol)
@@ -403,18 +411,24 @@
 (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
+(setq ido-enable-prefix nil)
+(setq ido-case-fold  t) ; be case-insensitive
+(setq ido-enable-last-directory-history t) ; remember last used dirs
+(setq ido-max-work-directory-list 30)   ; should be enough
+(setq ido-max-work-file-list      50)   ; remember many
+(setq ido-enable-flex-matching t)
+(setq ido-create-new-buffer 'always)
+(setq ido-use-filename-at-point nil)
+(setq ido-show-dot-for-dired t)
+;; (setq ido-everywhere t) ;use for many file dialogs
+(setq ido-save-directory-list-file "~/.emacs.d/.ido.last")
+(setq ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc"));TODO doesn't work -- need to eval-buffer after every load
+(setq ido-ignore-files '("\.(pyc|jpg|png|gif)$"));TODO doesn't work
+(setq ido-max-prospects 10)
 (ido-mode 'both) ; User ido mode for both buffers and files
-(setq ido-enable-prefix nil
-      ido-case-fold  t ; be case-insensitive
-      ido-enable-last-directory-history t ; remember last used dirs
-      ido-max-work-directory-list 30   ; should be enough
-      ido-max-work-file-list      50   ; remember many
-      ido-enable-flex-matching t
-      ido-create-new-buffer 'always
-      ido-use-filename-at-point nil
-      ido-show-dot-for-dired t
-      ido-save-directory-list-file "~/.emacs.d/.ido.last"
-      ido-max-prospects 10)
+;; (add-to-list 'ido-ignore-buffers "*scratch*")
+;; (add-to-list 'ido-ignore-buffers "^#")
+
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -452,6 +466,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(ido-ignore-buffers (quote ("\\` " "^*Mess" "^*Back" ".*Completion" "^*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")))
  '(speedbar-hide-button-brackets-flag t)
  '(speedbar-indentation-width 2)
  '(speedbar-show-unknown-files t)
@@ -937,8 +952,9 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****Dired & Tramp*****
 (setq tramp-default-method "ssh")
-(setq dired-omit-files
-      (concat dired-omit-files "\\|^\\..+$"))
+;(setq dired-omit-files
+;      (concat dired-omit-files "\\|^\\..+$"))
+(setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
 
 ;;*****ORG-MODE*****
 (defun planner ()
@@ -1134,6 +1150,20 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;*****ERC STUFF*****
+;; check channels
+(erc-track-mode t)
+
+;; Only track my nick(s)
+(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
+  (if (erc-query-buffer-p)
+      (setq ad-return-value (intern "erc-current-nick-face"))
+    ad-do-it))
+(setq erc-keywords '("kylpo" "kp"))
+(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                "324" "329" "332" "333" "353" "477"))
+;; don't show any of this
+(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+
 ;; Use libnotify
 (defun clean-message (s)
   (setq s (replace-regexp-in-string "'" "&apos;"
@@ -1160,29 +1190,38 @@ an .ics file that has been downloaded from Google Calendar "
       '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails")))
 ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
 
-;; check channels
-(erc-track-mode t)
-
-;; Only track my nick(s)
-(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
-  (if (erc-query-buffer-p)
-      (setq ad-return-value (intern "erc-current-nick-face"))
-    ad-do-it))
-;; (setq erc-keywords '("kylpo" "kp"))
-(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                "324" "329" "332" "333" "353" "477"))
-;; don't show any of this
-(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
-
 (defun djcb-erc-start-or-switch ()
   "Connect to ERC, or switch to last active buffer"
   (interactive)
   (if (get-buffer "irc.freenode.net:6667") ;; ERC already active?
 
       (erc-track-switch-buffer 1) ;; yes: switch to last active
-    (when (y-or-n-p "Start ERC? ") ;; no: maybe start ERC
-      (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
-;; (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
+    (when (y-or-n-p "Start ERC? ")
+      (erc)))) ;; no: maybe start ERC
+      ;; (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
+;;(erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
+(setq erc-join-buffer 'bury)
+   (setq erc-server                         "irc.freenode.net"
+         erc-port                           6667
+  ;;       erc-user-full-name                 "Edward O'Connor"
+  ;;       erc-email-userid                   "ted"
+         erc-nick                           '("kylpo" "kp")
+  ;;       erc-password                       nil ; set this in local config
+  ;;       erc-nickserv-passwords             nil ; set this in local config
+  ;;       erc-anonymous-login                t
+  ;;       erc-auto-query                     'bury
+  ;;       erc-join-buffer                    'bury
+  ;;       erc-max-buffer-size                30000
+  ;;       erc-prompt-for-password            nil
+  ;;       erc-join-buffer                    'buffer
+  ;;       erc-command-indicator              "CMD"
+  ;;       erc-echo-notices-in-current-buffer t
+  ;;       erc-send-whitespace-lines          nil
+  ;;       erc-hide-list                      '("JOIN" "PART" "QUIT")
+  ;;       erc-ignore-list                    '("jibot")
+)
+
+
 
 ;;*****SPEEDBAR*****
 ;; (setq speedbar-use-imenu-flag nil)
