@@ -1394,8 +1394,8 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "C-c e") 'djcb-erc-start-or-switch) ;; switch to ERC
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
-(global-set-key (kbd "M-n") 'next-buffer)
-;(global-set-key (kbd "M-p") 'previous-buffer)
+(global-set-key (kbd "M-L") 'next-buffer)
+(global-set-key (kbd "M-H") 'previous-buffer)
                                         ;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
                                         ;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
 (global-set-key (kbd "M-/") 'hippie-expand)
