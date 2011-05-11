@@ -233,24 +233,6 @@
 
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;; (require 'smex)
-;; (setq smex-save-file "~/.emacs.d/.smex-items")
-;; (smex-initialize)
-;; (require 'viper)
-                      ;(require 'org)
-                                        ;(require 'org-protocol)
-                                        ;(require 'org-install)
-                                        ;(require 'org-habit)
-;(require 'easymenu) ;for ERC
-                                        ;(require 'yaml-mode);doesn't auto init from elpa
-                                        ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-                                        ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-                                        ;(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-;; (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name))
-;;       dropbox-dir (concat dotfiles-dir "../Dropbox")
-;;       journal-pictures-dir (concat dropbox-dir "/doc/journal_pics"))
-
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -331,25 +313,25 @@
 
 ;; save a list of open files in ~/.emacs.desktop
 ;; save the desktop file automatically if it already exists
-;;(setq desktop-save 'if-exists)
-;;(desktop-save-mode 1)
+(setq desktop-save 'if-exists)
+(desktop-save-mode 1)
 
 ;; save a bunch of variables to the desktop file
 ;; for lists specify the len of the maximal saved data also
-;; (setq desktop-globals-to-save
-;;       (append '((extended-command-history . 30)
-;;                 (file-name-history        . 100)
-;;                 (grep-history             . 30)
-;;                 (compile-history          . 30)
-;;                 (minibuffer-history       . 50)
-;;                 (query-replace-history    . 60)
-;;                 (read-expression-history  . 60)
-;;                 (regexp-history           . 60)
-;;                 (regexp-search-ring       . 20)
-;;                 (search-ring              . 20)
-;;                 (shell-command-history    . 50)
-;;                 tags-file-name
-;;                 register-alist)))
+(setq desktop-globals-to-save
+      (append '((extended-command-history . 30)
+                (file-name-history        . 100)
+                (grep-history             . 30)
+                (compile-history          . 30)
+                (minibuffer-history       . 50)
+                (query-replace-history    . 60)
+                (read-expression-history  . 60)
+                (regexp-history           . 60)
+                (regexp-search-ring       . 20)
+                (search-ring              . 20)
+                (shell-command-history    . 50)
+                tags-file-name
+                register-alist)))
 
 (setq ibuffer-shrink-to-minimum-size t)
 (setq ibuffer-always-show-last-buffer nil)
@@ -368,7 +350,7 @@
 (setq-default indicate-empty-lines t)
 
 
-(add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized/")
+(add-to-list 'load-path "~/.emacs.d/colors/")
 (require 'color-theme-solarized)
 (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
 
@@ -466,7 +448,6 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(ido-ignore-buffers (quote ("\\` " "^*Mess" "^*Back" ".*Completion" "^*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")))
  '(speedbar-hide-button-brackets-flag t)
  '(speedbar-indentation-width 2)
  '(speedbar-show-unknown-files t)
@@ -952,8 +933,8 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****Dired & Tramp*****
 (setq tramp-default-method "ssh")
-;(setq dired-omit-files
-;      (concat dired-omit-files "\\|^\\..+$"))
+(setq dired-omit-files
+     (concat dired-omit-files "\\|^\\..+$"))
 (setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
 
 ;;*****ORG-MODE*****
@@ -1467,13 +1448,13 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "M-3") 'split-window-horizontally)
 (global-set-key (kbd "M-4") 'balance-windows)
 
-(bind "s-x" (lambda ()
-              (interactive)
-              (call-interactively
-               (intern
-                (ido-completing-read
-                 "M-x "
-                 (all-completions "" obarray 'commandp))))))
+;; (bind "s-x" (lambda ()
+;;               (interactive)
+;;               (call-interactively
+;;                (intern
+;;                 (ido-completing-read
+;;                  "M-x "
+;;                  (all-completions "" obarray 'commandp))))))
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
