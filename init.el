@@ -4,6 +4,8 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+(setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
+
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 
 ;;------------------------------------------------
@@ -82,12 +84,16 @@
                    (global-set-key (kbd "C-x g") 'magit-status)))
    magithub
    rvm
-   (:name smex ; a better (ido like) M-x
-          :after (lambda ()
-                   (setq smex-save-file "~/.emacs.d/.smex-items")
-                   (global-set-key (kbd "M-x") 'smex)
-                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-
+   (:name kylpo-smex
+       :type git
+       :url "http://github.com/nonsequitur/smex.git"
+       :features smex
+       :post-init (lambda ()
+                    (setq smex-save-file "~/.emacs.d/.smex-items")
+                    (smex-initialize))
+       :after (lambda ()
+                (global-set-key (kbd "M-x") 'smex)
+                (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
    sunrise-commander
    sunrise-x-buttons
    todochiku
@@ -108,7 +114,6 @@
           :type git
           :url "https://github.com/defunkt/textmate.el.git"
           :features textmate
-
           ;; customization
           :after (lambda ()
                    (textmate-mode t)))
@@ -190,11 +195,11 @@
    ;;                           (lambda () (rinari-launch)))))
    ruby-end ;necessary to place after ruby-mode
    flymake-ruby
-   (:name senny-perspective
-          :type git
-          :features perspective
-          :url "https://github.com/nex3/perspective-el.git"
-          :after (lambda () (persp-mode)))
+   ;; (:name senny-perspective
+   ;;        :type git
+   ;;        :features perspective
+   ;;        :url "https://github.com/nex3/perspective-el.git"
+   ;;        :after (lambda () (persp-mode)))
    (:name senny-rspec-mode
           :type git
           :url "https://github.com/pezra/rspec-mode.git"
@@ -225,24 +230,9 @@
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
 (require 'tinyeat)
-(require 'ido)
+
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;; (require 'viper)
-                      ;(require 'org)
-                                        ;(require 'org-protocol)
-                                        ;(require 'org-install)
-                                        ;(require 'org-habit)
-;(require 'easymenu) ;for ERC
-                                        ;(require 'yaml-mode);doesn't auto init from elpa
-                                        ;(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-                                        ;(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-                                        ;(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-;; (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name))
-;;       dropbox-dir (concat dotfiles-dir "../Dropbox")
-;;       journal-pictures-dir (concat dropbox-dir "/doc/journal_pics"))
-
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -323,25 +313,25 @@
 
 ;; save a list of open files in ~/.emacs.desktop
 ;; save the desktop file automatically if it already exists
-;;(setq desktop-save 'if-exists)
-;;(desktop-save-mode 1)
+(setq desktop-save 'if-exists)
+(desktop-save-mode 1)
 
 ;; save a bunch of variables to the desktop file
 ;; for lists specify the len of the maximal saved data also
-;; (setq desktop-globals-to-save
-;;       (append '((extended-command-history . 30)
-;;                 (file-name-history        . 100)
-;;                 (grep-history             . 30)
-;;                 (compile-history          . 30)
-;;                 (minibuffer-history       . 50)
-;;                 (query-replace-history    . 60)
-;;                 (read-expression-history  . 60)
-;;                 (regexp-history           . 60)
-;;                 (regexp-search-ring       . 20)
-;;                 (search-ring              . 20)
-;;                 (shell-command-history    . 50)
-;;                 tags-file-name
-;;                 register-alist)))
+(setq desktop-globals-to-save
+      (append '((extended-command-history . 30)
+                (file-name-history        . 100)
+                (grep-history             . 30)
+                (compile-history          . 30)
+                (minibuffer-history       . 50)
+                (query-replace-history    . 60)
+                (read-expression-history  . 60)
+                (regexp-history           . 60)
+                (regexp-search-ring       . 20)
+                (search-ring              . 20)
+                (shell-command-history    . 50)
+                tags-file-name
+                register-alist)))
 
 (setq ibuffer-shrink-to-minimum-size t)
 (setq ibuffer-always-show-last-buffer nil)
@@ -359,12 +349,16 @@
 (setq-default cursor-type '(bar . 2))
 (setq-default indicate-empty-lines t)
 
-(load "~/.emacs.d/colors/color-theme-wombat")
-(color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
-;; (load "~/.emacs.d/colors/color-theme-railscasts")
-;; (color-theme-railscasts);https://github.com/olegshaldybin/color-theme-railscasts/blob/master/color-theme-railscasts.el
+
+(add-to-list 'load-path "~/.emacs.d/colors/")
+(require 'color-theme-solarized)
+(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+
+;; (load "~/.emacs.d/colors/color-theme-wombat")
+;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
+
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
@@ -397,14 +391,24 @@
 (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
-(ido-mode 'both) ; User ido mode for both buffers and files
 (setq ido-enable-prefix nil
+      ido-case-fold  t ; be case-insensitive
+      ido-enable-last-directory-history t ; remember last used dirs
+      ido-max-work-directory-list 30   ; should be enough
+      ido-max-work-file-list 50   ; remember many
       ido-enable-flex-matching t
       ido-create-new-buffer 'always
-      ido-use-filename-at-point 'guess
+      ido-use-filename-at-point nil
       ido-show-dot-for-dired t
-      ido-save-directory-list-file "~/.emacs.d/.ido.last")
-;;      ido-max-prospects 10)
+      ;; ido-everywhere t ;use for many file dialogs
+      ido-save-directory-list-file "~/.emacs.d/.ido.last"
+      ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
+      ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
+      ido-max-prospects 10)
+(ido-mode 'both) ; User ido mode for both buffers and files
+
+;; when using ido, the confirmation is rather annoying...
+(setq confirm-nonexistent-file-or-buffer nil)
 
 ;; Display ido results vertically, rather than horizontally
 ;; (setq ido-decorations (quote ("" "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
@@ -556,11 +560,6 @@
     (insert "{}")
     (backward-char 1)))
 
-;; (defadvice zap-to-char (after dont-zap-char (arg char))
-;;   "Doesn't include the char - zaps to the char before it (like vim)."
-;;   (insert char)
-;;   (backward-char))
-;; (ad-activate 'zap-to-char)
 (defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
     "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
   you are deleting forward, the CHAR is replaced and the point is
@@ -782,16 +781,6 @@ an .ics file that has been downloaded from Google Calendar "
   (untabify-buffer)
   (delete-trailing-whitespace))
 
-;; (defun move-cursor-next-pane ()
-;;   "Move cursor to the next pane."
-;;   (interactive)
-;;   (other-window 1))
-
-;; (defun move-cursor-previous-pane ()
-;;   "Move cursor to the previous pane."
-;;   (interactive)
-;;   (other-window -1))
-
 (defun toggle-fullscreen ()
   (interactive)
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
@@ -925,7 +914,8 @@ an .ics file that has been downloaded from Google Calendar "
 ;;*****Dired & Tramp*****
 (setq tramp-default-method "ssh")
 (setq dired-omit-files
-      (concat dired-omit-files "\\|^\\..+$"))
+     (concat dired-omit-files "\\|^\\..+$"))
+(setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
 
 ;;*****ORG-MODE*****
 (defun planner ()
@@ -1081,7 +1071,8 @@ an .ics file that has been downloaded from Google Calendar "
               |-|
               | Anki||
               | Climbed||
-              | Ran||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
+              | Ran||
+         |Biked to work ||";;\n#+BEGIN: clocktable :maxlevel 5 :scope agenda :block today\n#+END:"
          )
         ("w" "" entry ;; 'w' for 'org-protocol'
          (file+headline "~/Dropbox/doc/www.org" "Notes`")
@@ -1120,7 +1111,36 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;*****ERC STUFF*****
-;(easy-menu-add-item  nil '("tools") ["IRC with ERC" erc t])
+;; check channels
+(erc-track-mode t)
+
+;; Only track my nick(s)
+(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
+  (if (erc-query-buffer-p)
+      (setq ad-return-value (intern "erc-current-nick-face"))
+    ad-do-it))
+(setq erc-keywords '("kylpo" "kp"))
+(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                "324" "329" "332" "333" "353" "477"))
+;; don't show any of this
+(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+
+;; Use libnotify
+(defun clean-message (s)
+  (setq s (replace-regexp-in-string "'" "&apos;"
+  (replace-regexp-in-string "\"" "&quot;"
+  (replace-regexp-in-string "&" "&"
+  (replace-regexp-in-string "<" "&lt;"
+  (replace-regexp-in-string ">" "&gt;" s)))))))
+
+(defun call-libnotify (matched-type nick msg)
+  (let* ((cmsg  (split-string (clean-message msg)))
+        (nick   (first (split-string nick "!")))
+        (msg    (mapconcat 'identity (rest cmsg) " ")))
+    (shell-command-to-string
+     (format "notify-send -u critical '%s says:' '%s'" nick msg))))
+
+(add-hook 'erc-text-matched-hook 'call-libnotify)
 
 ;; joining && autojoing
 
@@ -1143,23 +1163,38 @@ an .ics file that has been downloaded from Google Calendar "
       '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails")))
 ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
 
-;; check channels
-(erc-track-mode t)
-(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                "324" "329" "332" "333" "353" "477"))
-
-;; don't show any of this
-(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
-
 (defun djcb-erc-start-or-switch ()
   "Connect to ERC, or switch to last active buffer"
   (interactive)
   (if (get-buffer "irc.freenode.net:6667") ;; ERC already active?
 
       (erc-track-switch-buffer 1) ;; yes: switch to last active
-    (when (y-or-n-p "Start ERC? ") ;; no: maybe start ERC
-      (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
-;; (erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
+    (when (y-or-n-p "Start ERC? ")
+      (erc)))) ;; no: maybe start ERC
+      ;; (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
+;;(erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
+;; (setq erc-join-buffer 'bury)
+   (setq erc-server                         "irc.freenode.net"
+         erc-port                           6667
+  ;;       erc-user-full-name                 "Edward O'Connor"
+  ;;       erc-email-userid                   "ted"
+         erc-nick                           '("kylpo" "kp")
+  ;;       erc-password                       nil ; set this in local config
+  ;;       erc-nickserv-passwords             nil ; set this in local config
+  ;;       erc-anonymous-login                t
+  ;;       erc-auto-query                     'bury
+  ;;       erc-join-buffer                    'bury
+  ;;       erc-max-buffer-size                30000
+  ;;       erc-prompt-for-password            nil
+  ;;       erc-join-buffer                    'buffer
+  ;;       erc-command-indicator              "CMD"
+  ;;       erc-echo-notices-in-current-buffer t
+  ;;       erc-send-whitespace-lines          nil
+  ;;       erc-hide-list                      '("JOIN" "PART" "QUIT")
+  ;;       erc-ignore-list                    '("jibot")
+)
+
+
 
 ;;*****SPEEDBAR*****
 ;; (setq speedbar-use-imenu-flag nil)
@@ -1182,7 +1217,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;;;; Perspective
 (eval-after-load 'perspective
   '(progn
-
      ;; Perspective Setup
      (defmacro senny-persp (name &rest body)
        `(let ((initialize (not (gethash ,name perspectives-hash)))
@@ -1351,17 +1385,12 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "C-c e") 'djcb-erc-start-or-switch) ;; switch to ERC
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
-(global-set-key (kbd "M-n") 'next-buffer)
-;(global-set-key (kbd "M-p") 'previous-buffer)
-                                        ;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
-                                        ;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
+(global-set-key (kbd "M-L") 'next-buffer)
+(global-set-key (kbd "M-H") 'previous-buffer)
 (global-set-key (kbd "M-/") 'hippie-expand)
-                                        ;(global-set-key (kbd "C-z") 'set-mark-command)
-                                        ;(global-set-key [C-tab] 'other-window)
 (global-set-key "\r" 'newline-and-indent)
                                         ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
-;; (global-set-key "\C-xq" 'anything)
 (global-set-key "\C-xj" 'join-line)
 (global-set-key "\C-xi" 'ido-goto-symbol) ;own func
 (global-set-key "\C-xf" 'xsteve-ido-choose-from-recentf)
@@ -1373,11 +1402,9 @@ Has no effect when `persp-show-modestring' is nil."
                                         ;(global-set-key "\C-xc" 'search)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
-                                        ;(global-set-key "\C-cb" 'org-iswitchb)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
-;; (global-set-key (kbd "C-x g") 'magit-status)
 
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
@@ -1390,8 +1417,6 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "C-S-n" scroll-up-keep-cursor)
 
 ;; Window Navigation/Manipulation
-                                        ;(bind "s-C-n" 'other-window)
-                                        ;(bind "s-C-p" 'previous-multiframe-window)
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
@@ -1404,14 +1429,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "M-2") 'split-window-vertically)
 (global-set-key (kbd "M-3") 'split-window-horizontally)
 (global-set-key (kbd "M-4") 'balance-windows)
-
-(bind "s-x" (lambda ()
-              (interactive)
-              (call-interactively
-               (intern
-                (ido-completing-read
-                 "M-x "
-                 (all-completions "" obarray 'commandp))))))
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1429,7 +1446,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
 (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
 (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
-;(global-set-key (kbd "M-p s") 'persp-switch)
 (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
