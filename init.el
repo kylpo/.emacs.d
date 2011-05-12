@@ -195,11 +195,11 @@
    ;;                           (lambda () (rinari-launch)))))
    ruby-end ;necessary to place after ruby-mode
    flymake-ruby
-   (:name senny-perspective
-          :type git
-          :features perspective
-          :url "https://github.com/nex3/perspective-el.git"
-          :after (lambda () (persp-mode)))
+   ;; (:name senny-perspective
+   ;;        :type git
+   ;;        :features perspective
+   ;;        :url "https://github.com/nex3/perspective-el.git"
+   ;;        :after (lambda () (persp-mode)))
    (:name senny-rspec-mode
           :type git
           :url "https://github.com/pezra/rspec-mode.git"
@@ -393,20 +393,20 @@
 (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
-(setq ido-enable-prefix nil)
-(setq ido-case-fold  t) ; be case-insensitive
-(setq ido-enable-last-directory-history t) ; remember last used dirs
-(setq ido-max-work-directory-list 30)   ; should be enough
-(setq ido-max-work-file-list      50)   ; remember many
-(setq ido-enable-flex-matching t)
-(setq ido-create-new-buffer 'always)
-(setq ido-use-filename-at-point nil)
-(setq ido-show-dot-for-dired t)
-;; (setq ido-everywhere t) ;use for many file dialogs
-(setq ido-save-directory-list-file "~/.emacs.d/.ido.last")
-(setq ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc"));TODO doesn't work -- need to eval-buffer after every load
-(setq ido-ignore-files '("\.(pyc|jpg|png|gif)$"));TODO doesn't work
-(setq ido-max-prospects 10)
+(setq ido-enable-prefix nil
+      ido-case-fold  t ; be case-insensitive
+      ido-enable-last-directory-history t ; remember last used dirs
+      ido-max-work-directory-list 30   ; should be enough
+      ido-max-work-file-list 50   ; remember many
+      ido-enable-flex-matching t
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point nil
+      ido-show-dot-for-dired t
+      ;; ido-everywhere t ;use for many file dialogs
+      ido-save-directory-list-file "~/.emacs.d/.ido.last"
+      ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
+      ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
+      ido-max-prospects 10)
 (ido-mode 'both) ; User ido mode for both buffers and files
 ;; (add-to-list 'ido-ignore-buffers "*scratch*")
 ;; (add-to-list 'ido-ignore-buffers "^#")
@@ -1181,7 +1181,7 @@ an .ics file that has been downloaded from Google Calendar "
       (erc)))) ;; no: maybe start ERC
       ;; (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
 ;;(erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
-(setq erc-join-buffer 'bury)
+;; (setq erc-join-buffer 'bury)
    (setq erc-server                         "irc.freenode.net"
          erc-port                           6667
   ;;       erc-user-full-name                 "Edward O'Connor"
@@ -1396,15 +1396,10 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-L") 'next-buffer)
 (global-set-key (kbd "M-H") 'previous-buffer)
-                                        ;(global-set-key (kbd "M-n") 'move-cursor-next-pane)
-                                        ;(global-set-key (kbd "M-p") 'move-cursor-previous-pane)
 (global-set-key (kbd "M-/") 'hippie-expand)
-                                        ;(global-set-key (kbd "C-z") 'set-mark-command)
-                                        ;(global-set-key [C-tab] 'other-window)
 (global-set-key "\r" 'newline-and-indent)
                                         ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
-;; (global-set-key "\C-xq" 'anything)
 (global-set-key "\C-xj" 'join-line)
 (global-set-key "\C-xi" 'ido-goto-symbol) ;own func
 (global-set-key "\C-xf" 'xsteve-ido-choose-from-recentf)
@@ -1416,7 +1411,6 @@ Has no effect when `persp-show-modestring' is nil."
                                         ;(global-set-key "\C-xc" 'search)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
-                                        ;(global-set-key "\C-cb" 'org-iswitchb)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
@@ -1433,8 +1427,6 @@ Has no effect when `persp-show-modestring' is nil."
 (bind "C-S-n" scroll-up-keep-cursor)
 
 ;; Window Navigation/Manipulation
-                                        ;(bind "s-C-n" 'other-window)
-                                        ;(bind "s-C-p" 'previous-multiframe-window)
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
@@ -1447,14 +1439,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "M-2") 'split-window-vertically)
 (global-set-key (kbd "M-3") 'split-window-horizontally)
 (global-set-key (kbd "M-4") 'balance-windows)
-
-;; (bind "s-x" (lambda ()
-;;               (interactive)
-;;               (call-interactively
-;;                (intern
-;;                 (ido-completing-read
-;;                  "M-x "
-;;                  (all-completions "" obarray 'commandp))))))
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
