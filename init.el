@@ -356,8 +356,6 @@
 
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
-;; (load "~/.emacs.d/colors/color-theme-railscasts")
-;; (color-theme-railscasts);https://github.com/olegshaldybin/color-theme-railscasts/blob/master/color-theme-railscasts.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
 
@@ -408,9 +406,6 @@
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
       ido-max-prospects 10)
 (ido-mode 'both) ; User ido mode for both buffers and files
-;; (add-to-list 'ido-ignore-buffers "*scratch*")
-;; (add-to-list 'ido-ignore-buffers "^#")
-
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -565,11 +560,6 @@
     (insert "{}")
     (backward-char 1)))
 
-;; (defadvice zap-to-char (after dont-zap-char (arg char))
-;;   "Doesn't include the char - zaps to the char before it (like vim)."
-;;   (insert char)
-;;   (backward-char))
-;; (ad-activate 'zap-to-char)
 (defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
     "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
   you are deleting forward, the CHAR is replaced and the point is
@@ -790,16 +780,6 @@ an .ics file that has been downloaded from Google Calendar "
   (indent-buffer)
   (untabify-buffer)
   (delete-trailing-whitespace))
-
-;; (defun move-cursor-next-pane ()
-;;   "Move cursor to the next pane."
-;;   (interactive)
-;;   (other-window 1))
-
-;; (defun move-cursor-previous-pane ()
-;;   "Move cursor to the previous pane."
-;;   (interactive)
-;;   (other-window -1))
 
 (defun toggle-fullscreen ()
   (interactive)
@@ -1225,7 +1205,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;;;; Perspective
 (eval-after-load 'perspective
   '(progn
-
      ;; Perspective Setup
      (defmacro senny-persp (name &rest body)
        `(let ((initialize (not (gethash ,name perspectives-hash)))
@@ -1414,7 +1393,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "C-x O") 'previous-multiframe-window) ;back a window
-;; (global-set-key (kbd "C-x g") 'magit-status)
 
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
@@ -1456,7 +1434,6 @@ Has no effect when `persp-show-modestring' is nil."
 (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
 (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
 (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
-;(global-set-key (kbd "M-p s") 'persp-switch)
 (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
