@@ -350,9 +350,15 @@
 (setq-default indicate-empty-lines t)
 
 
-(add-to-list 'load-path "~/.emacs.d/colors/")
-(require 'color-theme-solarized)
-(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+;; (add-to-list 'load-path "~/.emacs.d/colors/")
+;; (require 'color-theme-solarized)
+;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+
+;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized")
+;; (color-theme-sanityinc-solarized-dark)
+
+(load "~/.emacs.d/colors/color-theme-solarized")
+(color-theme-solarized-dark)
 
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
