@@ -439,9 +439,7 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-;; (setq rinari-tags-file-name "TAGS")
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
-
 ;; (setq windmove-wrap-around t) ;windmove-wrap
 
 (custom-set-variables
@@ -1119,17 +1117,13 @@ an .ics file that has been downloaded from Google Calendar "
 ;;*****ERC STUFF*****
 ;; check channels
 (erc-track-mode t)
+(erc-autojoin-mode t)
 
 ;; Only track my nick(s)
 (defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
   (if (erc-query-buffer-p)
       (setq ad-return-value (intern "erc-current-nick-face"))
     ad-do-it))
-(setq erc-keywords '("kylpo" "kp"))
-(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                "324" "329" "332" "333" "353" "477"))
-;; don't show any of this
-(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 
 ;; Use libnotify
 (defun clean-message (s)
@@ -1148,59 +1142,32 @@ an .ics file that has been downloaded from Google Calendar "
 
 (add-hook 'erc-text-matched-hook 'call-libnotify)
 
-;; joining && autojoing
-
-;; make sure to use wildcards for e.g. freenode as the actual server
-;; name can be be a bit different, which would screw up autoconnect
-
-
-
-(defun call-libnotify (matched-type nick msg)
-  (let* ((cmsg  (split-string (clean-message msg)))
-        (nick   (first (split-string nick "!")))
-        (msg    (mapconcat 'identity (rest cmsg) " ")))
-    (shell-command-to-string
-     (format "notify-send -u critical '%s says:' '%s'" nick msg))))
-
-(add-hook 'erc-text-matched-hook 'call-libnotify)
-
-(erc-autojoin-mode t)
-(setq erc-autojoin-channels-alist
-      '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails")))
-;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
-
-(defun djcb-erc-start-or-switch ()
-  "Connect to ERC, or switch to last active buffer"
-  (interactive)
-  (if (get-buffer "irc.freenode.net:6667") ;; ERC already active?
-
-      (erc-track-switch-buffer 1) ;; yes: switch to last active
-    (when (y-or-n-p "Start ERC? ")
-      (erc)))) ;; no: maybe start ERC
-      ;; (erc :server "irc.freenode.net" :port 6667 :nick "kylpo"))))
-;;(erc :server "irc.gimp.org" :port 6667 :nick "sevfen"))))
-;; (setq erc-join-buffer 'bury)
-   (setq erc-server                         "irc.freenode.net"
-         erc-port                           6667
-  ;;       erc-user-full-name                 "Edward O'Connor"
-  ;;       erc-email-userid                   "ted"
-         erc-nick                           '("kylpo" "kp")
-  ;;       erc-password                       nil ; set this in local config
-  ;;       erc-nickserv-passwords             nil ; set this in local config
-  ;;       erc-anonymous-login                t
-  ;;       erc-auto-query                     'bury
-  ;;       erc-join-buffer                    'bury
-  ;;       erc-max-buffer-size                30000
-  ;;       erc-prompt-for-password            nil
-  ;;       erc-join-buffer                    'buffer
-  ;;       erc-command-indicator              "CMD"
-  ;;       erc-echo-notices-in-current-buffer t
-  ;;       erc-send-whitespace-lines          nil
-  ;;       erc-hide-list                      '("JOIN" "PART" "QUIT")
-  ;;       erc-ignore-list                    '("jibot")
-)
-
-
+(setq erc-server "irc.freenode.net"
+      erc-port 6667
+      ;;       erc-user-full-name                 "Edward O'Connor"
+      ;;       erc-email-userid                   "ted"
+      erc-nick '("kylpo" "kp")
+      ;;       erc-password                       nil ; set this in local config
+      ;;       erc-nickserv-passwords             nil ; set this in local config
+      ;;       erc-anonymous-login                t
+      ;;       erc-auto-query                     'bury
+      ;;       erc-join-buffer                    'bury
+      ;;       erc-max-buffer-size                30000
+      ;;       erc-prompt-for-password            nil
+      ;;       erc-join-buffer                    'buffer
+      ;;       erc-command-indicator              "CMD"
+      ;;       erc-echo-notices-in-current-buffer t
+      ;;       erc-send-whitespace-lines          nil
+      erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
+      erc-keywords '("kylpo" "kp")
+      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
+      ;; joining && autojoing
+      ;; make sure to use wildcards for e.g. freenode as the actual server
+      ;; name can be be a bit different, which would screw up autoconnect
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails"))
+      ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
+      ;;       erc-ignore-list                    '("jibot")
+      )
 
 ;;*****SPEEDBAR*****
 ;; (setq speedbar-use-imenu-flag nil)
@@ -1221,35 +1188,35 @@ an .ics file that has been downloaded from Google Calendar "
                                         unsplittable t))
 
 ;;;; Perspective
-(eval-after-load 'perspective
-  '(progn
-     ;; Perspective Setup
-     (defmacro senny-persp (name &rest body)
-       `(let ((initialize (not (gethash ,name perspectives-hash)))
-              (current-perspective persp-curr))
-          (persp-switch ,name)
-          (when initialize ,@body)
-          (setq persp-last current-perspective)))
+;; (eval-after-load 'perspective
+;;   '(progn
+;;      ;; Perspective Setup
+;;      (defmacro senny-persp (name &rest body)
+;;        `(let ((initialize (not (gethash ,name perspectives-hash)))
+;;               (current-perspective persp-curr))
+;;           (persp-switch ,name)
+;;           (when initialize ,@body)
+;;           (setq persp-last current-perspective)))
 
-     (defun persp-format-name (name)
-       "Format the perspective name given by NAME for display in `persp-modestring'."
-       (let ((string-name (format "%s" name)))
-         (if (equal name (persp-name persp-curr))
-             (propertize string-name 'face 'persp-selected-face))))
+;;      (defun persp-format-name (name)
+;;        "Format the perspective name given by NAME for display in `persp-modestring'."
+;;        (let ((string-name (format "%s" name)))
+;;          (if (equal name (persp-name persp-curr))
+;;              (propertize string-name 'face 'persp-selected-face))))
 
-     (defun persp-update-modestring ()
-       "Update `persp-modestring' to reflect the current perspectives.
-Has no effect when `persp-show-modestring' is nil."
-       (when persp-show-modestring
-         (setq persp-modestring
-               (append '("[")
-                       (persp-intersperse (mapcar 'persp-format-name (persp-names)) "")
-                       '("]")))))
+;;      (defun persp-update-modestring ()
+;;        "Update `persp-modestring' to reflect the current perspectives.
+;; Has no effect when `persp-show-modestring' is nil."
+;;        (when persp-show-modestring
+;;          (setq persp-modestring
+;;                (append '("[")
+;;                        (persp-intersperse (mapcar 'persp-format-name (persp-names)) "")
+;;                        '("]")))))
 
-     ;; Perspective Defuns
-     (defun senny-persp-last ()
-       (interactive)
-       (persp-switch (persp-name persp-last)))
+;;      ;; Perspective Defuns
+;;      (defun senny-persp-last ()
+;;        (interactive)
+;;        (persp-switch (persp-name persp-last)))
 
 
 ;;;; Perspective Definitions
@@ -1260,40 +1227,40 @@ Has no effect when `persp-show-modestring' is nil."
      ;;                (call-interactively 'jabber-display-roster)
      ;;                (switch-to-buffer jabber-roster-buffer)))
 
-     (defun senny-persp/irc ()
-       (interactive)
-       (senny-persp "@IRC"
-                    (djcb-erc-start-or-switch)
-                    ;; (dolist (channel '("emacs" "ruby" "cucumber"))
-                    ;;   (erc-join-channel channel))
-                    ))
+     ;; (defun senny-persp/irc ()
+     ;;   (interactive)
+     ;;   (senny-persp "@IRC"
+     ;;                (djcb-erc-start-or-switch)
+     ;;                ;; (dolist (channel '("emacs" "ruby" "cucumber"))
+     ;;                ;;   (erc-join-channel channel))
+     ;;                ))
 
-     (defun senny-persp/terminal ()
-       (interactive)
-       (senny-persp "@terminal"
-                    (multi-term-next)
-                    (jone-term-binding-fix)))
+     ;; (defun senny-persp/terminal ()
+     ;;   (interactive)
+     ;;   (senny-persp "@terminal"
+     ;;                (multi-term-next)
+     ;;                (jone-term-binding-fix)))
 
-     (defun senny-persp/emacs ()
-       (interactive)
-       (senny-persp "@Emacs"))
+     ;; (defun senny-persp/emacs ()
+     ;;   (interactive)
+     ;;   (senny-persp "@Emacs"))
 
-     (defun senny-persp/org ()
-       (interactive)
-       (senny-persp "@org"
-                    (find-file (first org-agenda-files))
-                    (find-file "~/Dropbox/doc/ci.org")
-                    (org-agenda-list 1)))
+     ;; (defun senny-persp/org ()
+     ;;   (interactive)
+     ;;   (senny-persp "@org"
+     ;;                (find-file (first org-agenda-files))
+     ;;                (find-file "~/Dropbox/doc/ci.org")
+     ;;                (org-agenda-list 1)))
 
-     (defun senny-persp/koans ()
-       (interactive)
-       (senny-persp "@koans"
-                    (find-file ("~/Dropbox/koans/"))))
+     ;; (defun senny-persp/koans ()
+     ;;   (interactive)
+     ;;   (senny-persp "@koans"
+     ;;                (find-file ("~/Dropbox/koans/"))))
 
-     (defun senny-persp/main ()
-       (interactive)
-       (senny-persp "main"))
-     ))
+     ;; (defun senny-persp/main ()
+     ;;   (interactive)
+     ;;   (senny-persp "main"))
+     ;; ))
 
 
 ;;------------------------------------------------
