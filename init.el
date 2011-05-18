@@ -11,6 +11,7 @@
 ;;------------------------------------------------
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
+(setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
 ;;*****ELPA****
 ;;early in .emacs to be able to use plugins later down
 (when
@@ -211,6 +212,10 @@
           :url "https://github.com/pezra/rspec-mode.git"
           :compile "rspec-mode.el"
           :features rspec-mode)
+   ;; (:name rainbow-delimiters :type emacswiki
+   ;;        :after (lambda ()
+   ;;                 (require 'rainbow-delimiters)
+   ;;                 (add-hook 'scheme-mode-hook 'rainbow-delimiters-mode)))
    (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
@@ -245,6 +250,7 @@
 (require 'cedet)
 ;;(require 'ecb-autoloads)
 (require 'ecb)
+(require 'uniquify)
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -327,12 +333,97 @@
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
+;;http://www.hollenback.net/index.php/EmacsModeLine
+;; Set the modeline to tell me the filename, hostname, etc..
+(setq-default mode-line-format
+      (list "-"
+            ; */% indicators if the file has been modified
+            'mode-line-mule-info
+            'mode-line-modified
+            ;; "--"
+            ; the name of the buffer (i.e. filename)
+            ; note this gets automatically highlighted
+            'mode-line-frame-identification
+            ;; 'mode-line-buffer-identification
+            ;; "--"
+            "%b  "
+            (getenv "HOST")
+            ":"
+            'default-directory
+            "   "
+            ;; 'global-mode-string
+            ;; "   %[("
+
+            ; major and minor modes in effect
+            'mode-line-modes
+            ; if which-func-mode is in effect, display which
+            ; function we are currently in.
+            '(which-func-mode ("" which-func-format "--"))
+            ; line, column, file %
+            'mode-line-position
+            "--"
+            ; if vc-mode is in effect, display version control
+            ; info here
+            `(vc-mode vc-mode)
+            "--"
+            ; hostname
+            'system-name
+            ; dashes sufficient to fill rest of modeline.
+            "-%-"
+            )
+)
+
+     ;; (setq-default mode-line-format
+     ;;   (list "-"
+     ;;    'mode-line-mule-info
+     ;;    'mode-line-modified
+     ;;    'mode-line-frame-identification
+     ;;    "%b--"
+     ;;    ;; Note that this is evaluated while making the list.
+     ;;    ;; It makes a mode-line construct which is just a string.
+        ;; (getenv "HOST")
+        ;; ":"
+        ;; 'default-directory
+        ;; "   "
+        ;; 'global-mode-string
+        ;; "   %[("
+     ;;    '(:eval (mode-line-mode-name))
+     ;;    'mode-line-process
+     ;;    'minor-mode-alist
+     ;;    "%n"
+     ;;    ")%]--"
+     ;;    '(which-func-mode ("" which-func-format "--"))
+     ;;    '(line-number-mode "L%l--")
+     ;;    '(column-number-mode "C%c--")
+     ;;    '(-3 "%p")
+     ;;    "-%-"))
+
+;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
+;;default
+;; ("-"
+;;       mode-line-mule-info
+;;       mode-line-modified
+;;       mode-line-frame-identification
+;;       mode-line-buffer-identification
+;;       "   "
+;;       mode-line-position
+;;       (vc-mode vc-mode)
+;;       "   "
+;;       mode-line-modes
+;;       (which-func-mode ("" which-func-format "--"))
+;;       (global-mode-string ("--" global-mode-string))
+;;       "-%-")
+
+
+(setq
+  uniquify-buffer-name-style 'post-forward
+  uniquify-separator ":")
 
 ;; (yas/initialize)
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
-;; save a list of open files in ~/.emacs.desktop
+;; save a list of open files in ~/.emacs.d/.emacs.desktop
 ;; save the desktop file automatically if it already exists
 (setq desktop-save 'if-exists)
 (desktop-save-mode 1)
@@ -371,25 +462,29 @@
 (setq-default indicate-empty-lines t)
 
 
-;; (add-to-list 'load-path "~/.emacs.d/colors/")
-;; (require 'color-theme-solarized)
-;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
+(add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
+(require 'color-theme-solarized)
+(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
 
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
 
-(load "~/.emacs.d/colors/color-theme-solarized")
-(color-theme-solarized-dark)
+;; (load "~/.emacs.d/colors/color-theme-solarized")
+;; (color-theme-solarized-dark)
 
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
 
+;; (load (concat dotfiles-dir "colors/zenburn-theme"))
+
+
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
-(setq c-basic-offset 3) ; Indenting is 3 spaces
+(setq c-basic-offset 2) ; Indenting is 2 spaces
 (global-font-lock-mode 1) ; Enable syntax highlighting when editing code.
 (show-paren-mode 1) ; Highlight the matching paren
 ;;show line of matching paren when off buffer
@@ -416,7 +511,7 @@
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
 (display-time-mode t)
 (display-battery-mode t)
-(global-hl-line-mode t) ; Highlight the current line
+;; (global-hl-line-mode t) ; Highlight the current line
 
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
@@ -453,7 +548,7 @@
 (setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
 (setq scroll-step 1) ; Only scroll down 1 line at a time
 (setq scroll-conservatively 10) ; make scroll less jumpy
-(setq scroll-margin 7) ; scroll will start b4 getting to top/bottom of page
+(setq scroll-margin 4) ; scroll will start b4 getting to top/bottom of page
 
 ;; activate disabled features
 (put 'narrow-to-region 'disabled nil)
@@ -1204,14 +1299,14 @@ an .ics file that has been downloaded from Google Calendar "
       )
 
 ;;*****SPEEDBAR*****
-;; (setq speedbar-use-imenu-flag nil)
-;; (setq speedbar-fetch-etags-command "/usr/bin/ctags-exuberant")
-;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
+;; (setq speedbar-use-imenu-flag 'nil)
+(setq speedbar-fetch-etags-command "/usr/bin/ctags")
+(setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
 
 ;;Setup speedbar, an additional frame for viewing source files
 ;; (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
 ;; (autoload 'speedbar-get-focus "speedbar" "Jump to speedbar frame" t)
-;; (autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
+(autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
 ;; (setq speedbar-frame-plist '(minibuffer nil
 ;;                                         border-width 0
 ;;                                         internal-border-width 0

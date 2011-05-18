@@ -100,6 +100,7 @@ will use the 256 degraded color mode."
           ((t (:foreground ,base0 :background ,base03 :inverse-video t))))
          (escape-glyph-face ((t (:foreground ,red))))
          (fringe ((t (:foreground ,base01 :background ,base02))))
+         (linum ((t (:foreground ,base01 :background ,base02))))
          (header-line ((t (:foreground ,base0 :background ,base2))))
          (highlight ((t (:background ,base02))))
          (hl-line ((t (:background ,base02))))
@@ -148,6 +149,10 @@ will use the 256 degraded color mode."
          (diff-file-header
           ((t (:background ,base1 :foreground ,base01 :weight ,bold))))
          (diff-refine-change ((t (:background ,base1))))
+         ;; IDO
+         (ido-only-match ((t (:foreground ,green))))
+         (ido-subdir ((t (:foreground ,blue))))
+         (ido-first-match ((t (:foreground ,green :weight ,bold))))
          ;; emacs-wiki
          (emacs-wiki-bad-link-face
           ((t (:foreground ,red :underline ,underline))))
@@ -286,7 +291,7 @@ will use the 256 degraded color mode."
          (cursor-color . ,base0))))))
 
 (defmacro create-solarized-theme (mode)
-  (let* ((theme-name (make-symbol (concat "solarized-" (symbol-name mode))))
+  (let* ((theme-name (intern (concat "solarized-" (symbol-name mode))))
          (defs (solarized-color-definitions mode))
          (theme-vars (mapcar (lambda (def) (list (car def) (cdr def)))
                              (second defs)))
