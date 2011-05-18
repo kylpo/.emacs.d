@@ -41,6 +41,12 @@
  el-get-sources ;order does matter for some of these
  '(el-get
    ack
+   (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+          :features ecb
+          :post-init (lambda ()
+                       (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+          :after (lambda ()
+                   (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
    (:name auto-complete :after
           (lambda ()
             ;; (setq ac-auto-start nil
@@ -214,6 +220,9 @@
                    ;; (global-set-key (kbd "s-h") 'fm-left-frame)
                    ;; (global-set-key (kbd "s-l") 'fm-right-frame)
                    ))
+   (:name sr-speedbar :type emacswiki ;http://www.emacswiki.org/emacs/sr-speedbar.el
+          :after (lambda ()
+                   (require 'sr-speedbar)))
 
    (:name yaml-mode
           :type git
@@ -233,6 +242,9 @@
 
 (require 'tramp)
 (require 'redo+) ;;from elpa
+(require 'cedet)
+;;(require 'ecb-autoloads)
+(require 'ecb)
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -249,11 +261,8 @@
 ;;------------------------------------------------
 (cond
  ((string-match "nt" system-configuration)
-
   );;end windows
-
  ((string-match "apple" system-configuration)
-                                        ;  (add-to-list 'el-get-sources 'color-theme)
   (defun dired-do-shell-mac-open-vqn ()
     (interactive)
     (save-window-excursion
@@ -262,6 +271,18 @@
        (dired-get-marked-files t current-prefix-arg))))
 
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-do-shell-mac-open-vqn)))
+
+  (defun gnome-open-file (filename)
+    "gnome-opens the specified file."
+    (interactive "File to open: ")
+    (let ((process-connection-type nil))
+      (start-process "" nil "/usr/bin/open" filename)))
+
+  (defun iterm ()
+    "gnome-opens the specified file."
+    (interactive)
+    (let ((process-connection-type nil))
+      (start-process "" nil "/usr/bin/open" "/Applications/iTerm.app/Contents/MacOS/iTerm")))
   );;end apple
 
  ((string-match "linux" system-configuration)
@@ -405,7 +426,7 @@
       ido-enable-flex-matching t
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
-      ido-show-dot-for-dired t
+      ;; ido-show-dot-for-dired t
       ;; ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
@@ -442,16 +463,28 @@
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 ;; (setq windmove-wrap-around t) ;windmove-wrap
 
+;;Sunrise
+(setq sr-terminal-program "eshell")
+
+;;ECB
+;; (setq ecb-tree-buffer-style 'ascii-guides)
+;; (setq ecb-options-version "2.40")
+(setq ecb-tip-of-the-day nil) ;inhibit startup message
+
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(speedbar-hide-button-brackets-flag t)
- '(speedbar-indentation-width 2)
- '(speedbar-show-unknown-files t)
- '(speedbar-update-flag nil t)
- '(speedbar-use-images nil)
+ '(ecb-directories-update-speedbar t)
+ '(ecb-options-version "2.40")
+ '(ecb-tree-indent 2)
+ ;; '(ecb-use-speedbar-instead-native-tree-buffer (quote dir))
+ ;; '(speedbar-hide-button-brackets-flag t)
+ ;; '(speedbar-indentation-width 2)
+ ;; '(speedbar-show-unknown-files t)
+ ;; '(speedbar-update-flag nil t)
+ ;; '(speedbar-use-images nil)
  '(sr-show-file-attributes nil))
 
 (custom-set-faces
@@ -597,7 +630,8 @@
 
 (defun etags ()
   (interactive)
-  (shell-command "etags -a -f TAGS *"))
+  ;; (shell-command "etags -a -f TAGS *"))
+  (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
@@ -1159,12 +1193,12 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-echo-notices-in-current-buffer t
       ;;       erc-send-whitespace-lines          nil
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-      erc-keywords '("kylpo" "kp")
+      erc-keywords '("kylpo")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#conkeror" "#org-mode" "#ruby" "#rails"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails"))
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
       )
@@ -1175,17 +1209,17 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
 
 ;;Setup speedbar, an additional frame for viewing source files
-(autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
-(autoload 'speedbar-get-focus "speedbar" "Jump to speedbar frame" t)
-(autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
-(setq speedbar-frame-plist '(minibuffer nil
-                                        border-width 0
-                                        internal-border-width 0
-                                        menu-bar-lines 0
-                                        modeline t
-                                        name "SpeedBar"
-                                        width 24
-                                        unsplittable t))
+;; (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
+;; (autoload 'speedbar-get-focus "speedbar" "Jump to speedbar frame" t)
+;; (autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
+;; (setq speedbar-frame-plist '(minibuffer nil
+;;                                         border-width 0
+;;                                         internal-border-width 0
+;;                                         menu-bar-lines 0
+;;                                         modeline t
+;;                                         name "SpeedBar"
+;;                                         width 24
+;;                                         unsplittable t))
 
 ;;;; Perspective
 ;; (eval-after-load 'perspective
@@ -1372,6 +1406,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-xt" 'eshell)
                                         ;(global-set-key "\C-xs" 'flyspell-mode)
 (global-set-key "\C-xs" 'sunrise)
+(global-set-key "\C-xS" 'sunrise-cd)
                                         ;(global-set-key "\C-xc" 'search)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
@@ -1409,7 +1444,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 (global-set-key [next] 'sfp-page-down)
 (global-set-key [prior] 'sfp-page-up)
-(global-set-key (kbd "M-S-v") 'kylpo-page-up-half)
+(global-set-key (kbd "M-V") 'kylpo-page-up-half)
 (global-set-key (kbd "C-S-v") 'kylpo-page-down-half)
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
