@@ -1,5 +1,5 @@
 auto-save-list/
-elpa/archives/*
+elpa/archives/
 tramp
 .emacs.BAK
 .org-id-locations
@@ -9,5 +9,6 @@ org-clock-save.el
 url/
 .ido.last
 .smex-items
-
+.emacs.desktop*
+.DS_Store
 

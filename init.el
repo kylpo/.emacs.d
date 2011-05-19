@@ -247,9 +247,7 @@
 
 (require 'tramp)
 (require 'redo+) ;;from elpa
-(require 'cedet)
-;;(require 'ecb-autoloads)
-(require 'ecb)
+;; (require 'cedet)
 (require 'uniquify)
 
 
@@ -335,43 +333,43 @@
 ;;------------------------------------------------
 ;;http://www.hollenback.net/index.php/EmacsModeLine
 ;; Set the modeline to tell me the filename, hostname, etc..
-(setq-default mode-line-format
-      (list "-"
-            ; */% indicators if the file has been modified
-            'mode-line-mule-info
-            'mode-line-modified
-            ;; "--"
-            ; the name of the buffer (i.e. filename)
-            ; note this gets automatically highlighted
-            'mode-line-frame-identification
-            ;; 'mode-line-buffer-identification
-            ;; "--"
-            "%b  "
-            (getenv "HOST")
-            ":"
-            'default-directory
-            "   "
-            ;; 'global-mode-string
-            ;; "   %[("
+;; (setq-default mode-line-format
+;;       (list "-"
+;;             ; */% indicators if the file has been modified
+;;             'mode-line-mule-info
+;;             'mode-line-modified
+;;             ;; "--"
+;;             ; the name of the buffer (i.e. filename)
+;;             ; note this gets automatically highlighted
+;;             'mode-line-frame-identification
+;;             ;; 'mode-line-buffer-identification
+;;             ;; "--"
+;;             "%b  "
+;;             (getenv "HOST")
+;;             ":"
+;;             'default-directory
+;;             "   "
+;;             ;; 'global-mode-string
+;;             ;; "   %[("
 
-            ; major and minor modes in effect
-            'mode-line-modes
-            ; if which-func-mode is in effect, display which
-            ; function we are currently in.
-            '(which-func-mode ("" which-func-format "--"))
-            ; line, column, file %
-            'mode-line-position
-            "--"
-            ; if vc-mode is in effect, display version control
-            ; info here
-            `(vc-mode vc-mode)
-            "--"
-            ; hostname
-            'system-name
-            ; dashes sufficient to fill rest of modeline.
-            "-%-"
-            )
-)
+;;             ; major and minor modes in effect
+;;             'mode-line-modes
+;;             ; if which-func-mode is in effect, display which
+;;             ; function we are currently in.
+;;             '(which-func-mode ("" which-func-format "--"))
+;;             ; line, column, file %
+;;             'mode-line-position
+;;             "--"
+;;             ; if vc-mode is in effect, display version control
+;;             ; info here
+;;             `(vc-mode vc-mode)
+;;             "--"
+;;             ; hostname
+;;             'system-name
+;;             ; dashes sufficient to fill rest of modeline.
+;;             "-%-"
+;;             )
+;; )
 
      ;; (setq-default mode-line-format
      ;;   (list "-"
@@ -381,12 +379,12 @@
      ;;    "%b--"
      ;;    ;; Note that this is evaluated while making the list.
      ;;    ;; It makes a mode-line construct which is just a string.
-        ;; (getenv "HOST")
-        ;; ":"
-        ;; 'default-directory
-        ;; "   "
-        ;; 'global-mode-string
-        ;; "   %[("
+     ;;    (getenv "HOST")
+     ;;    ":"
+     ;;    'default-directory
+     ;;    "   "
+     ;;    'global-mode-string
+     ;;    "   %[("
      ;;    '(:eval (mode-line-mode-name))
      ;;    'mode-line-process
      ;;    'minor-mode-alist
@@ -399,20 +397,26 @@
      ;;    "-%-"))
 
 ;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
-;;default
-;; ("-"
-;;       mode-line-mule-info
-;;       mode-line-modified
-;;       mode-line-frame-identification
-;;       mode-line-buffer-identification
-;;       "   "
-;;       mode-line-position
-;;       (vc-mode vc-mode)
-;;       "   "
-;;       mode-line-modes
-;;       (which-func-mode ("" which-func-format "--"))
-;;       (global-mode-string ("--" global-mode-string))
-;;       "-%-")
+
+(setq-default mode-line-format
+      (list "-"
+      'mode-line-mule-info
+      'mode-line-modified
+      'mode-line-frame-identification
+      ;; 'mode-line-buffer-identification
+      "%b  "
+      '(getenv "HOST")
+      ":"
+      'default-directory
+      "   "
+      'mode-line-position
+      '(vc-mode vc-mode)
+      "   "
+      'mode-line-modes
+      '(which-func-mode ("" which-func-format "--"))
+      '(global-mode-string ("--" global-mode-string))
+      "-%-")
+      )
 
 
 (setq
@@ -522,7 +526,7 @@
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
       ;; ido-show-dot-for-dired t
-      ;; ido-everywhere t ;use for many file dialogs
+      ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
@@ -594,6 +598,18 @@
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+
+;; Emacs macro to add a pomodoro item
+(fset 'pomodoro
+   "[ ]")
+
+;; Emacs macro to add a pomodoro table
+;;
+;; | G | Organization | [ ] |
+;; |   |              |     |
+(fset 'pomodoro-table
+   [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
+
 
 (defun kylpo-zap-back-to-char (arg char)
        "Kill up to ARG'th occurrence of CHAR.
@@ -1046,8 +1062,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****Dired & Tramp*****
 (setq tramp-default-method "ssh")
-(setq dired-omit-files
-     (concat dired-omit-files "\\|^\\..+$"))
+(setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
 (setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
 
 ;;*****ORG-MODE*****
