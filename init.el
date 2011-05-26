@@ -42,12 +42,24 @@
  el-get-sources ;order does matter for some of these
  '(el-get
    ack
-   (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
-          :features ecb
-          :post-init (lambda ()
-                       (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
-          :after (lambda ()
-                   (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
+   magithub
+   rvm
+;   bookmark+ ;;http://www.emacswiki.org/emacs/BookmarkPlus#toc2
+   dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
+   erc-highlight-nicknames
+   sunrise-commander
+   sunrise-x-buttons
+   todochiku
+   color-theme
+   wrap-region
+   yari
+;   cedet
+;   (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+;          :features ecb
+;          :post-init (lambda ()
+;                       (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+;          :after (lambda ()
+;                   (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
    (:name auto-complete :after
           (lambda ()
             ;; (setq ac-auto-start nil
@@ -66,15 +78,14 @@
             ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
             ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
             ))
-   bookmark+ ;;http://www.emacswiki.org/emacs/BookmarkPlus#toc2
+
    (:name buffer-move ; have to add your own keys
           :after (lambda ()
                    (global-set-key (kbd "<C-S-up>") 'buf-move-up)
                    (global-set-key (kbd "<C-S-down>") 'buf-move-down)
                    (global-set-key (kbd "<C-S-left>") 'buf-move-left)
                    (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
-   dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
-   erc-highlight-nicknames
+
    (:name dot-mode
     :type git
     :url "https://github.com/emacsmirror/dot-mode.git"
@@ -89,8 +100,7 @@
    (:name magit
           :after (lambda ()
                    (global-set-key (kbd "C-x g") 'magit-status)))
-   magithub
-   rvm
+
    (:name kylpo-smex
        :type git
        :url "http://github.com/nonsequitur/smex.git"
@@ -101,9 +111,7 @@
        :after (lambda ()
                 (global-set-key (kbd "M-x") 'smex)
                 (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-   sunrise-commander
-   sunrise-x-buttons
-   todochiku
+
    (:name yasnippet
        :type svn
        :url "http://yasnippet.googlecode.com/svn/trunk/"
@@ -114,9 +122,7 @@
 ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
                     (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
                     (yas/reload-all)))
-   color-theme
-   wrap-region
-   yari
+
    (:name senny-textmate
           :type git
           :url "https://github.com/defunkt/textmate.el.git"
@@ -134,9 +140,21 @@
   ;;                  (setq popwin:special-display-config '(("*Ido Completions*")))))
 ;   (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
-   (:name org-mode :after
+   (:name kylpo-org-mode
+          :type git
+          :url "git://orgmode.org/org-mode.git"
+	  :info "doc"
+	  :build `,(mapcar
+		    (lambda (target)
+		      (concat "make " target " EMACS=" el-get-emacs))
+		    '("clean" "all"))
+	  :load-path ("lisp" "contrib/lisp")
+	  :autoloads nil
+	  :features org-install
+	  :after
           (lambda ()
             (require 'org-habit)
+;            (require 'org-capture)
             (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
    (:name inf-ruby  :type elpa)
    (:name ruby-compilation :type elpa)
@@ -244,10 +262,11 @@
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
 (require 'tinyeat)
+;(require 'org-install)
 
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;; (require 'cedet)
+;(require 'cedet)
 (require 'uniquify)
 
 
@@ -1076,7 +1095,7 @@ an .ics file that has been downloaded from Google Calendar "
   )
 
 (setq org-habit-graph-column 60)
-(setq org-log-done 'time)
+;(setq org-log-done 'time)
 (setq org-agenda-include-diary nil)
 (setq org-deadline-warning-days 14)
 (setq org-timeline-show-empty-dates t)
@@ -1098,7 +1117,7 @@ an .ics file that has been downloaded from Google Calendar "
 (setq org-deadline-warning-days 14)
 (setq org-export-html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyles.css\">")
 (setq org-fast-tag-selection-single-key nil)
-(setq org-log-done (quote (done)))
+;(setq org-log-done (quote (done)))
 (setq org-reverse-note-order t)
 (setq org-tags-column -78)
 (setq org-tags-match-list-sublevels nil)
@@ -1308,7 +1327,7 @@ an .ics file that has been downloaded from Google Calendar "
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu"))
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
       )
