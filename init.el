@@ -48,7 +48,7 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   sunrise-x-buttons
+;   sunrise-x-buttons
    todochiku
    color-theme
    wrap-region
@@ -312,7 +312,8 @@
   ;;start LINUX
 ;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
-  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+;  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+  (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
@@ -350,6 +351,7 @@
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
+
 ;;http://www.hollenback.net/index.php/EmacsModeLine
 ;; Set the modeline to tell me the filename, hostname, etc..
 ;; (setq-default mode-line-format
@@ -446,9 +448,20 @@
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
-;; save a list of open files in ~/.emacs.d/.emacs.desktop
-;; save the desktop file automatically if it already exists
-(setq desktop-save 'if-exists)
+
+
+;(setq desktop-path '("~/.emacs.d/"))
+;(setq desktop-dirname "~/.emacs.d/")
+;(setq desktop-base-file-name "emacs-desktop")
+
+;; Automatically save and restore sessions
+(setq desktop-dirname             "~/.emacs.d/"
+      desktop-base-file-name      ".emacs.desktop"
+;      desktop-base-lock-name      "lock"
+      desktop-path                (list desktop-dirname)
+      desktop-save                t
+      desktop-files-not-to-save   "^$" ;reload tramp paths
+      desktop-load-locked-desktop nil)
 (desktop-save-mode 1)
 
 ;; save a bunch of variables to the desktop file
@@ -468,6 +481,8 @@
                 tags-file-name
                 register-alist)))
 
+(setq bookmark-default-file "~/.emacs.d/emacs.bmk")
+
 (setq ibuffer-shrink-to-minimum-size t)
 (setq ibuffer-always-show-last-buffer nil)
 (setq ibuffer-sorting-mode 'recency)
@@ -481,7 +496,7 @@
 ;;Display
 ;; Use a vertical bar as cursor
 (blink-cursor-mode 1)
-(setq-default cursor-type '(bar . 2))
+;;(setq-default cursor-type '(bar . 2))
 (setq-default indicate-empty-lines t)
 
 
@@ -534,7 +549,7 @@
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
 (display-time-mode t)
 (display-battery-mode t)
-;; (global-hl-line-mode t) ; Highlight the current line
+;;(global-hl-line-mode t) ; Highlight the current line
 
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
@@ -594,16 +609,15 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(column-number-mode t)
+ '(display-battery-mode t)
+ '(display-time-mode t)
  '(ecb-directories-update-speedbar t)
  '(ecb-options-version "2.40")
  '(ecb-tree-indent 2)
- ;; '(ecb-use-speedbar-instead-native-tree-buffer (quote dir))
- ;; '(speedbar-hide-button-brackets-flag t)
- ;; '(speedbar-indentation-width 2)
- ;; '(speedbar-show-unknown-files t)
- ;; '(speedbar-update-flag nil t)
- ;; '(speedbar-use-images nil)
+ '(show-paren-mode t)
  '(sr-show-file-attributes nil))
+
 
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
