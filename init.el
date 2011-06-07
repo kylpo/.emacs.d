@@ -48,8 +48,22 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-;   sunrise-x-buttons
-   todochiku
+   ;; color-theme-solarized
+   workgroups
+   color-theme-chocolate-rain
+   (:name kylpo-sunrise-x-buttons
+          :type emacswiki
+          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-buttons.el"
+          :features sunrise-x-buttons)
+   (:name kylpo-sunrise-x-tree
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tree.el"
+       :features sunrise-x-tree)
+   (:name sunrise-x-tabs
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tabs.el"
+       :features sunrise-x-tabs)
+   ;; todochiku
    color-theme
    wrap-region
    yari
@@ -314,6 +328,8 @@
   ;;10pt font aka :height 10*10=100
 ;  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
   (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
+  (setq browse-url-generic-program (executable-find "firefox")
+          browse-url-browser-function 'browse-url-generic)
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
@@ -448,12 +464,7 @@
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
-
-
-;(setq desktop-path '("~/.emacs.d/"))
-;(setq desktop-dirname "~/.emacs.d/")
-;(setq desktop-base-file-name "emacs-desktop")
-
+;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
 ;; Automatically save and restore sessions
 (setq desktop-dirname             "~/.emacs.d/"
       desktop-base-file-name      ".emacs.desktop"
@@ -501,17 +512,14 @@
 
 
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
-(add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
-(require 'color-theme-solarized)
-(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
+;; (require 'color-theme-solarized)
+;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
 
-;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized")
-;; (color-theme-sanityinc-solarized-dark)
+(load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
+(color-theme-sanityinc-solarized-dark)
 
-;; (load "~/.emacs.d/colors/color-theme-solarized")
-;; (color-theme-solarized-dark)
-
-;; (load "~/.emacs.d/colors/color-theme-wombat")
+(load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
@@ -549,7 +557,7 @@
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
 (display-time-mode t)
 (display-battery-mode t)
-;;(global-hl-line-mode t) ; Highlight the current line
+(global-hl-line-mode t) ; Highlight the current line
 
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
@@ -597,7 +605,7 @@
 ;; (setq windmove-wrap-around t) ;windmove-wrap
 
 ;;Sunrise
-(setq sr-terminal-program "eshell")
+;; (setq sr-terminal-program "eshell")
 
 ;;ECB
 ;; (setq ecb-tree-buffer-style 'ascii-guides)
@@ -643,6 +651,34 @@
 (fset 'pomodoro-table
    [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
 
+
+;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
+(defvar my-desktop-session-dir
+  (concat (getenv "HOME") "/.emacs.d/desktop-sessions/")
+  "*Directory to save desktop sessions in")
+
+(defvar my-desktop-session-name-hist nil
+  "Desktop session name history")
+
+(defun my-desktop-save (&optional name)
+  "Save desktop with a name."
+  (interactive)
+  (unless name
+    (setq name (my-desktop-get-session-name "Save session as: ")))
+  (make-directory (concat my-desktop-session-dir name) t)
+  (desktop-save (concat my-desktop-session-dir name) t))
+
+(defun my-desktop-read (&optional name)
+  "Read desktop with a name."
+  (interactive)
+  (unless name
+    (setq name (my-desktop-get-session-name "Load session: ")))
+  (desktop-read (concat my-desktop-session-dir name)))
+
+(defun my-desktop-get-session-name (prompt)
+  (completing-read prompt (and (file-exists-p my-desktop-session-dir)
+                               (directory-files my-desktop-session-dir))
+                   nil nil nil my-desktop-session-name-hist))
 
 (defun kylpo-zap-back-to-char (arg char)
        "Kill up to ARG'th occurrence of CHAR.
@@ -1329,19 +1365,21 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-anonymous-login                t
       ;;       erc-auto-query                     'bury
       ;;       erc-join-buffer                    'bury
-      ;;       erc-max-buffer-size                30000
+      erc-max-buffer-size                30000
       ;;       erc-prompt-for-password            nil
       ;;       erc-join-buffer                    'buffer
       ;;       erc-command-indicator              "CMD"
       ;;       erc-echo-notices-in-current-buffer t
       ;;       erc-send-whitespace-lines          nil
+      erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
       erc-keywords '("kylpo")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu" "#chicken"))
+
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
       )
@@ -1566,6 +1604,7 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
+(setq mouse-autoselect-window t) ;;focus follows mouse
 
 ;; Window Navigation/Manipulation
 (bind "C-^" 'enlarge-window)
