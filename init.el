@@ -4,7 +4,7 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
+;(setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 
@@ -50,7 +50,16 @@
    sunrise-commander
    ;; color-theme-solarized
    workgroups
-   color-theme-chocolate-rain
+   ;; egg
+   ;; color-theme-chocolate-rain
+;   color-theme-zenburn
+  (:name color-theme-topfunky
+         :type http
+         :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
+         :after (lambda ()
+                  (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
+                  (color-theme-topfunky)
+                  ))
    (:name kylpo-sunrise-x-buttons
           :type emacswiki
           :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-buttons.el"
@@ -67,14 +76,14 @@
    color-theme
    wrap-region
    yari
-;   cedet
-;   (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
-;          :features ecb
-;          :post-init (lambda ()
-;                       (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
-;          :after (lambda ()
-;                   (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
-   (:name auto-complete :after
+  ;; cedet
+  (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+         :features ecb
+         :post-init (lambda ()
+                      (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+         :after (lambda ()
+                  (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
+  (:name auto-complete :after
           (lambda ()
             ;; (setq ac-auto-start nil
             ;;       ac-modes '(erlang-mode
@@ -280,7 +289,7 @@
 
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;(require 'cedet)
+(require 'cedet)
 (require 'uniquify)
 
 
@@ -292,6 +301,15 @@
 ;; Deal with colors in shell mode correctly
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;; CEDET
+;(load-file "~/.emacs.d/cedet-1.0/common/cedet.el")
+(global-ede-mode 'nil)                  ; do NOT use project manager
+
+;(require 'ecb)
+
+;(load-file "~/.emacs.d/cedet-1.0/eieio/eieio.el")
+
 
 ;;------------------------------------------------
 ;; == Platform Dependencies
@@ -435,6 +453,43 @@
 
 ;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 
+
+;;; starter-kit-eshell.el --- Making the defaults a bit saner
+;;
+;; Part of the Emacs Starter Kit
+
+(setq eshell-cmpl-cycle-completions nil
+      eshell-save-history-on-exit t
+      eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+
+(eval-after-load 'esh-opt
+  '(progn
+     (require 'em-prompt)
+     (require 'em-term)
+     (require 'em-cmpl)
+     (setenv "PAGER" "cat")
+     (set-face-attribute 'eshell-prompt nil :foreground "turquoise1")
+     (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+               '(lambda () (eshell/export "TERM" "dumb")))
+     (when (< emacs-major-version 23)
+       (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+                 '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+       (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color))
+
+     ;; TODO: submit these via M-x report-emacs-bug
+     (add-to-list 'eshell-visual-commands "ssh")
+     (add-to-list 'eshell-visual-commands "tail")
+     (add-to-list 'eshell-command-completions-alist
+                  '("gunzip" "gz\\'"))
+     (add-to-list 'eshell-command-completions-alist
+                  '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))))
+
+(defun eshell/cds ()
+  "Change directory to the project's root."
+  (eshell/cd (locate-dominating-file default-directory "src")))
+
+
+
 (setq-default mode-line-format
       (list "-"
       'mode-line-mule-info
@@ -464,33 +519,39 @@
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
+;;-----WORKGROUPS-----
+(workgroups-mode t)
+(wg-load "~/.emacs.d/workgroups/default")
+(setq workgroups-default-file "~/.emacs.d/workgroups/")
+(setq wg-prefix-key (kbd "C-c w"))
+
 ;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
 ;; Automatically save and restore sessions
-(setq desktop-dirname             "~/.emacs.d/"
-      desktop-base-file-name      ".emacs.desktop"
-;      desktop-base-lock-name      "lock"
-      desktop-path                (list desktop-dirname)
-      desktop-save                t
-      desktop-files-not-to-save   "^$" ;reload tramp paths
-      desktop-load-locked-desktop nil)
-(desktop-save-mode 1)
+;; (setq desktop-dirname             "~/.emacs.d/"
+;;       desktop-base-file-name      ".emacs.desktop"
+;; ;      desktop-base-lock-name      "lock"
+;;       desktop-path                (list desktop-dirname)
+;;       desktop-save                t
+;;       desktop-files-not-to-save   "^$" ;reload tramp paths
+;;       desktop-load-locked-desktop nil)
+;; (desktop-save-mode 1)
 
-;; save a bunch of variables to the desktop file
-;; for lists specify the len of the maximal saved data also
-(setq desktop-globals-to-save
-      (append '((extended-command-history . 30)
-                (file-name-history        . 100)
-                (grep-history             . 30)
-                (compile-history          . 30)
-                (minibuffer-history       . 50)
-                (query-replace-history    . 60)
-                (read-expression-history  . 60)
-                (regexp-history           . 60)
-                (regexp-search-ring       . 20)
-                (search-ring              . 20)
-                (shell-command-history    . 50)
-                tags-file-name
-                register-alist)))
+;; ;; save a bunch of variables to the desktop file
+;; ;; for lists specify the len of the maximal saved data also
+;; (setq desktop-globals-to-save
+;;       (append '((extended-command-history . 30)
+;;                 (file-name-history        . 100)
+;;                 (grep-history             . 30)
+;;                 (compile-history          . 30)
+;;                 (minibuffer-history       . 50)
+;;                 (query-replace-history    . 60)
+;;                 (read-expression-history  . 60)
+;;                 (regexp-history           . 60)
+;;                 (regexp-search-ring       . 20)
+;;                 (search-ring              . 20)
+;;                 (shell-command-history    . 50)
+;;                 tags-file-name
+;;                 register-alist)))
 
 (setq bookmark-default-file "~/.emacs.d/emacs.bmk")
 
@@ -502,7 +563,7 @@
 ;; whenever an external process changes a file underneath emacs, and there
 ;; was no unsaved changes in the corresponding buffer, just revert its
 ;; content to reflect what's on-disk.
-(global-auto-revert-mode 1)
+;; (global-auto-revert-mode 1)
 
 ;;Display
 ;; Use a vertical bar as cursor
@@ -511,15 +572,22 @@
 (setq-default indicate-empty-lines t)
 
 
+;; (color-theme-zenburn)
+
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
 ;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
 ;; (require 'color-theme-solarized)
 ;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
 
-(load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
-(color-theme-sanityinc-solarized-dark)
+;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
+;; (color-theme-sanityinc-solarized-dark)
 
-(load "~/.emacs.d/colors/color-theme-wombat")
+;; (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
+;; (color-theme-topfunky)
+
+;; (load "~/.emacs.d/colors/tlh-color-themes/color-theme-thunk1")
+
+;; (load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 ;; (load "~/.emacs.d/colors/zenburn")
 ;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
@@ -557,7 +625,7 @@
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
 (display-time-mode t)
 (display-battery-mode t)
-(global-hl-line-mode t) ; Highlight the current line
+;; (global-hl-line-mode t) ; Highlight the current line
 
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
@@ -586,6 +654,9 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (set-default 'imenu-auto-rescan t)
+
+;(setq eshell-prompt-function
+;      (lambda nil (concat (eshell/pwd) (getenv "rvm-prompt") (if (= (user-uid) 0) " # " " $ "))))
 
 (recentf-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
@@ -645,12 +716,10 @@
    "[ ]")
 
 ;; Emacs macro to add a pomodoro table
-;;
 ;; | G | Organization | [ ] |
 ;; |   |              |     |
 (fset 'pomodoro-table
    [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
-
 
 ;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
 (defvar my-desktop-session-dir
@@ -811,7 +880,8 @@
 (defun etags ()
   (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
-  (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
+  ;; (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
+  (shell-command "etags -a --Ruby-kinds=-f -o TAGS -R . "))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."

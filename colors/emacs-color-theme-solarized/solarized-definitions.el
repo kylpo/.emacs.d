@@ -64,11 +64,11 @@ will use the 256 degraded color mode."
   (flet ((find-color (name)
            (let ((index (if window-system
                             (if solarized-degrade
-                                3
-			      2)
+                                1 ;default 3
+			      1) ;default 2
 			  (if (= solarized-termcolors 256)
-			      3
-			    4))))
+			      1 ;default 3
+			    1)))) ;default 4
              (nth index (assoc name solarized-colors)))))
     (let ((base03    (find-color 'base03))
           (base02    (find-color 'base02))
