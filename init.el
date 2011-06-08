@@ -1556,7 +1556,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;------------------------------------------------
-                                        ;== GLOBAL KEYBINDS
+;; == GLOBAL KEYBINDS
 ;;------------------------------------------------
 
 ;;-----------------------------------------------------------------------------
@@ -1683,7 +1683,7 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-S-n" scroll-up-keep-cursor)
 (setq mouse-autoselect-window t) ;;focus follows mouse
 
-;; Window Navigation/Manipulation
+;; Window/Desktop Navigation/Manipulation
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
@@ -1696,6 +1696,8 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "M-2") 'split-window-vertically)
 (global-set-key (kbd "M-3") 'split-window-horizontally)
 (global-set-key (kbd "M-4") 'balance-windows)
+(global-set-key (kbd "C-, r") 'my-desktop-read)
+(global-set-key (kbd "C-, s") 'my-desktop-save)
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1708,13 +1710,14 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
-(global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
-(global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
-(global-set-key (kbd "C-x SPC m") 'senny-persp/main)
-(global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
-(global-set-key (kbd "C-x SPC o") 'senny-persp/org)
-(global-set-key (kbd "C-x SPC p") 'senny-persp-last)
+;; (global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
+;; (global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
+;; (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
+;; (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
+;; (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
+;; (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
 (global-set-key "\C-w" 'tinyeat-backward)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
+
