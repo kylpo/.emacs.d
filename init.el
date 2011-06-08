@@ -52,14 +52,15 @@
    workgroups
    ;; egg
    ;; color-theme-chocolate-rain
-;   color-theme-zenburn
-  (:name color-theme-topfunky
-         :type http
-         :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
-         :after (lambda ()
-                  (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
-                  (color-theme-topfunky)
-                  ))
+   ;; color-theme-zenburn
+   rainbow-mode ;color-highlight
+   ;; (:name color-theme-topfunky
+   ;;       :type http
+   ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
+   ;;       :after (lambda ()
+   ;;                (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
+   ;;                ;; (color-theme-topfunky)
+   ;;                ))
    (:name kylpo-sunrise-x-buttons
           :type emacswiki
           :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-buttons.el"
@@ -309,6 +310,13 @@
 ;(require 'ecb)
 
 ;(load-file "~/.emacs.d/cedet-1.0/eieio/eieio.el")
+
+(load "~/.emacs.d/colors/zenburn/zenburn.el")
+(load "~/.emacs.d/colors/color-theme-topfunky.el")
+
+(color-theme-topfunky)
+;; (color-theme-zenburn)
+
 
 
 ;;------------------------------------------------
@@ -572,7 +580,6 @@
 (setq-default indicate-empty-lines t)
 
 
-;; (color-theme-zenburn)
 
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
 ;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
@@ -625,7 +632,7 @@
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
 (display-time-mode t)
 (display-battery-mode t)
-;; (global-hl-line-mode t) ; Highlight the current line
+(global-hl-line-mode t) ; Highlight the current line
 
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
