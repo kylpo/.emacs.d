@@ -6,6 +6,26 @@
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
+(setq-default mode-line-format
+      (list "-"
+      'mode-line-mule-info
+      'mode-line-modified
+      'mode-line-frame-identification
+      ;; 'mode-line-buffer-identification
+      "%b  "
+      '(getenv "HOST")
+      ;; ":"
+      ;; 'default-directory
+      ;; "   "
+      'mode-line-position
+      '(vc-mode vc-mode)
+      "   "
+      ;; 'mode-line-modes
+      '(which-func-mode ("" which-func-format "--"))
+      '(global-mode-string ("--" global-mode-string))
+      "-%-")
+      )
+
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 
 ;;------------------------------------------------
@@ -48,19 +68,44 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   sunrise-x-buttons
-   todochiku
+   (:name workgroups :after
+          (lambda ()
+            (setq wg-prefix-key (kbd "C-c w"))
+            (workgroups-mode t)
+            (wg-load "~/.emacs.d/workgroups/default")))
+
+   rainbow-mode ;color-highlight
+   ;; (:name color-theme-topfunky
+   ;;       :type http
+   ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
+   ;;       :after (lambda ()
+   ;;                (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
+   ;;                ;; (color-theme-topfunky)
+   ;;                ))
+
+   (:name kylpo-sunrise-x-buttons
+          :type http
+          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-buttons.el"
+          :features sunrise-x-buttons)
+   (:name kylpo-sunrise-x-tree
+       :type http
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tree.el"
+       :features sunrise-x-tree)
+   (:name sunrise-x-tabs
+       :type http
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tabs.el"
+       :features sunrise-x-tabs)
+   ;; todochiku
    color-theme
    wrap-region
    yari
-;   cedet
-;   (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
-;          :features ecb
-;          :post-init (lambda ()
-;                       (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
-;          :after (lambda ()
-;                   (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
-   (:name auto-complete :after
+  (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+         :features ecb
+         :post-init (lambda ()
+                      (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+         :after (lambda ()
+                  (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
+  (:name auto-complete :after
           (lambda ()
             ;; (setq ac-auto-start nil
             ;;       ac-modes '(erlang-mode
@@ -75,6 +120,7 @@
             ;;                  emacs-lisp-mode
             ;;                  css-mode
             ;;                  sql-interactive-mode))
+            (global-set-key (kbd "s-/") 'auto-complete)
             ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
             ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
             ))
@@ -85,14 +131,20 @@
                    (global-set-key (kbd "<C-S-down>") 'buf-move-down)
                    (global-set-key (kbd "<C-S-left>") 'buf-move-left)
                    (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
-
+   ;;http://emacs-fu.blogspot.com/2010/07/navigating-through-files-and-buffers.html
+   (:name lusty-explorer
+          :type git
+          :url "git://github.com/sjbach/lusty-emacs.git"
+          :features lusty-explorer
+          :after (lambda ()
+                   (require 'lusty-explorer)))
    (:name dot-mode
-    :type git
-    :url "https://github.com/emacsmirror/dot-mode.git"
-    :features dot-mode
-    :after (lambda ()
-             (require 'dot-mode)
-             (add-hook 'find-file-hooks 'dot-mode-on)))
+          :type git
+          :url "https://github.com/emacsmirror/dot-mode.git"
+          :features dot-mode
+          :after (lambda ()
+                   (require 'dot-mode)
+                   (add-hook 'find-file-hooks 'dot-mode-on)))
    (:name goto-last-change ; move pointer back to last change
           :after (lambda ()
                    ;; when using AZERTY keyboard, consider C-x C-_
@@ -214,26 +266,21 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   ;; (:name rinari
-   ;;        :after (lambda ()
-   ;;                 (add-hook 'rhtml-mode-hook
-   ;;                           (lambda () (rinari-launch)))))
    ruby-end ;necessary to place after ruby-mode
    flymake-ruby
-   ;; (:name senny-perspective
-   ;;        :type git
-   ;;        :features perspective
-   ;;        :url "https://github.com/nex3/perspective-el.git"
-   ;;        :after (lambda () (persp-mode)))
    (:name senny-rspec-mode
           :type git
           :url "https://github.com/pezra/rspec-mode.git"
           :compile "rspec-mode.el"
           :features rspec-mode)
-   ;; (:name rainbow-delimiters :type emacswiki
-   ;;        :after (lambda ()
-   ;;                 (require 'rainbow-delimiters)
-   ;;                 (add-hook 'scheme-mode-hook 'rainbow-delimiters-mode)))
+   (:name etags-table :type emacswiki
+          :after (lambda ()
+                   (require 'etags-table)
+                   ;; (setq tag-table-alist
+                   ;;       '(("~/.emacs.d/" . "~/.emacs.d/TAGS")
+                   ;;         ("~/projects/source/" . "~/.TAGS/projects.tags")))
+                   ;; (setq etags-table-alist tag-table-alist)
+                   (setq etags-table-search-up-depth 10)))
    (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
@@ -246,7 +293,6 @@
    (:name sr-speedbar :type emacswiki ;http://www.emacswiki.org/emacs/sr-speedbar.el
           :after (lambda ()
                    (require 'sr-speedbar)))
-
    (:name yaml-mode
           :type git
           :url "http://github.com/yoshiki/yaml-mode.git"
@@ -262,11 +308,9 @@
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
 (require 'tinyeat)
-;(require 'org-install)
-
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;(require 'cedet)
+;; (require 'cedet)
 (require 'uniquify)
 
 
@@ -278,6 +322,36 @@
 ;; Deal with colors in shell mode correctly
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;; CEDET
+;(load-file "~/.emacs.d/cedet-1.0/common/cedet.el")
+;; (global-ede-mode 'nil)                  ; do NOT use project manager
+
+(load "~/.emacs.d/colors/zenburn/zenburn.el")
+(color-theme-zenburn)
+;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
+;; (color-theme-topfunky)
+
+;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
+;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
+;; (require 'color-theme-solarized)
+;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+
+;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
+;; (color-theme-sanityinc-solarized-dark)
+
+;; (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
+;; (color-theme-topfunky)
+
+;; (load "~/.emacs.d/colors/tlh-color-themes/color-theme-thunk1")
+
+;; (load "~/.emacs.d/colors/color-theme-wombat")
+;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
+;; (load "~/.emacs.d/colors/zenburn")
+;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
+
+;; (load (concat dotfiles-dir "colors/zenburn-theme"))
+
 
 ;;------------------------------------------------
 ;; == Platform Dependencies
@@ -312,7 +386,10 @@
   ;;start LINUX
 ;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
-  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+;  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+  (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
+  (setq browse-url-generic-program (executable-find "firefox")
+          browse-url-browser-function 'browse-url-generic)
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
@@ -350,6 +427,7 @@
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
+
 ;;http://www.hollenback.net/index.php/EmacsModeLine
 ;; Set the modeline to tell me the filename, hostname, etc..
 ;; (setq-default mode-line-format
@@ -417,25 +495,69 @@
 
 ;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 
-(setq-default mode-line-format
-      (list "-"
-      'mode-line-mule-info
-      'mode-line-modified
-      'mode-line-frame-identification
-      ;; 'mode-line-buffer-identification
-      "%b  "
-      '(getenv "HOST")
-      ":"
-      'default-directory
-      "   "
-      'mode-line-position
-      '(vc-mode vc-mode)
-      "   "
-      'mode-line-modes
-      '(which-func-mode ("" which-func-format "--"))
-      '(global-mode-string ("--" global-mode-string))
-      "-%-")
-      )
+
+;; This is a little hacky since VC doesn't support git add internally
+(eval-after-load 'vc
+  (define-key vc-prefix-map "i" '(lambda () (interactive)
+                                   (if (not (eq 'Git (vc-backend buffer-file-name)))
+                                       (vc-register)
+                                     (shell-command (format "git add %s" buffer-file-name))
+                                     (message "Staged changes.")))))
+
+
+;;; starter-kit-eshell.el --- Making the defaults a bit saner
+;;
+;; Part of the Emacs Starter Kit
+
+(setq eshell-cmpl-cycle-completions nil
+      eshell-save-history-on-exit t
+      eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+
+(eval-after-load 'esh-opt
+  '(progn
+     (require 'em-prompt)
+     (require 'em-term)
+     (require 'em-cmpl)
+     (setenv "PAGER" "cat")
+     (set-face-attribute 'eshell-prompt nil :foreground "turquoise1")
+     (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+               '(lambda () (eshell/export "TERM" "dumb")))
+     (when (< emacs-major-version 23)
+       (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+                 '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+       (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color))
+
+     ;; TODO: submit these via M-x report-emacs-bug
+     (add-to-list 'eshell-visual-commands "ssh")
+     (add-to-list 'eshell-visual-commands "tail")
+     (add-to-list 'eshell-command-completions-alist
+                  '("gunzip" "gz\\'"))
+     (add-to-list 'eshell-command-completions-alist
+                  '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))))
+
+(defun eshell/cds ()
+  "Change directory to the project's root."
+  (eshell/cd (locate-dominating-file default-directory "src")))
+
+;; (setq-default mode-line-format
+;;       (list "-"
+;;       'mode-line-mule-info
+;;       'mode-line-modified
+;;       'mode-line-frame-identification
+;;       ;; 'mode-line-buffer-identification
+;;       "%b  "
+;;       '(getenv "HOST")
+;;       ;; ":"
+;;       ;; 'default-directory
+;;       ;; "   "
+;;       'mode-line-position
+;;       '(vc-mode vc-mode)
+;;       "   "
+;;       ;; 'mode-line-modes
+;;       '(which-func-mode ("" which-func-format "--"))
+;;       '(global-mode-string ("--" global-mode-string))
+;;       "-%-")
+;;       )
 
 
 (setq
@@ -446,13 +568,26 @@
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
-;; save a list of open files in ~/.emacs.d/.emacs.desktop
-;; save the desktop file automatically if it already exists
-(setq desktop-save 'if-exists)
-(desktop-save-mode 1)
+;;-----WORKGROUPS-----
+;; (setq wg-prefix-key (kbd "C-c w"))
+;; (workgroups-mode t)
+;; (wg-load "~/.emacs.d/workgroups/default")
+;; (setq workgroups-default-file "~/.emacs.d/workgroups/")
 
-;; save a bunch of variables to the desktop file
-;; for lists specify the len of the maximal saved data also
+
+;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
+;; Automatically save and restore sessions
+;; (setq desktop-dirname             "~/.emacs.d/"
+;;       desktop-base-file-name      ".emacs.desktop"
+;; ;      desktop-base-lock-name      "lock"
+;;       desktop-path                (list desktop-dirname)
+;;       desktop-save                t
+;;       desktop-files-not-to-save   "^$" ;reload tramp paths
+;;       desktop-load-locked-desktop nil)
+;; (desktop-save-mode 1)
+
+;; ;; save a bunch of variables to the desktop file
+;; ;; for lists specify the len of the maximal saved data also
 (setq desktop-globals-to-save
       (append '((extended-command-history . 30)
                 (file-name-history        . 100)
@@ -468,6 +603,8 @@
                 tags-file-name
                 register-alist)))
 
+(setq bookmark-default-file "~/.emacs.d/emacs.bmk")
+
 (setq ibuffer-shrink-to-minimum-size t)
 (setq ibuffer-always-show-last-buffer nil)
 (setq ibuffer-sorting-mode 'recency)
@@ -476,32 +613,13 @@
 ;; whenever an external process changes a file underneath emacs, and there
 ;; was no unsaved changes in the corresponding buffer, just revert its
 ;; content to reflect what's on-disk.
-(global-auto-revert-mode 1)
+;; (global-auto-revert-mode 1)
 
 ;;Display
 ;; Use a vertical bar as cursor
 (blink-cursor-mode 1)
-(setq-default cursor-type '(bar . 2))
+;;(setq-default cursor-type '(bar . 2))
 (setq-default indicate-empty-lines t)
-
-
-;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
-(add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
-(require 'color-theme-solarized)
-(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
-
-;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized")
-;; (color-theme-sanityinc-solarized-dark)
-
-;; (load "~/.emacs.d/colors/color-theme-solarized")
-;; (color-theme-solarized-dark)
-
-;; (load "~/.emacs.d/colors/color-theme-wombat")
-;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
-;; (load "~/.emacs.d/colors/zenburn")
-;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
-
-;; (load (concat dotfiles-dir "colors/zenburn-theme"))
 
 
 (set-terminal-coding-system 'utf-8)
@@ -532,9 +650,9 @@
 (setq inhibit-startup-screen t) ; Dont load the about screen on load
 (fset 'yes-or-no-p 'y-or-n-p)
 (column-number-mode t) ; Show cursors X + Y coordinates in modeline
-(display-time-mode t)
-(display-battery-mode t)
-;; (global-hl-line-mode t) ; Highlight the current line
+;; (display-time-mode t)
+;; (display-battery-mode t)
+(global-hl-line-mode t) ; Highlight the current line
 
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
@@ -545,12 +663,13 @@
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
       ;; ido-show-dot-for-dired t
-      ido-everywhere t ;use for many file dialogs
+      ;; ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
       ido-max-prospects 10)
-(ido-mode 'both) ; User ido mode for both buffers and files
+;; (ido-mode 'both) ; User ido mode for both buffers and files
+(ido-mode 'buffer)
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -563,6 +682,12 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (set-default 'imenu-auto-rescan t)
+
+;; Eshell
+(setq eshell-cmpl-ignore-case t)
+;; (setq eshell-prompt-function
+;;      (lambda nil (concat (eshell/pwd) (eshell/rvm-prompt) (if (= (user-uid) 0) " # " " $ "))))
+
 
 (recentf-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
@@ -581,8 +706,6 @@
 ;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
 ;; (setq windmove-wrap-around t) ;windmove-wrap
 
-;;Sunrise
-(setq sr-terminal-program "eshell")
 
 ;;ECB
 ;; (setq ecb-tree-buffer-style 'ascii-guides)
@@ -597,19 +720,15 @@
  '(ecb-directories-update-speedbar t)
  '(ecb-options-version "2.40")
  '(ecb-tree-indent 2)
- ;; '(ecb-use-speedbar-instead-native-tree-buffer (quote dir))
- ;; '(speedbar-hide-button-brackets-flag t)
- ;; '(speedbar-indentation-width 2)
- ;; '(speedbar-show-unknown-files t)
- ;; '(speedbar-update-flag nil t)
- ;; '(speedbar-use-images nil)
  '(sr-show-file-attributes nil))
+
 
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(lusty-match-face ((t (:foreground "salmon"))))
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
@@ -623,15 +742,41 @@
    "[ ]")
 
 ;; Emacs macro to add a pomodoro table
-;;
 ;; | G | Organization | [ ] |
 ;; |   |              |     |
 (fset 'pomodoro-table
    [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
 
+;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
+(defvar my-desktop-session-dir
+  (concat (getenv "HOME") "/.emacs.d/desktop-sessions/")
+  "*Directory to save desktop sessions in")
+
+(defvar my-desktop-session-name-hist nil
+  "Desktop session name history")
+
+(defun my-desktop-save (&optional name)
+  "Save desktop with a name."
+  (interactive)
+  (unless name
+    (setq name (my-desktop-get-session-name "Save session as: ")))
+  (make-directory (concat my-desktop-session-dir name) t)
+  (desktop-save (concat my-desktop-session-dir name) t))
+
+(defun my-desktop-read (&optional name)
+  "Read desktop with a name."
+  (interactive)
+  (unless name
+    (setq name (my-desktop-get-session-name "Load session: ")))
+  (desktop-read (concat my-desktop-session-dir name)))
+
+(defun my-desktop-get-session-name (prompt)
+  (completing-read prompt (and (file-exists-p my-desktop-session-dir)
+                               (directory-files my-desktop-session-dir))
+                   nil nil nil my-desktop-session-name-hist))
 
 (defun kylpo-zap-back-to-char (arg char)
-       "Kill up to ARG'th occurrence of CHAR.
+  "Kill up to ARG'th occurrence of CHAR.
      Case is ignored if `case-fold-search' is non-nil in the current buffer.
      Goes forward if ARG is negative; error if CHAR not found."
        (interactive "p\ncZap back to char: ")
@@ -754,6 +899,9 @@
 (defun eshell/emacs (tags) ;;eshell rtags alias
   (rtags --recurse .))
 
+;; (defun eshell/rvm-prompt ()
+;;   (/Users/kp/.rvm/bin/rvm-prompt))
+
 (defun rtags ()
   (interactive)
   (shell-command "rtags --recurse ."))
@@ -761,7 +909,8 @@
 (defun etags ()
   (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
-  (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
+  ;; (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
+  (shell-command "etags -a --Ruby-kinds=-f -o TAGS -R . "))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
@@ -1315,19 +1464,21 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-anonymous-login                t
       ;;       erc-auto-query                     'bury
       ;;       erc-join-buffer                    'bury
-      ;;       erc-max-buffer-size                30000
+      erc-max-buffer-size                30000
       ;;       erc-prompt-for-password            nil
       ;;       erc-join-buffer                    'buffer
       ;;       erc-command-indicator              "CMD"
       ;;       erc-echo-notices-in-current-buffer t
       ;;       erc-send-whitespace-lines          nil
+      erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
       erc-keywords '("kylpo")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu" "#chicken"))
+
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
       )
@@ -1427,7 +1578,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 
 ;;------------------------------------------------
-                                        ;== GLOBAL KEYBINDS
+;; == GLOBAL KEYBINDS
 ;;------------------------------------------------
 
 ;;-----------------------------------------------------------------------------
@@ -1533,6 +1684,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
+(global-set-key "\C-x\C-f" 'lusty-file-explorer)
                                         ;(global-set-key "\C-xs" 'flyspell-mode)
 (global-set-key "\C-xs" 'sunrise)
 (global-set-key "\C-xS" 'sunrise-cd)
@@ -1552,8 +1704,9 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
+(setq mouse-autoselect-window t) ;;focus follows mouse
 
-;; Window Navigation/Manipulation
+;; Window/Desktop Navigation/Manipulation
 (bind "C-^" 'enlarge-window)
 (bind "C-<" 'shrink-window-horizontally)
 (bind "C->" 'enlarge-window-horizontally)
@@ -1566,6 +1719,8 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "M-2") 'split-window-vertically)
 (global-set-key (kbd "M-3") 'split-window-horizontally)
 (global-set-key (kbd "M-4") 'balance-windows)
+(global-set-key (kbd "C-, r") 'my-desktop-read)
+(global-set-key (kbd "C-, s") 'my-desktop-save)
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1578,13 +1733,16 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
-(global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
-(global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
-(global-set-key (kbd "C-x SPC m") 'senny-persp/main)
-(global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
-(global-set-key (kbd "C-x SPC o") 'senny-persp/org)
-(global-set-key (kbd "C-x SPC p") 'senny-persp-last)
+;; (global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
+;; (global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
+;; (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
+;; (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
+;; (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
+;; (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
 (global-set-key "\C-w" 'tinyeat-backward)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
+
+(global-set-key (kbd "s--") 'text-scale-decrease)
+(global-set-key (kbd "s-=") 'text-scale-increase)

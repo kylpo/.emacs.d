@@ -11,4 +11,4 @@ url/
 .smex-items
 .emacs.desktop*
 .DS_Store
-
+.emacs.bmk
