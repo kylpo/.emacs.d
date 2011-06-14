@@ -273,6 +273,14 @@
           :url "https://github.com/pezra/rspec-mode.git"
           :compile "rspec-mode.el"
           :features rspec-mode)
+   (:name etags-table :type emacswiki
+          :after (lambda ()
+                   (require 'etags-table)
+                   ;; (setq tag-table-alist
+                   ;;       '(("~/.emacs.d/" . "~/.emacs.d/TAGS")
+                   ;;         ("~/projects/source/" . "~/.TAGS/projects.tags")))
+                   ;; (setq etags-table-alist tag-table-alist)
+                   (setq etags-table-search-up-depth 10)))
    (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
@@ -614,9 +622,6 @@
 (setq-default indicate-empty-lines t)
 
 
-
-
-
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
@@ -678,8 +683,11 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (set-default 'imenu-auto-rescan t)
 
-;(setq eshell-prompt-function
-;      (lambda nil (concat (eshell/pwd) (getenv "rvm-prompt") (if (= (user-uid) 0) " # " " $ "))))
+;; Eshell
+(setq eshell-cmpl-ignore-case t)
+;; (setq eshell-prompt-function
+;;      (lambda nil (concat (eshell/pwd) (eshell/rvm-prompt) (if (= (user-uid) 0) " # " " $ "))))
+
 
 (recentf-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
@@ -709,11 +717,9 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- ;; '(column-number-mode t)
  '(ecb-directories-update-speedbar t)
  '(ecb-options-version "2.40")
  '(ecb-tree-indent 2)
- ;; '(show-paren-mode t)
  '(sr-show-file-attributes nil))
 
 
@@ -722,6 +728,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(lusty-match-face ((t (:foreground "salmon"))))
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
  '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
  '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
@@ -891,6 +898,9 @@
 
 (defun eshell/emacs (tags) ;;eshell rtags alias
   (rtags --recurse .))
+
+;; (defun eshell/rvm-prompt ()
+;;   (/Users/kp/.rvm/bin/rvm-prompt))
 
 (defun rtags ()
   (interactive)
