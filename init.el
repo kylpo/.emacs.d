@@ -27,6 +27,7 @@
       )
 
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
+(push "~/.rvm/bin/rvm-prompt" exec-path)
 
 ;;------------------------------------------------
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
@@ -72,7 +73,7 @@
           (lambda ()
             (setq wg-prefix-key (kbd "C-c w"))
             (workgroups-mode t)
-            (wg-load "~/.emacs.d/workgroups/default")))
+            (setq workgroups-default-file "~/.emacs.d/workgroups/default")))
 
    rainbow-mode ;color-highlight
    ;; (:name color-theme-topfunky
@@ -158,9 +159,9 @@
        :url "http://github.com/nonsequitur/smex.git"
        :features smex
        :post-init (lambda ()
-                    (setq smex-save-file "~/.emacs.d/.smex-items")
                     (smex-initialize))
        :after (lambda ()
+                (setq smex-save-file "~/.emacs.d/.smex-items")
                 (global-set-key (kbd "M-x") 'smex)
                 (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
@@ -312,6 +313,7 @@
 (require 'redo+) ;;from elpa
 ;; (require 'cedet)
 (require 'uniquify)
+(require 'cl)
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -339,9 +341,6 @@
 
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
-
-;; (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
-;; (color-theme-topfunky)
 
 ;; (load "~/.emacs.d/colors/tlh-color-themes/color-theme-thunk1")
 
@@ -684,9 +683,28 @@
 (set-default 'imenu-auto-rescan t)
 
 ;; Eshell
+;;
 (setq eshell-cmpl-ignore-case t)
 ;; (setq eshell-prompt-function
 ;;      (lambda nil (concat (eshell/pwd) (eshell/rvm-prompt) (if (= (user-uid) 0) " # " " $ "))))
+
+;; TERM
+;;
+;; If you do use M-x term, you will notice there's line mode that acts like
+;; emacs buffers, and there's the default char mode that will send your
+;; input char-by-char, so that curses application see each of your key
+;; strokes.
+;;
+;; The default way to toggle between them is C-c C-j and C-c C-k, let's
+;; better use just one key to do the same.
+(require 'term)
+(define-key term-raw-map (kbd "C-'") 'term-line-mode)
+(define-key term-mode-map (kbd "C-'") 'term-char-mode)
+
+;; Have C-y act as usual in term-mode, to avoid C-' C-y C-'
+;; Well the real default would be C-c C-j C-y C-c C-k.
+(define-key term-raw-map (kbd "C-y") 'term-paste)
+
 
 
 (recentf-mode 1)
@@ -746,6 +764,17 @@
 ;; |   |              |     |
 (fset 'pomodoro-table
    [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
+
+(defun select-current-word ()
+  "Select the word under cursor.
+“word” here is considered any alphanumeric sequence with “_” or “-”."
+  (interactive)
+  (let (pt)
+    (skip-chars-backward "-_A-Za-z0-9")
+    (setq pt (point))
+    (skip-chars-forward "-_A-Za-z0-9")
+    (set-mark pt)
+    ))
 
 ;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
 (defvar my-desktop-session-dir
@@ -964,13 +993,13 @@
           (progn (goto-char min) (line-beginning-position))
           (progn (goto-char max) (line-end-position))))))
 
-(defun senny-ido-find-work ()
-  (interactive)
-  (let ((project-name (ido-completing-read "Work: "
-                                           (directory-files "~/Work/" nil "^[^.]"))))
-    (senny-persp project-name)
-    (find-file (ido-open-find-directory-files
-                (concat "~/Work/" project-name)))))
+;; (defun senny-ido-find-work ()
+;;   (interactive)
+;;   (let ((project-name (ido-completing-read "Work: "
+;;                                            (directory-files "~/Work/" nil "^[^.]"))))
+;;     (senny-persp project-name)
+;;     (find-file (ido-open-find-directory-files
+;;                 (concat "~/Work/" project-name)))))
 ;;TODO
 (defun ido-open-find-directory-files (directory)
   (let ((directory (concat (expand-file-name directory) "/")))
@@ -1477,7 +1506,7 @@ an .ics file that has been downloaded from Google Calendar "
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu" "#chicken"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#lubuntu" "rubyonrails"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
@@ -1500,82 +1529,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;;                                         name "SpeedBar"
 ;;                                         width 24
 ;;                                         unsplittable t))
-
-;;;; Perspective
-;; (eval-after-load 'perspective
-;;   '(progn
-;;      ;; Perspective Setup
-;;      (defmacro senny-persp (name &rest body)
-;;        `(let ((initialize (not (gethash ,name perspectives-hash)))
-;;               (current-perspective persp-curr))
-;;           (persp-switch ,name)
-;;           (when initialize ,@body)
-;;           (setq persp-last current-perspective)))
-
-;;      (defun persp-format-name (name)
-;;        "Format the perspective name given by NAME for display in `persp-modestring'."
-;;        (let ((string-name (format "%s" name)))
-;;          (if (equal name (persp-name persp-curr))
-;;              (propertize string-name 'face 'persp-selected-face))))
-
-;;      (defun persp-update-modestring ()
-;;        "Update `persp-modestring' to reflect the current perspectives.
-;; Has no effect when `persp-show-modestring' is nil."
-;;        (when persp-show-modestring
-;;          (setq persp-modestring
-;;                (append '("[")
-;;                        (persp-intersperse (mapcar 'persp-format-name (persp-names)) "")
-;;                        '("]")))))
-
-;;      ;; Perspective Defuns
-;;      (defun senny-persp-last ()
-;;        (interactive)
-;;        (persp-switch (persp-name persp-last)))
-
-
-;;;; Perspective Definitions
-     ;; (defun senny-persp/jabber ()
-     ;;   (interactive)
-     ;;   (senny-persp "@Jabber"
-     ;;                (jabber-connect-all)
-     ;;                (call-interactively 'jabber-display-roster)
-     ;;                (switch-to-buffer jabber-roster-buffer)))
-
-     ;; (defun senny-persp/irc ()
-     ;;   (interactive)
-     ;;   (senny-persp "@IRC"
-     ;;                (djcb-erc-start-or-switch)
-     ;;                ;; (dolist (channel '("emacs" "ruby" "cucumber"))
-     ;;                ;;   (erc-join-channel channel))
-     ;;                ))
-
-     ;; (defun senny-persp/terminal ()
-     ;;   (interactive)
-     ;;   (senny-persp "@terminal"
-     ;;                (multi-term-next)
-     ;;                (jone-term-binding-fix)))
-
-     ;; (defun senny-persp/emacs ()
-     ;;   (interactive)
-     ;;   (senny-persp "@Emacs"))
-
-     ;; (defun senny-persp/org ()
-     ;;   (interactive)
-     ;;   (senny-persp "@org"
-     ;;                (find-file (first org-agenda-files))
-     ;;                (find-file "~/Dropbox/doc/ci.org")
-     ;;                (org-agenda-list 1)))
-
-     ;; (defun senny-persp/koans ()
-     ;;   (interactive)
-     ;;   (senny-persp "@koans"
-     ;;                (find-file ("~/Dropbox/koans/"))))
-
-     ;; (defun senny-persp/main ()
-     ;;   (interactive)
-     ;;   (senny-persp "main"))
-     ;; ))
-
 
 ;;------------------------------------------------
 ;; == GLOBAL KEYBINDS
@@ -1626,13 +1579,13 @@ an .ics file that has been downloaded from Google Calendar "
                                         ;(bind "<f6> d" 'color-theme-wombat)
                                         ;(bind "<f6> l" 'color-theme-active)
                                         ;(bind "<f6> n" 'linum-mode)
-(global-set-key (kbd "<f6> e") 'senny-persp/emacs)
-(global-set-key (kbd "<f6> t") 'senny-persp/terminal)
-(global-set-key (kbd "<f6> m") 'senny-persp/main)
-(global-set-key (kbd "<f6> i") 'senny-persp/irc)
-(global-set-key (kbd "<f6> o") 'senny-persp/org)
-(global-set-key (kbd "<f6> s") 'persp-switch)
-(global-set-key (kbd "<f6> p") 'senny-persp-last)
+;; (global-set-key (kbd "<f6> e") 'senny-persp/emacs)
+;; (global-set-key (kbd "<f6> t") 'senny-persp/terminal)
+;; (global-set-key (kbd "<f6> m") 'senny-persp/main)
+;; (global-set-key (kbd "<f6> i") 'senny-persp/irc)
+;; (global-set-key (kbd "<f6> o") 'senny-persp/org)
+;; (global-set-key (kbd "<f6> s") 'persp-switch)
+;; (global-set-key (kbd "<f6> p") 'senny-persp-last)
 
 ;;-----------------------------------------------------------------------------
 ;; F9: Emacs programs
