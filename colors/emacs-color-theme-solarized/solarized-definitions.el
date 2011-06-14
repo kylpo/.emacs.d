@@ -65,7 +65,7 @@ will use the 256 degraded color mode."
            (let ((index (if window-system
                             (if solarized-degrade
                                 3
-			      2)
+			      1)
 			  (if (= solarized-termcolors 256)
 			      3
 			    4))))
