@@ -47,7 +47,7 @@
       '(("original" . "http://tromey.com/elpa/")
         ("gnu" . "http://elpa.gnu.org/packages/")
         ("marmalade" . "http://marmalade-repo.org/packages/")
-        ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
+        ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
         ))
 
 (if (require 'el-get nil t)
@@ -69,10 +69,10 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   (:name multi-term
-          :after (lambda ()
-                   (multi-term-keystroke-setup)
-                   (setq multi-term-program "/bin/bash")))
+   ;; (:name multi-term
+   ;;        :after (lambda ()
+   ;;                 (multi-term-keystroke-setup)
+   ;;                 (setq multi-term-program "/bin/bash")))
    ;; (:name workgroups :after ;disabled b/c using tmux now
    ;;        (lambda ()
    ;;          (setq wg-prefix-key (kbd "C-c w"))
@@ -138,12 +138,12 @@
                    (global-set-key (kbd "<C-S-left>") 'buf-move-left)
                    (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
    ;;http://emacs-fu.blogspot.com/2010/07/navigating-through-files-and-buffers.html
-   (:name lusty-explorer
-          :type git
-          :url "git://github.com/sjbach/lusty-emacs.git"
-          :features lusty-explorer
-          :after (lambda ()
-                   (require 'lusty-explorer)))
+   ;; (:name lusty-explorer
+   ;;        :type git
+   ;;        :url "git://github.com/sjbach/lusty-emacs.git"
+   ;;        :features lusty-explorer
+   ;;        :after (lambda ()
+   ;;                 (require 'lusty-explorer)))
    (:name dot-mode
           :type git
           :url "https://github.com/emacsmirror/dot-mode.git"
@@ -660,14 +660,14 @@
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
       ;; ido-show-dot-for-dired t
-      ;; ido-everywhere t ;use for many file dialogs
+      ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
       ;; ido-max-prospects 10
       )
 ;; (ido-mode 'both) ; User ido mode for both buffers and files
-(ido-mode 'buffer)
+(ido-mode 'both)
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -1636,7 +1636,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
-(global-set-key "\C-x\C-f" 'lusty-file-explorer)
+;; (global-set-key "\C-x\C-f" 'lusty-file-explorer)
                                         ;(global-set-key "\C-xs" 'flyspell-mode)
 (global-set-key "\C-xs" 'sunrise)
 (global-set-key "\C-xS" 'sunrise-cd)
@@ -1693,11 +1693,12 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
-(global-set-key "\C-w" 'tinyeat-backward)
+;; (global-set-key "\C-w" 'tinyeat-backward)
+(global-set-key "\C-w" 'kill-word)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
 
 (global-set-key (kbd "s--") 'text-scale-decrease)
 (global-set-key (kbd "s-=") 'text-scale-increase)
 
-(global-set-key (kbd "s-n") 'wg-switch-left)
-(global-set-key (kbd "s-p") 'wg-switch-left)
+;; (global-set-key (kbd "s-n") 'wg-switch-left)
+;; (global-set-key (kbd "s-p") 'wg-switch-left)
