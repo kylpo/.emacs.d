@@ -27,6 +27,7 @@
       )
 
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
+(push "~/.rvm/bin/rvm-prompt" exec-path)
 
 ;;------------------------------------------------
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
@@ -46,7 +47,7 @@
       '(("original" . "http://tromey.com/elpa/")
         ("gnu" . "http://elpa.gnu.org/packages/")
         ("marmalade" . "http://marmalade-repo.org/packages/")
-        ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
+        ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
         ))
 
 (if (require 'el-get nil t)
@@ -68,11 +69,16 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   (:name workgroups :after
-          (lambda ()
-            (setq wg-prefix-key (kbd "C-c w"))
-            (workgroups-mode t)
-            (wg-load "~/.emacs.d/workgroups/default")))
+   ;; (:name multi-term
+   ;;        :after (lambda ()
+   ;;                 (multi-term-keystroke-setup)
+   ;;                 (setq multi-term-program "/bin/bash")))
+   ;; (:name workgroups :after ;disabled b/c using tmux now
+   ;;        (lambda ()
+   ;;          (setq wg-prefix-key (kbd "C-c w"))
+   ;;          (workgroups-mode t)
+   ;;          (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+   ;;          (wg-load "~/.emacs.d/workgroups/default")))
 
    rainbow-mode ;color-highlight
    ;; (:name color-theme-topfunky
@@ -132,12 +138,12 @@
                    (global-set-key (kbd "<C-S-left>") 'buf-move-left)
                    (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
    ;;http://emacs-fu.blogspot.com/2010/07/navigating-through-files-and-buffers.html
-   (:name lusty-explorer
-          :type git
-          :url "git://github.com/sjbach/lusty-emacs.git"
-          :features lusty-explorer
-          :after (lambda ()
-                   (require 'lusty-explorer)))
+   ;; (:name lusty-explorer
+   ;;        :type git
+   ;;        :url "git://github.com/sjbach/lusty-emacs.git"
+   ;;        :features lusty-explorer
+   ;;        :after (lambda ()
+   ;;                 (require 'lusty-explorer)))
    (:name dot-mode
           :type git
           :url "https://github.com/emacsmirror/dot-mode.git"
@@ -158,9 +164,9 @@
        :url "http://github.com/nonsequitur/smex.git"
        :features smex
        :post-init (lambda ()
-                    (setq smex-save-file "~/.emacs.d/.smex-items")
                     (smex-initialize))
        :after (lambda ()
+                (setq smex-save-file "~/.emacs.d/.smex-items")
                 (global-set-key (kbd "M-x") 'smex)
                 (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
@@ -266,7 +272,7 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   ruby-end ;necessary to place after ruby-mode
+   ;; ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    (:name senny-rspec-mode
           :type git
@@ -312,6 +318,7 @@
 (require 'redo+) ;;from elpa
 ;; (require 'cedet)
 (require 'uniquify)
+(require 'cl)
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -339,9 +346,6 @@
 
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
-
-;; (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
-;; (color-theme-topfunky)
 
 ;; (load "~/.emacs.d/colors/tlh-color-themes/color-theme-thunk1")
 
@@ -568,13 +572,6 @@
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
-;;-----WORKGROUPS-----
-;; (setq wg-prefix-key (kbd "C-c w"))
-;; (workgroups-mode t)
-;; (wg-load "~/.emacs.d/workgroups/default")
-;; (setq workgroups-default-file "~/.emacs.d/workgroups/")
-
-
 ;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
 ;; Automatically save and restore sessions
 ;; (setq desktop-dirname             "~/.emacs.d/"
@@ -663,13 +660,14 @@
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
       ;; ido-show-dot-for-dired t
-      ;; ido-everywhere t ;use for many file dialogs
+      ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
-      ido-max-prospects 10)
+      ;; ido-max-prospects 10
+      )
 ;; (ido-mode 'both) ; User ido mode for both buffers and files
-(ido-mode 'buffer)
+(ido-mode 'both)
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -684,9 +682,28 @@
 (set-default 'imenu-auto-rescan t)
 
 ;; Eshell
+;;
 (setq eshell-cmpl-ignore-case t)
 ;; (setq eshell-prompt-function
 ;;      (lambda nil (concat (eshell/pwd) (eshell/rvm-prompt) (if (= (user-uid) 0) " # " " $ "))))
+
+;; TERM
+;;
+;; If you do use M-x term, you will notice there's line mode that acts like
+;; emacs buffers, and there's the default char mode that will send your
+;; input char-by-char, so that curses application see each of your key
+;; strokes.
+;;
+;; The default way to toggle between them is C-c C-j and C-c C-k, let's
+;; better use just one key to do the same.
+(require 'term)
+(define-key term-raw-map (kbd "C-'") 'term-line-mode)
+(define-key term-mode-map (kbd "C-'") 'term-char-mode)
+
+;; Have C-y act as usual in term-mode, to avoid C-' C-y C-'
+;; Well the real default would be C-c C-j C-y C-c C-k.
+(define-key term-raw-map (kbd "C-y") 'term-paste)
+
 
 
 (recentf-mode 1)
@@ -746,6 +763,17 @@
 ;; |   |              |     |
 (fset 'pomodoro-table
    [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
+
+(defun select-current-word ()
+  "Select the word under cursor.
+“word” here is considered any alphanumeric sequence with “_” or “-”."
+  (interactive)
+  (let (pt)
+    (skip-chars-backward "-_A-Za-z0-9")
+    (setq pt (point))
+    (skip-chars-forward "-_A-Za-z0-9")
+    (set-mark pt)
+    ))
 
 ;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
 (defvar my-desktop-session-dir
@@ -964,13 +992,13 @@
           (progn (goto-char min) (line-beginning-position))
           (progn (goto-char max) (line-end-position))))))
 
-(defun senny-ido-find-work ()
-  (interactive)
-  (let ((project-name (ido-completing-read "Work: "
-                                           (directory-files "~/Work/" nil "^[^.]"))))
-    (senny-persp project-name)
-    (find-file (ido-open-find-directory-files
-                (concat "~/Work/" project-name)))))
+;; (defun senny-ido-find-work ()
+;;   (interactive)
+;;   (let ((project-name (ido-completing-read "Work: "
+;;                                            (directory-files "~/Work/" nil "^[^.]"))))
+;;     (senny-persp project-name)
+;;     (find-file (ido-open-find-directory-files
+;;                 (concat "~/Work/" project-name)))))
 ;;TODO
 (defun ido-open-find-directory-files (directory)
   (let ((directory (concat (expand-file-name directory) "/")))
@@ -1472,12 +1500,12 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-send-whitespace-lines          nil
       erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-      erc-keywords '("kylpo")
+      erc-keywords '("kylpo" "technomancy")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#ruby" "#rails" "#lxde" "#lubuntu" "#chicken"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#lubuntu" "RubyOnRails"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
@@ -1485,8 +1513,8 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****SPEEDBAR*****
 ;; (setq speedbar-use-imenu-flag 'nil)
-(setq speedbar-fetch-etags-command "/usr/bin/ctags")
-(setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
+;; (setq speedbar-fetch-etags-command "/usr/bin/ctags")
+;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
 
 ;;Setup speedbar, an additional frame for viewing source files
 ;; (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
@@ -1500,82 +1528,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;;                                         name "SpeedBar"
 ;;                                         width 24
 ;;                                         unsplittable t))
-
-;;;; Perspective
-;; (eval-after-load 'perspective
-;;   '(progn
-;;      ;; Perspective Setup
-;;      (defmacro senny-persp (name &rest body)
-;;        `(let ((initialize (not (gethash ,name perspectives-hash)))
-;;               (current-perspective persp-curr))
-;;           (persp-switch ,name)
-;;           (when initialize ,@body)
-;;           (setq persp-last current-perspective)))
-
-;;      (defun persp-format-name (name)
-;;        "Format the perspective name given by NAME for display in `persp-modestring'."
-;;        (let ((string-name (format "%s" name)))
-;;          (if (equal name (persp-name persp-curr))
-;;              (propertize string-name 'face 'persp-selected-face))))
-
-;;      (defun persp-update-modestring ()
-;;        "Update `persp-modestring' to reflect the current perspectives.
-;; Has no effect when `persp-show-modestring' is nil."
-;;        (when persp-show-modestring
-;;          (setq persp-modestring
-;;                (append '("[")
-;;                        (persp-intersperse (mapcar 'persp-format-name (persp-names)) "")
-;;                        '("]")))))
-
-;;      ;; Perspective Defuns
-;;      (defun senny-persp-last ()
-;;        (interactive)
-;;        (persp-switch (persp-name persp-last)))
-
-
-;;;; Perspective Definitions
-     ;; (defun senny-persp/jabber ()
-     ;;   (interactive)
-     ;;   (senny-persp "@Jabber"
-     ;;                (jabber-connect-all)
-     ;;                (call-interactively 'jabber-display-roster)
-     ;;                (switch-to-buffer jabber-roster-buffer)))
-
-     ;; (defun senny-persp/irc ()
-     ;;   (interactive)
-     ;;   (senny-persp "@IRC"
-     ;;                (djcb-erc-start-or-switch)
-     ;;                ;; (dolist (channel '("emacs" "ruby" "cucumber"))
-     ;;                ;;   (erc-join-channel channel))
-     ;;                ))
-
-     ;; (defun senny-persp/terminal ()
-     ;;   (interactive)
-     ;;   (senny-persp "@terminal"
-     ;;                (multi-term-next)
-     ;;                (jone-term-binding-fix)))
-
-     ;; (defun senny-persp/emacs ()
-     ;;   (interactive)
-     ;;   (senny-persp "@Emacs"))
-
-     ;; (defun senny-persp/org ()
-     ;;   (interactive)
-     ;;   (senny-persp "@org"
-     ;;                (find-file (first org-agenda-files))
-     ;;                (find-file "~/Dropbox/doc/ci.org")
-     ;;                (org-agenda-list 1)))
-
-     ;; (defun senny-persp/koans ()
-     ;;   (interactive)
-     ;;   (senny-persp "@koans"
-     ;;                (find-file ("~/Dropbox/koans/"))))
-
-     ;; (defun senny-persp/main ()
-     ;;   (interactive)
-     ;;   (senny-persp "main"))
-     ;; ))
-
 
 ;;------------------------------------------------
 ;; == GLOBAL KEYBINDS
@@ -1626,13 +1578,13 @@ an .ics file that has been downloaded from Google Calendar "
                                         ;(bind "<f6> d" 'color-theme-wombat)
                                         ;(bind "<f6> l" 'color-theme-active)
                                         ;(bind "<f6> n" 'linum-mode)
-(global-set-key (kbd "<f6> e") 'senny-persp/emacs)
-(global-set-key (kbd "<f6> t") 'senny-persp/terminal)
-(global-set-key (kbd "<f6> m") 'senny-persp/main)
-(global-set-key (kbd "<f6> i") 'senny-persp/irc)
-(global-set-key (kbd "<f6> o") 'senny-persp/org)
-(global-set-key (kbd "<f6> s") 'persp-switch)
-(global-set-key (kbd "<f6> p") 'senny-persp-last)
+;; (global-set-key (kbd "<f6> e") 'senny-persp/emacs)
+;; (global-set-key (kbd "<f6> t") 'senny-persp/terminal)
+;; (global-set-key (kbd "<f6> m") 'senny-persp/main)
+;; (global-set-key (kbd "<f6> i") 'senny-persp/irc)
+;; (global-set-key (kbd "<f6> o") 'senny-persp/org)
+;; (global-set-key (kbd "<f6> s") 'persp-switch)
+;; (global-set-key (kbd "<f6> p") 'senny-persp-last)
 
 ;;-----------------------------------------------------------------------------
 ;; F9: Emacs programs
@@ -1684,7 +1636,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
-(global-set-key "\C-x\C-f" 'lusty-file-explorer)
+;; (global-set-key "\C-x\C-f" 'lusty-file-explorer)
                                         ;(global-set-key "\C-xs" 'flyspell-mode)
 (global-set-key "\C-xs" 'sunrise)
 (global-set-key "\C-xS" 'sunrise-cd)
@@ -1741,8 +1693,12 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
-(global-set-key "\C-w" 'tinyeat-backward)
+;; (global-set-key "\C-w" 'tinyeat-backward)
+(global-set-key "\C-w" 'kill-word)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
 
 (global-set-key (kbd "s--") 'text-scale-decrease)
 (global-set-key (kbd "s-=") 'text-scale-increase)
+
+;; (global-set-key (kbd "s-n") 'wg-switch-left)
+;; (global-set-key (kbd "s-p") 'wg-switch-left)
