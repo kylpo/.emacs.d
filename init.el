@@ -69,11 +69,16 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   (:name workgroups :after
-          (lambda ()
-            (setq wg-prefix-key (kbd "C-c w"))
-            (workgroups-mode t)
-            (setq workgroups-default-file "~/.emacs.d/workgroups/default")))
+   (:name multi-term
+          :after (lambda ()
+                   (multi-term-keystroke-setup)
+                   (setq multi-term-program "/bin/bash")))
+   ;; (:name workgroups :after ;disabled b/c using tmux now
+   ;;        (lambda ()
+   ;;          (setq wg-prefix-key (kbd "C-c w"))
+   ;;          (workgroups-mode t)
+   ;;          (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+   ;;          (wg-load "~/.emacs.d/workgroups/default")))
 
    rainbow-mode ;color-highlight
    ;; (:name color-theme-topfunky
@@ -267,7 +272,7 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   ruby-end ;necessary to place after ruby-mode
+   ;; ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    (:name senny-rspec-mode
           :type git
@@ -567,13 +572,6 @@
 ;; (yas/load-directory
  ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
-;;-----WORKGROUPS-----
-;; (setq wg-prefix-key (kbd "C-c w"))
-;; (workgroups-mode t)
-;; (wg-load "~/.emacs.d/workgroups/default")
-;; (setq workgroups-default-file "~/.emacs.d/workgroups/")
-
-
 ;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
 ;; Automatically save and restore sessions
 ;; (setq desktop-dirname             "~/.emacs.d/"
@@ -666,7 +664,8 @@
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
-      ido-max-prospects 10)
+      ;; ido-max-prospects 10
+      )
 ;; (ido-mode 'both) ; User ido mode for both buffers and files
 (ido-mode 'buffer)
 
@@ -1501,12 +1500,12 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-send-whitespace-lines          nil
       erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-      erc-keywords '("kylpo")
+      erc-keywords '("kylpo" "technomancy")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#lubuntu" "rubyonrails"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#lubuntu" "RubyOnRails"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
@@ -1514,8 +1513,8 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;*****SPEEDBAR*****
 ;; (setq speedbar-use-imenu-flag 'nil)
-(setq speedbar-fetch-etags-command "/usr/bin/ctags")
-(setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
+;; (setq speedbar-fetch-etags-command "/usr/bin/ctags")
+;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
 
 ;;Setup speedbar, an additional frame for viewing source files
 ;; (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
@@ -1699,3 +1698,6 @@ an .ics file that has been downloaded from Google Calendar "
 
 (global-set-key (kbd "s--") 'text-scale-decrease)
 (global-set-key (kbd "s-=") 'text-scale-increase)
+
+(global-set-key (kbd "s-n") 'wg-switch-left)
+(global-set-key (kbd "s-p") 'wg-switch-left)
