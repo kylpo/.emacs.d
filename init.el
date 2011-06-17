@@ -1,6 +1,6 @@
 (server-start)
 ;;Done at start to load faster
-;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
@@ -164,9 +164,9 @@
        :url "http://github.com/nonsequitur/smex.git"
        :features smex
        :post-init (lambda ()
+                    (setq smex-save-file "~/.emacs.d/.smex-items")
                     (smex-initialize))
        :after (lambda ()
-                (setq smex-save-file "~/.emacs.d/.smex-items")
                 (global-set-key (kbd "M-x") 'smex)
                 (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
@@ -1685,8 +1685,8 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
-;; (global-set-key (kbd "C-x SPC e") 'senny-persp/emacs)
-;; (global-set-key (kbd "C-x SPC t") 'senny-persp/terminal)
+(global-set-key (kbd "C-x SPC s") 'my-desktop-save)
+(global-set-key (kbd "C-x SPC r") 'my-desktop-read)
 ;; (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
 ;; (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
 ;; (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
@@ -1694,7 +1694,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
 ;; (global-set-key "\C-w" 'tinyeat-backward)
-(global-set-key "\C-w" 'kill-word)
+(global-set-key "\C-w" 'backward-kill-word)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
 
 (global-set-key (kbd "s--") 'text-scale-decrease)

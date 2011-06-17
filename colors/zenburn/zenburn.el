@@ -257,7 +257,7 @@
 
      '(trailing-whitespace ((t (:inherit font-lock-warning))))
      ;; '(highlight ((t (:underline t))))
-     '(highlight ((t (:background "#3c3c3c"))))
+     '(highlight ((t (:background "#2b2b2b"))))
      '(paren ((t (:inherit zenburn-lowlight-1))))
      ;; '(paren ((t (:foreground "pale green" :weight bold))))
      '(show-paren-mismatch ((t (:inherit font-lock-warning))))
