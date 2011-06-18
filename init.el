@@ -1,8 +1,9 @@
-(server-start)
 ;;Done at start to load faster
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+(server-start)
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
@@ -105,12 +106,12 @@
    color-theme
    wrap-region
    yari
-  (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
-         :features ecb
-         :post-init (lambda ()
-                      (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
-         :after (lambda ()
-                  (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
+  ;; (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+  ;;        :features ecb
+  ;;        :post-init (lambda ()
+  ;;                     (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+  ;;        :after (lambda ()
+  ;;                 (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
   (:name auto-complete :after
           (lambda ()
             ;; (setq ac-auto-start nil
@@ -704,7 +705,7 @@
 ;; Well the real default would be C-c C-j C-y C-c C-k.
 (define-key term-raw-map (kbd "C-y") 'term-paste)
 
-
+(setq whitespace-style '(trailing lines space-before-tab indentation space-after-tab))
 
 (recentf-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
@@ -726,17 +727,25 @@
 
 ;;ECB
 ;; (setq ecb-tree-buffer-style 'ascii-guides)
-;; (setq ecb-options-version "2.40")
-(setq ecb-tip-of-the-day nil) ;inhibit startup message
+;; (setq ecb-tip-of-the-day nil) ;inhibit startup message
+
+;; (setq hippie-expand-try-functions-list ‘(try-expand-dabbrev
+;;                                          try-expand-dabbrev-all-buffers
+;;                                          try-expand-dabbrev-from-kill
+;;                                          try-complete-file-name-partially
+;;                                          try-complete-file-name
+;;                                          try-complete-lisp-symbol-partially
+;;                                          try-complete-lisp-symbol
+;;                                          try-expand-whole-kill))
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(ecb-directories-update-speedbar t)
- '(ecb-options-version "2.40")
- '(ecb-tree-indent 2)
+ ;; '(ecb-directories-update-speedbar t)
+ ;; '(ecb-options-version "2.40")
+ ;; '(ecb-tree-indent 2)
  '(sr-show-file-attributes nil))
 
 
@@ -753,6 +762,33 @@
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+
+
+;; I-search with initial contents
+;; from http://platypope.org/blog/2007/8/5/a-compendium-of-awesomeness
+(defvar isearch-initial-string nil)
+
+(defun isearch-set-initial-string ()
+  (remove-hook 'isearch-mode-hook 'isearch-set-initial-string)
+  (setq isearch-string isearch-initial-string)
+  (isearch-search-and-update))
+
+(defun isearch-forward-at-point (&optional regexp-p no-recursive-edit)
+  "Interactive search forward for the symbol at point."
+  (interactive "P\np")
+  (if regexp-p (isearch-forward regexp-p no-recursive-edit)
+    (let* ((end (progn (skip-syntax-forward "w_") (point)))
+           (begin (progn (skip-syntax-backward "w_") (point))))
+      (if (eq begin end)
+          (isearch-forward regexp-p no-recursive-edit)
+        (setq isearch-initial-string (buffer-substring begin end))
+        (add-hook 'isearch-mode-hook 'isearch-set-initial-string)
+        (isearch-forward regexp-p no-recursive-edit)))))
+
+(defun hotkeys()
+  (interactive)
+  (find-file "~/spideroak/notes/emacs/hotkeys.org")
+  )
 
 ;; Emacs macro to add a pomodoro item
 (fset 'pomodoro
@@ -1615,6 +1651,7 @@ an .ics file that has been downloaded from Google Calendar "
 ;;---------------------------------------------------------
 (global-set-key (kbd "C-c p") 'planner)
 (global-set-key (kbd "C-c j") 'journal)
+(global-set-key (kbd "C-c h") 'hotkeys)
 (global-set-key [f7] 'ansi-term)
 (global-set-key [f8] 'org-agenda-clock-cancel)
 (global-set-key [f9] 'org-agenda-clock-in)
@@ -1702,3 +1739,4 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;; (global-set-key (kbd "s-n") 'wg-switch-left)
 ;; (global-set-key (kbd "s-p") 'wg-switch-left)
+(global-set-key (kbd "M-s #") 'isearch-forward-at-point)
