@@ -1516,7 +1516,32 @@ an .ics file that has been downloaded from Google Calendar "
     (shell-command-to-string
      (format "notify-send -u critical '%s says:' '%s'" nick msg))))
 
-(add-hook 'erc-text-matched-hook 'call-libnotify)
+(defvar growlnotify-command (executable-find "growlnotify") "The path to growlnotify")
+
+(defun growl (title message)
+    "Shows a message through the growl notification system using
+ `growlnotify-command` as the program."
+      (flet ((encfn (s) (encode-coding-string s (keyboard-coding-system))) )
+            (let* ((process (start-process "growlnotify" nil
+                                                                              growlnotify-command
+                                                                                                                 (encfn title)
+                                                                                                                                                    "-a" "Emacs"
+                                                                                                                                                                                       "-n" "Emacs")))
+                    (process-send-string process (encfn message))
+                          (process-send-string process "\n")
+                                (process-send-eof process)))
+        t)
+
+(defun my-erc-hook (match-type nick message)
+    "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
+      (unless (posix-string-match "^\\** *Users on #" message)
+            (growl
+                  (concat "ERC: name mentioned on: " (buffer-name (current-buffer)))
+                       message
+                            )))
+
+(add-hook 'erc-text-matched-hook 'my-erc-hook)
+;; (add-hook 'erc-text-matched-hook 'call-libnotify)
 
 (setq erc-server "irc.freenode.net"
       erc-port 6667
@@ -1536,12 +1561,13 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-send-whitespace-lines          nil
       erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-      erc-keywords '("kylpo" "technomancy")
+      erc-keywords '("ruby" "rails" "erc" "tmux" "screen")
+      erc-pals '("technomancy")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#lubuntu" "RubyOnRails"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#emacs"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
