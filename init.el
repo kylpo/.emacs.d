@@ -74,12 +74,13 @@
    ;;        :after (lambda ()
    ;;                 (multi-term-keystroke-setup)
    ;;                 (setq multi-term-program "/bin/bash")))
-   ;; (:name workgroups :after ;disabled b/c using tmux now
-   ;;        (lambda ()
-   ;;          (setq wg-prefix-key (kbd "C-c w"))
-   ;;          (workgroups-mode t)
-   ;;          (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-   ;;          (wg-load "~/.emacs.d/workgroups/default")))
+   (:name workgroups :after ;disabled b/c using tmux now
+          (lambda ()
+            (setq wg-prefix-key (kbd "C-c w"))
+            (workgroups-mode t)
+            (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+            ;; (wg-load "~/.emacs.d/workgroups/default")
+            ))
 
    rainbow-mode ;color-highlight
    ;; (:name color-theme-topfunky
@@ -665,7 +666,7 @@
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
-      ;; ido-max-prospects 10
+      ido-max-prospects 20
       )
 ;; (ido-mode 'both) ; User ido mode for both buffers and files
 (ido-mode 'both)
@@ -673,10 +674,11 @@
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
 
-;; Display ido results vertically, rather than horizontally
-;; (setq ido-decorations (quote ("" "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-;; (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
-;; (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
+ ;; Display ido results vertically, rather than horizontally
+(setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+
+(defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
+(add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
 
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
