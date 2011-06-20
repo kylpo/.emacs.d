@@ -7,6 +7,9 @@
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
+
+;;http://www.hollenback.net/index.php/EmacsModeLine
+;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 (setq-default mode-line-format
       (list "-"
       'mode-line-mule-info
@@ -434,72 +437,6 @@
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
 
-;;http://www.hollenback.net/index.php/EmacsModeLine
-;; Set the modeline to tell me the filename, hostname, etc..
-;; (setq-default mode-line-format
-;;       (list "-"
-;;             ; */% indicators if the file has been modified
-;;             'mode-line-mule-info
-;;             'mode-line-modified
-;;             ;; "--"
-;;             ; the name of the buffer (i.e. filename)
-;;             ; note this gets automatically highlighted
-;;             'mode-line-frame-identification
-;;             ;; 'mode-line-buffer-identification
-;;             ;; "--"
-;;             "%b  "
-;;             (getenv "HOST")
-;;             ":"
-;;             'default-directory
-;;             "   "
-;;             ;; 'global-mode-string
-;;             ;; "   %[("
-
-;;             ; major and minor modes in effect
-;;             'mode-line-modes
-;;             ; if which-func-mode is in effect, display which
-;;             ; function we are currently in.
-;;             '(which-func-mode ("" which-func-format "--"))
-;;             ; line, column, file %
-;;             'mode-line-position
-;;             "--"
-;;             ; if vc-mode is in effect, display version control
-;;             ; info here
-;;             `(vc-mode vc-mode)
-;;             "--"
-;;             ; hostname
-;;             'system-name
-;;             ; dashes sufficient to fill rest of modeline.
-;;             "-%-"
-;;             )
-;; )
-
-     ;; (setq-default mode-line-format
-     ;;   (list "-"
-     ;;    'mode-line-mule-info
-     ;;    'mode-line-modified
-     ;;    'mode-line-frame-identification
-     ;;    "%b--"
-     ;;    ;; Note that this is evaluated while making the list.
-     ;;    ;; It makes a mode-line construct which is just a string.
-     ;;    (getenv "HOST")
-     ;;    ":"
-     ;;    'default-directory
-     ;;    "   "
-     ;;    'global-mode-string
-     ;;    "   %[("
-     ;;    '(:eval (mode-line-mode-name))
-     ;;    'mode-line-process
-     ;;    'minor-mode-alist
-     ;;    "%n"
-     ;;    ")%]--"
-     ;;    '(which-func-mode ("" which-func-format "--"))
-     ;;    '(line-number-mode "L%l--")
-     ;;    '(column-number-mode "C%c--")
-     ;;    '(-3 "%p")
-     ;;    "-%-"))
-
-;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 
 
 ;; This is a little hacky since VC doesn't support git add internally
@@ -533,7 +470,7 @@
                  '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
        (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color))
 
-     ;; TODO: submit these via M-x report-emacs-bug
+     ;; TODO submit these via M-x report-emacs-bug
      (add-to-list 'eshell-visual-commands "ssh")
      (add-to-list 'eshell-visual-commands "tail")
      (add-to-list 'eshell-command-completions-alist
@@ -714,9 +651,9 @@
 (setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
 (setq-default indent-tabs-mode nil) ; Dont indent with tabs
 (setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
-(setq scroll-step 1) ; Only scroll down 1 line at a time
-(setq scroll-conservatively 10) ; make scroll less jumpy
-(setq scroll-margin 4) ; scroll will start b4 getting to top/bottom of page
+;; (setq scroll-step 1) ; Only scroll down 1 line at a time
+;; (setq scroll-conservatively 10) ; make scroll less jumpy
+;; (setq scroll-margin 4) ; scroll will start b4 getting to top/bottom of page
 
 ;; activate disabled features
 (put 'narrow-to-region 'disabled nil)
@@ -739,6 +676,8 @@
 ;;                                          try-complete-lisp-symbol-partially
 ;;                                          try-complete-lisp-symbol
 ;;                                          try-expand-whole-kill))
+
+(font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -1145,6 +1084,7 @@ an .ics file that has been downloaded from Google Calendar "
 (defalias 'iwb 'indent-whole-buffer)
 
 (defun add-watchwords ()
+  (interactive)
   (font-lock-add-keywords
    nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
           1 font-lock-warning-face t))))
@@ -1156,7 +1096,6 @@ an .ics file that has been downloaded from Google Calendar "
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
-
 
 (defun cleanup-buffer ()
   "Perform a bunch of operations on the whitespace content of a buffer."
@@ -1519,31 +1458,30 @@ an .ics file that has been downloaded from Google Calendar "
     (shell-command-to-string
      (format "notify-send -u critical '%s says:' '%s'" nick msg))))
 
-(defvar growlnotify-command (executable-find "growlnotify") "The path to growlnotify")
+;; (defvar growlnotify-command (executable-find "growlnotify") "The path to growlnotify")
 
-(defun growl (title message)
-    "Shows a message through the growl notification system using
- `growlnotify-command` as the program."
-      (flet ((encfn (s) (encode-coding-string s (keyboard-coding-system))) )
-            (let* ((process (start-process "growlnotify" nil
-                                                                              growlnotify-command
-                                                                                                                 (encfn title)
-                                                                                                                                                    "-a" "Emacs"
-                                                                                                                                                                                       "-n" "Emacs")))
-                    (process-send-string process (encfn message))
-                          (process-send-string process "\n")
-                                (process-send-eof process)))
-        t)
+;; (defun growl (title message)
+;;   "Shows a message through the growl notification system using
+;;  `growlnotify-command` as the program."
+;;       (flet ((encfn (s) (encode-coding-string s (keyboard-coding-system))) )
+;;             (let* ((process (start-process "growlnotify" nil
+;;                                            growlnotify-command
+;;                                            (encfn title)
+;;                                            "-a" "Emacs"
+;;                                            "-n" "Emacs")))
+;;               (process-send-string process (encfn message))
+;;               (process-send-string process "\n")
+;;               (process-send-eof process))) t)
 
-(defun my-erc-hook (match-type nick message)
-    "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
-      (unless (posix-string-match "^\\** *Users on #" message)
-            (growl
-                  (concat "ERC: name mentioned on: " (buffer-name (current-buffer)))
-                       message
-                            )))
+;; (defun my-erc-hook (match-type nick message)
+;;     "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
+;;       (unless (posix-string-match "^\\** *Users on #" message)
+;;             (growl
+;;                   (concat "ERC: name mentioned on: " (buffer-name (current-buffer)))
+;;                        message
+;;                             )))
 
-(add-hook 'erc-text-matched-hook 'my-erc-hook)
+;; (add-hook 'erc-text-matched-hook 'my-erc-hook)
 ;; (add-hook 'erc-text-matched-hook 'call-libnotify)
 
 (setq erc-server "irc.freenode.net"
