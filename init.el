@@ -70,16 +70,16 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   ;; (:name multi-term
-   ;;        :after (lambda ()
-   ;;                 (multi-term-keystroke-setup)
-   ;;                 (setq multi-term-program "/bin/bash")))
+   (:name multi-term
+          :after (lambda ()
+                   (multi-term-keystroke-setup)
+                   (setq multi-term-program "/bin/bash")))
    (:name workgroups :after ;disabled b/c using tmux now
           (lambda ()
             (setq wg-prefix-key (kbd "C-c w"))
             (workgroups-mode t)
-            (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-            ;; (wg-load "~/.emacs.d/workgroups/default")
+            ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+            (wg-load "~/.emacs.d/workgroups/default")
             ))
 
    rainbow-mode ;color-highlight
@@ -756,10 +756,11 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(lusty-match-face ((t (:foreground "salmon"))))
+ ;; '(lusty-match-face ((t (:foreground "salmon"))))
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
- '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
- '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
+ ;; '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
+ ;; '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic))))
+ )
 
 ;;------------------------------------------------
 ;;== Custom Functions
@@ -1767,4 +1768,4 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;; (global-set-key (kbd "s-n") 'wg-switch-left)
 ;; (global-set-key (kbd "s-p") 'wg-switch-left)
-(global-set-key (kbd "M-s #") 'isearch-forward-at-point)
+(global-set-key (kbd "M-#") 'isearch-forward-at-point)
