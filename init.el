@@ -221,7 +221,7 @@
             (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
    (:name inf-ruby  :type elpa)
    (:name ruby-compilation :type elpa)
-   (:name ruby-electric :type elpa)
+   ;; (:name ruby-electric :type elpa)
    (:name ruby-mode
           :type elpa
           :after
@@ -254,9 +254,9 @@
                         (set (make-local-variable 'tab-width) 2)
                         (imenu-add-to-menubar "IMENU")
                         (local-set-key "\r" 'newline-and-indent);ret indents
-                        (require 'ruby-electric)
+                        ;; (require 'ruby-electric)
                         (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
-                        (ruby-electric-mode t)
+                        ;; (ruby-electric-mode t)
                         ))))
    (:name css-mode
           :type elpa
@@ -277,7 +277,7 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   ;; ruby-end ;necessary to place after ruby-mode
+   ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    (:name senny-rspec-mode
           :type git
