@@ -193,15 +193,6 @@
           ;; customization
           :after (lambda ()
                    (textmate-mode t)))
-  ;; (:name senny-popwin
-  ;;         :features popwin
-  ;;         :type git
-  ;;         :url "https://github.com/m2ym/popwin-el.git"
-  ;;         :load-path "."
-  ;;         :after (lambda ()
-  ;;                  (setq display-buffer-function 'popwin:display-buffer)
-  ;;                  (setq popwin:special-display-config '(("*Ido Completions*")))))
-;   (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
    (:name kylpo-org-mode
           :type git
@@ -217,7 +208,6 @@
 	  :after
           (lambda ()
             (require 'org-habit)
-;            (require 'org-capture)
             (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
    (:name inf-ruby  :type elpa)
    (:name ruby-compilation :type elpa)
@@ -285,21 +275,14 @@
           :compile "rspec-mode.el"
           :features rspec-mode)
    (:name etags-table :type emacswiki
+          :features etags-table
           :after (lambda ()
-                   (require 'etags-table)
-                   ;; (setq tag-table-alist
-                   ;;       '(("~/.emacs.d/" . "~/.emacs.d/TAGS")
-                   ;;         ("~/projects/source/" . "~/.TAGS/projects.tags")))
-                   ;; (setq etags-table-alist tag-table-alist)
+                   ;; (require 'etags-table)
                    (setq etags-table-search-up-depth 10)))
    (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
                    (setq framemove-hook-into-windmove t)
-                   ;; (global-set-key (kbd "s-j") 'fm-down-frame)
-                   ;; (global-set-key (kbd "s-k") 'fm-up-frame)
-                   ;; (global-set-key (kbd "s-h") 'fm-left-frame)
-                   ;; (global-set-key (kbd "s-l") 'fm-right-frame)
                    ))
    (:name sr-speedbar :type emacswiki ;http://www.emacswiki.org/emacs/sr-speedbar.el
           :after (lambda ()
@@ -321,7 +304,6 @@
 (require 'tinyeat)
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;; (require 'cedet)
 (require 'uniquify)
 (require 'cl)
 
@@ -335,32 +317,18 @@
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-;; CEDET
-;(load-file "~/.emacs.d/cedet-1.0/common/cedet.el")
-;; (global-ede-mode 'nil)                  ; do NOT use project manager
-
 (load "~/.emacs.d/colors/zenburn/zenburn.el")
 (color-theme-zenburn)
 ;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
 ;; (color-theme-topfunky)
-
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
 ;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
 ;; (require 'color-theme-solarized)
 ;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
-
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
-
-;; (load "~/.emacs.d/colors/tlh-color-themes/color-theme-thunk1")
-
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
-;; (load "~/.emacs.d/colors/zenburn")
-;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
-
-;; (load (concat dotfiles-dir "colors/zenburn-theme"))
-
 
 ;;------------------------------------------------
 ;; == Platform Dependencies
@@ -414,30 +382,12 @@
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
   ;;doesn't work in os x
   (setq dired-listing-switches "-lXGh --group-directories-first")
-
-  ;; sort ido filelist by mtime instead of alphabetically
-  ;; (defun ido-sort-mtime ()
-  ;;   (setq ido-temp-list
-  ;;         (sort ido-temp-list
-  ;;               (lambda (a b)
-  ;;                 (time-less-p
-  ;;                  (sixth (file-attributes (concat ido-current-directory b)))
-  ;;                  (sixth (file-attributes (concat ido-current-directory a)))))))
-  ;;   (ido-to-end  ;; move . files to end (again)
-  ;;    (delq nil (mapcar
-  ;;               (lambda (x) (and (char-equal (string-to-char x) ?.) x))
-  ;;               ido-temp-list))))
-  ;; (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
-  ;; (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
   );;end linux
  )
-
 
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
-
-
 
 ;; This is a little hacky since VC doesn't support git add internally
 (eval-after-load 'vc
@@ -481,27 +431,6 @@
 (defun eshell/cds ()
   "Change directory to the project's root."
   (eshell/cd (locate-dominating-file default-directory "src")))
-
-;; (setq-default mode-line-format
-;;       (list "-"
-;;       'mode-line-mule-info
-;;       'mode-line-modified
-;;       'mode-line-frame-identification
-;;       ;; 'mode-line-buffer-identification
-;;       "%b  "
-;;       '(getenv "HOST")
-;;       ;; ":"
-;;       ;; 'default-directory
-;;       ;; "   "
-;;       'mode-line-position
-;;       '(vc-mode vc-mode)
-;;       "   "
-;;       ;; 'mode-line-modes
-;;       '(which-func-mode ("" which-func-format "--"))
-;;       '(global-mode-string ("--" global-mode-string))
-;;       "-%-")
-;;       )
-
 
 (setq
   uniquify-buffer-name-style 'post-forward
@@ -858,9 +787,6 @@
   (interactive)
   (scroll-down (window-half-height)))
 
-   ;; (global-set-key [next] 'scroll-up-half)
-   ;; (global-set-key [prior] 'scroll-down-half)
-
 ;; kill entire word, even if in middle of word
 (defun my-kill-word ()
   (interactive)
@@ -904,9 +830,6 @@
 
 (defun eshell/emacs (tags) ;;eshell rtags alias
   (rtags --recurse .))
-
-;; (defun eshell/rvm-prompt ()
-;;   (/Users/kp/.rvm/bin/rvm-prompt))
 
 (defun rtags ()
   (interactive)
