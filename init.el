@@ -420,7 +420,6 @@
                  '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
        (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color))
 
-     ;; TODO submit these via M-x report-emacs-bug
      (add-to-list 'eshell-visual-commands "ssh")
      (add-to-list 'eshell-visual-commands "tail")
      (add-to-list 'eshell-command-completions-alist
@@ -531,11 +530,11 @@
       ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
-      ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
+      ;; ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
       ido-max-prospects 20
+      ido-confirm-unique-completion nil
       )
-;; (ido-mode 'both) ; User ido mode for both buffers and files
-(ido-mode 'both)
+(ido-mode 'both) ; User ido mode for both buffers and files
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -634,6 +633,11 @@
 ;;== Custom Functions
 ;;------------------------------------------------
 
+(defun delete-file-and-buffer ()
+    "Deletes the current file and buffer, assumes file exists"
+      (interactive)
+        (delete-file buffer-file-name)
+          (kill-buffer (buffer-name)))
 
 ;; I-search with initial contents
 ;; from http://platypope.org/blog/2007/8/5/a-compendium-of-awesomeness
@@ -831,15 +835,15 @@
 (defun eshell/emacs (tags) ;;eshell rtags alias
   (rtags --recurse .))
 
+;; (defun rtags ()
+;;   (interactive)
+;;   (shell-command "rtags --recurse ."))
+
 (defun rtags ()
   (interactive)
-  (shell-command "rtags --recurse ."))
-
-(defun etags ()
-  (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
-  ;; (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
-  (shell-command "etags -a --Ruby-kinds=-f -o TAGS -R . "))
+  (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."));"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
+  ;; (shell-command "etags -a --Ruby-kinds=f -o TAGS -R . "))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
@@ -1630,3 +1634,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "s-n") 'wg-switch-left)
 ;; (global-set-key (kbd "s-p") 'wg-switch-left)
 (global-set-key (kbd "M-#") 'isearch-forward-at-point)
+(global-set-key (kbd "C-j") 'join-line)
+(global-set-key (kbd "C-o") 'open-next-line)
+(global-set-key (kbd "M-o") 'open-previous-line)
