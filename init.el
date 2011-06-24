@@ -7,6 +7,9 @@
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
+
+;;http://www.hollenback.net/index.php/EmacsModeLine
+;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 (setq-default mode-line-format
       (list "-"
       'mode-line-mule-info
@@ -70,16 +73,17 @@
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
-   ;; (:name multi-term
-   ;;        :after (lambda ()
-   ;;                 (multi-term-keystroke-setup)
-   ;;                 (setq multi-term-program "/bin/bash")))
-   ;; (:name workgroups :after ;disabled b/c using tmux now
-   ;;        (lambda ()
-   ;;          (setq wg-prefix-key (kbd "C-c w"))
-   ;;          (workgroups-mode t)
-   ;;          (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-   ;;          (wg-load "~/.emacs.d/workgroups/default")))
+   (:name multi-term
+          :after (lambda ()
+                   (multi-term-keystroke-setup)
+                   (setq multi-term-program "/bin/bash")))
+   (:name workgroups :after ;disabled b/c using tmux now
+          (lambda ()
+            (setq wg-prefix-key (kbd "C-c w"))
+            (workgroups-mode t)
+            ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+            (wg-load "~/.emacs.d/workgroups/default")
+            ))
 
    rainbow-mode ;color-highlight
    ;; (:name color-theme-topfunky
@@ -189,15 +193,6 @@
           ;; customization
           :after (lambda ()
                    (textmate-mode t)))
-  ;; (:name senny-popwin
-  ;;         :features popwin
-  ;;         :type git
-  ;;         :url "https://github.com/m2ym/popwin-el.git"
-  ;;         :load-path "."
-  ;;         :after (lambda ()
-  ;;                  (setq display-buffer-function 'popwin:display-buffer)
-  ;;                  (setq popwin:special-display-config '(("*Ido Completions*")))))
-;   (:name worklog :type elpa)
    (:name idle-highlight :type elpa)
    (:name kylpo-org-mode
           :type git
@@ -213,11 +208,10 @@
 	  :after
           (lambda ()
             (require 'org-habit)
-;            (require 'org-capture)
             (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
    (:name inf-ruby  :type elpa)
    (:name ruby-compilation :type elpa)
-   (:name ruby-electric :type elpa)
+   ;; (:name ruby-electric :type elpa)
    (:name ruby-mode
           :type elpa
           :after
@@ -250,9 +244,9 @@
                         (set (make-local-variable 'tab-width) 2)
                         (imenu-add-to-menubar "IMENU")
                         (local-set-key "\r" 'newline-and-indent);ret indents
-                        (require 'ruby-electric)
+                        ;; (require 'ruby-electric)
                         (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
-                        (ruby-electric-mode t)
+                        ;; (ruby-electric-mode t)
                         ))))
    (:name css-mode
           :type elpa
@@ -273,7 +267,7 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   ;; ruby-end ;necessary to place after ruby-mode
+   ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    (:name senny-rspec-mode
           :type git
@@ -281,21 +275,14 @@
           :compile "rspec-mode.el"
           :features rspec-mode)
    (:name etags-table :type emacswiki
+          :features etags-table
           :after (lambda ()
-                   (require 'etags-table)
-                   ;; (setq tag-table-alist
-                   ;;       '(("~/.emacs.d/" . "~/.emacs.d/TAGS")
-                   ;;         ("~/projects/source/" . "~/.TAGS/projects.tags")))
-                   ;; (setq etags-table-alist tag-table-alist)
+                   ;; (require 'etags-table)
                    (setq etags-table-search-up-depth 10)))
    (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
                    (setq framemove-hook-into-windmove t)
-                   ;; (global-set-key (kbd "s-j") 'fm-down-frame)
-                   ;; (global-set-key (kbd "s-k") 'fm-up-frame)
-                   ;; (global-set-key (kbd "s-h") 'fm-left-frame)
-                   ;; (global-set-key (kbd "s-l") 'fm-right-frame)
                    ))
    (:name sr-speedbar :type emacswiki ;http://www.emacswiki.org/emacs/sr-speedbar.el
           :after (lambda ()
@@ -317,7 +304,6 @@
 (require 'tinyeat)
 (require 'tramp)
 (require 'redo+) ;;from elpa
-;; (require 'cedet)
 (require 'uniquify)
 (require 'cl)
 
@@ -331,32 +317,18 @@
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-;; CEDET
-;(load-file "~/.emacs.d/cedet-1.0/common/cedet.el")
-;; (global-ede-mode 'nil)                  ; do NOT use project manager
-
 (load "~/.emacs.d/colors/zenburn/zenburn.el")
 (color-theme-zenburn)
 ;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
 ;; (color-theme-topfunky)
-
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
 ;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
 ;; (require 'color-theme-solarized)
 ;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
-
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
-
-;; (load "~/.emacs.d/colors/tlh-color-themes/color-theme-thunk1")
-
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
 ;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
-;; (load "~/.emacs.d/colors/zenburn")
-;; (color-theme-zenburn);http://emacs-fu.blogspot.com/2010/04/zenburn-color-theme.html
-
-;; (load (concat dotfiles-dir "colors/zenburn-theme"))
-
 
 ;;------------------------------------------------
 ;; == Platform Dependencies
@@ -410,96 +382,12 @@
   (add-hook 'dired-mode-hook (lambda () (local-set-key "E" 'dired-gnome-open-file)))
   ;;doesn't work in os x
   (setq dired-listing-switches "-lXGh --group-directories-first")
-
-  ;; sort ido filelist by mtime instead of alphabetically
-  ;; (defun ido-sort-mtime ()
-  ;;   (setq ido-temp-list
-  ;;         (sort ido-temp-list
-  ;;               (lambda (a b)
-  ;;                 (time-less-p
-  ;;                  (sixth (file-attributes (concat ido-current-directory b)))
-  ;;                  (sixth (file-attributes (concat ido-current-directory a)))))))
-  ;;   (ido-to-end  ;; move . files to end (again)
-  ;;    (delq nil (mapcar
-  ;;               (lambda (x) (and (char-equal (string-to-char x) ?.) x))
-  ;;               ido-temp-list))))
-  ;; (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
-  ;; (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
   );;end linux
  )
-
 
 ;;------------------------------------------------
                                         ;== INIT & CONFIG
 ;;------------------------------------------------
-
-;;http://www.hollenback.net/index.php/EmacsModeLine
-;; Set the modeline to tell me the filename, hostname, etc..
-;; (setq-default mode-line-format
-;;       (list "-"
-;;             ; */% indicators if the file has been modified
-;;             'mode-line-mule-info
-;;             'mode-line-modified
-;;             ;; "--"
-;;             ; the name of the buffer (i.e. filename)
-;;             ; note this gets automatically highlighted
-;;             'mode-line-frame-identification
-;;             ;; 'mode-line-buffer-identification
-;;             ;; "--"
-;;             "%b  "
-;;             (getenv "HOST")
-;;             ":"
-;;             'default-directory
-;;             "   "
-;;             ;; 'global-mode-string
-;;             ;; "   %[("
-
-;;             ; major and minor modes in effect
-;;             'mode-line-modes
-;;             ; if which-func-mode is in effect, display which
-;;             ; function we are currently in.
-;;             '(which-func-mode ("" which-func-format "--"))
-;;             ; line, column, file %
-;;             'mode-line-position
-;;             "--"
-;;             ; if vc-mode is in effect, display version control
-;;             ; info here
-;;             `(vc-mode vc-mode)
-;;             "--"
-;;             ; hostname
-;;             'system-name
-;;             ; dashes sufficient to fill rest of modeline.
-;;             "-%-"
-;;             )
-;; )
-
-     ;; (setq-default mode-line-format
-     ;;   (list "-"
-     ;;    'mode-line-mule-info
-     ;;    'mode-line-modified
-     ;;    'mode-line-frame-identification
-     ;;    "%b--"
-     ;;    ;; Note that this is evaluated while making the list.
-     ;;    ;; It makes a mode-line construct which is just a string.
-     ;;    (getenv "HOST")
-     ;;    ":"
-     ;;    'default-directory
-     ;;    "   "
-     ;;    'global-mode-string
-     ;;    "   %[("
-     ;;    '(:eval (mode-line-mode-name))
-     ;;    'mode-line-process
-     ;;    'minor-mode-alist
-     ;;    "%n"
-     ;;    ")%]--"
-     ;;    '(which-func-mode ("" which-func-format "--"))
-     ;;    '(line-number-mode "L%l--")
-     ;;    '(column-number-mode "C%c--")
-     ;;    '(-3 "%p")
-     ;;    "-%-"))
-
-;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
-
 
 ;; This is a little hacky since VC doesn't support git add internally
 (eval-after-load 'vc
@@ -532,7 +420,6 @@
                  '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
        (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color))
 
-     ;; TODO: submit these via M-x report-emacs-bug
      (add-to-list 'eshell-visual-commands "ssh")
      (add-to-list 'eshell-visual-commands "tail")
      (add-to-list 'eshell-command-completions-alist
@@ -543,27 +430,6 @@
 (defun eshell/cds ()
   "Change directory to the project's root."
   (eshell/cd (locate-dominating-file default-directory "src")))
-
-;; (setq-default mode-line-format
-;;       (list "-"
-;;       'mode-line-mule-info
-;;       'mode-line-modified
-;;       'mode-line-frame-identification
-;;       ;; 'mode-line-buffer-identification
-;;       "%b  "
-;;       '(getenv "HOST")
-;;       ;; ":"
-;;       ;; 'default-directory
-;;       ;; "   "
-;;       'mode-line-position
-;;       '(vc-mode vc-mode)
-;;       "   "
-;;       ;; 'mode-line-modes
-;;       '(which-func-mode ("" which-func-format "--"))
-;;       '(global-mode-string ("--" global-mode-string))
-;;       "-%-")
-;;       )
-
 
 (setq
   uniquify-buffer-name-style 'post-forward
@@ -664,19 +530,20 @@
       ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
-      ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
-      ;; ido-max-prospects 10
+      ;; ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
+      ido-max-prospects 20
+      ido-confirm-unique-completion nil
       )
-;; (ido-mode 'both) ; User ido mode for both buffers and files
-(ido-mode 'both)
+(ido-mode 'both) ; User ido mode for both buffers and files
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
 
-;; Display ido results vertically, rather than horizontally
-;; (setq ido-decorations (quote ("" "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-;; (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
-;; (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
+ ;; Display ido results vertically, rather than horizontally
+(setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+
+(defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
+(add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
 
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -712,9 +579,9 @@
 (setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
 (setq-default indent-tabs-mode nil) ; Dont indent with tabs
 (setq confirm-kill-emacs 'yes-or-no-p) ; stops me killing emacs by accident!
-(setq scroll-step 1) ; Only scroll down 1 line at a time
-(setq scroll-conservatively 10) ; make scroll less jumpy
-(setq scroll-margin 4) ; scroll will start b4 getting to top/bottom of page
+;; (setq scroll-step 1) ; Only scroll down 1 line at a time
+;; (setq scroll-conservatively 10) ; make scroll less jumpy
+;; (setq scroll-margin 4) ; scroll will start b4 getting to top/bottom of page
 
 ;; activate disabled features
 (put 'narrow-to-region 'disabled nil)
@@ -738,6 +605,8 @@
 ;;                                          try-complete-lisp-symbol
 ;;                                          try-expand-whole-kill))
 
+(font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
+
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -754,15 +623,21 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(lusty-match-face ((t (:foreground "salmon"))))
+ ;; '(lusty-match-face ((t (:foreground "salmon"))))
  '(org-upcoming-deadline ((t (:foreground "yellow"))))
- '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
- '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic)))))
+ ;; '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
+ ;; '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic))))
+ )
 
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
 
+(defun delete-file-and-buffer ()
+    "Deletes the current file and buffer, assumes file exists"
+      (interactive)
+        (delete-file buffer-file-name)
+          (kill-buffer (buffer-name)))
 
 ;; I-search with initial contents
 ;; from http://platypope.org/blog/2007/8/5/a-compendium-of-awesomeness
@@ -916,9 +791,6 @@
   (interactive)
   (scroll-down (window-half-height)))
 
-   ;; (global-set-key [next] 'scroll-up-half)
-   ;; (global-set-key [prior] 'scroll-down-half)
-
 ;; kill entire word, even if in middle of word
 (defun my-kill-word ()
   (interactive)
@@ -963,18 +835,15 @@
 (defun eshell/emacs (tags) ;;eshell rtags alias
   (rtags --recurse .))
 
-;; (defun eshell/rvm-prompt ()
-;;   (/Users/kp/.rvm/bin/rvm-prompt))
+;; (defun rtags ()
+;;   (interactive)
+;;   (shell-command "rtags --recurse ."))
 
 (defun rtags ()
   (interactive)
-  (shell-command "rtags --recurse ."))
-
-(defun etags ()
-  (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
-  ;; (shell-command "ctags -e -a --Ruby-kinds=-f -o TAGS -R . "))
-  (shell-command "etags -a --Ruby-kinds=-f -o TAGS -R . "))
+  (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."));"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
+  ;; (shell-command "etags -a --Ruby-kinds=f -o TAGS -R . "))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
@@ -1142,6 +1011,7 @@ an .ics file that has been downloaded from Google Calendar "
 (defalias 'iwb 'indent-whole-buffer)
 
 (defun add-watchwords ()
+  (interactive)
   (font-lock-add-keywords
    nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
           1 font-lock-warning-face t))))
@@ -1153,7 +1023,6 @@ an .ics file that has been downloaded from Google Calendar "
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
-
 
 (defun cleanup-buffer ()
   "Perform a bunch of operations on the whitespace content of a buffer."
@@ -1516,7 +1385,31 @@ an .ics file that has been downloaded from Google Calendar "
     (shell-command-to-string
      (format "notify-send -u critical '%s says:' '%s'" nick msg))))
 
-(add-hook 'erc-text-matched-hook 'call-libnotify)
+;; (defvar growlnotify-command (executable-find "growlnotify") "The path to growlnotify")
+
+;; (defun growl (title message)
+;;   "Shows a message through the growl notification system using
+;;  `growlnotify-command` as the program."
+;;       (flet ((encfn (s) (encode-coding-string s (keyboard-coding-system))) )
+;;             (let* ((process (start-process "growlnotify" nil
+;;                                            growlnotify-command
+;;                                            (encfn title)
+;;                                            "-a" "Emacs"
+;;                                            "-n" "Emacs")))
+;;               (process-send-string process (encfn message))
+;;               (process-send-string process "\n")
+;;               (process-send-eof process))) t)
+
+;; (defun my-erc-hook (match-type nick message)
+;;     "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
+;;       (unless (posix-string-match "^\\** *Users on #" message)
+;;             (growl
+;;                   (concat "ERC: name mentioned on: " (buffer-name (current-buffer)))
+;;                        message
+;;                             )))
+
+;; (add-hook 'erc-text-matched-hook 'my-erc-hook)
+;; (add-hook 'erc-text-matched-hook 'call-libnotify)
 
 (setq erc-server "irc.freenode.net"
       erc-port 6667
@@ -1536,12 +1429,13 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-send-whitespace-lines          nil
       erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-      erc-keywords '("kylpo" "technomancy")
+      erc-keywords '("ruby" "rails" "erc" "tmux" "screen")
+      erc-pals '("technomancy")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#emacs" "#lubuntu" "RubyOnRails"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#emacs"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
@@ -1739,4 +1633,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;; (global-set-key (kbd "s-n") 'wg-switch-left)
 ;; (global-set-key (kbd "s-p") 'wg-switch-left)
-(global-set-key (kbd "M-s #") 'isearch-forward-at-point)
+(global-set-key (kbd "M-#") 'isearch-forward-at-point)
+(global-set-key (kbd "C-j") 'join-line)
+(global-set-key (kbd "C-o") 'open-next-line)
+(global-set-key (kbd "M-o") 'open-previous-line)
