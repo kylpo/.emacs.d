@@ -11,24 +11,24 @@
 ;;http://www.hollenback.net/index.php/EmacsModeLine
 ;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 (setq-default mode-line-format
-      (list "-"
-      'mode-line-mule-info
-      'mode-line-modified
-      'mode-line-frame-identification
-      ;; 'mode-line-buffer-identification
-      "%b  "
-      '(getenv "HOST")
-      ;; ":"
-      ;; 'default-directory
-      ;; "   "
-      'mode-line-position
-      '(vc-mode vc-mode)
-      "   "
-      ;; 'mode-line-modes
-      '(which-func-mode ("" which-func-format "--"))
-      '(global-mode-string ("--" global-mode-string))
-      "-%-")
-      )
+              (list "-"
+                    'mode-line-mule-info
+                    'mode-line-modified
+                    'mode-line-frame-identification
+                    'mode-line-buffer-identification
+                    ;; "%b  "
+                    '(getenv "HOST")
+                    ;; ":"
+                    ;; 'default-directory
+                    ;; "   "
+                    'mode-line-position
+                    '(vc-mode vc-mode)
+                    "   "
+                    'mode-line-modes
+                    '(which-func-mode ("" which-func-format "--"))
+                    '(global-mode-string ("--" global-mode-string))
+                    "-%-")
+              )
 
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
 (push "~/.rvm/bin/rvm-prompt" exec-path)
@@ -63,27 +63,37 @@
      (end-of-buffer)
      (eval-print-last-sexp))))
 
+;;=el-get
 (setq
  el-get-sources ;order does matter for some of these
  '(el-get
    ack
    magithub
    rvm
-;   bookmark+ ;;http://www.emacswiki.org/emacs/BookmarkPlus#toc2
+   ;; (:name bookmark+
+   ;;        :type git
+   ;;        :url "https://github.com/emacsmirror/bookmark-plus.git"
+   ;;        :features bookmark+)
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    erc-highlight-nicknames
    sunrise-commander
+   scala-mode
+   ensime
    (:name multi-term
           :after (lambda ()
                    (multi-term-keystroke-setup)
                    (setq multi-term-program "/bin/bash")))
-   (:name workgroups :after ;disabled b/c using tmux now
-          (lambda ()
-            (setq wg-prefix-key (kbd "C-c w"))
-            (workgroups-mode t)
-            ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-            (wg-load "~/.emacs.d/workgroups/default")
-            ))
+   ;; (:name workgroups :after ;disabled b/c using tmux now
+   ;;        (lambda ()
+   ;;          ;; (setq wg-prefix-key (kbd "C-c w"))
+   ;;          ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+   ;;          (workgroups-mode t)
+   ;;          ;; (wg-switch-on-load nil)
+   ;;          (wg-load "~/.emacs.d/workgroups/default")
+   ;;          (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
+   ;;          ;; (wg-fill-keymap "C-z" 'wg-previous-workgroup)
+
+   ;;          ))
 
    rainbow-mode ;color-highlight
    ;; (:name color-theme-topfunky
@@ -99,24 +109,24 @@
           :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-buttons.el"
           :features sunrise-x-buttons)
    (:name kylpo-sunrise-x-tree
-       :type http
-       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tree.el"
-       :features sunrise-x-tree)
+          :type http
+          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tree.el"
+          :features sunrise-x-tree)
    (:name sunrise-x-tabs
-       :type http
-       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tabs.el"
-       :features sunrise-x-tabs)
+          :type http
+          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tabs.el"
+          :features sunrise-x-tabs)
    ;; todochiku
    color-theme
    wrap-region
    yari
-  ;; (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
-  ;;        :features ecb
-  ;;        :post-init (lambda ()
-  ;;                     (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
-  ;;        :after (lambda ()
-  ;;                 (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
-  (:name auto-complete :after
+   ;; (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+   ;;        :features ecb
+   ;;        :post-init (lambda ()
+   ;;                     (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+   ;;        :after (lambda ()
+   ;;                 (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
+   (:name auto-complete :after
           (lambda ()
             ;; (setq ac-auto-start nil
             ;;       ac-modes '(erlang-mode
@@ -165,26 +175,26 @@
                    (global-set-key (kbd "C-x g") 'magit-status)))
 
    (:name kylpo-smex
-       :type git
-       :url "http://github.com/nonsequitur/smex.git"
-       :features smex
-       :post-init (lambda ()
-                    (setq smex-save-file "~/.emacs.d/.smex-items")
-                    (smex-initialize))
-       :after (lambda ()
-                (global-set-key (kbd "M-x") 'smex)
-                (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+          :type git
+          :url "http://github.com/nonsequitur/smex.git"
+          :features smex
+          :post-init (lambda ()
+                       (setq smex-save-file "~/.emacs.d/.smex-items")
+                       (smex-initialize))
+          :after (lambda ()
+                   (global-set-key (kbd "M-x") 'smex)
+                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
    (:name yasnippet
-       :type svn
-       :url "http://yasnippet.googlecode.com/svn/trunk/"
-       :features "yasnippet"
-       :post-init (lambda ()
-                    (yas/initialize)
-;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
-;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
-                    (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
-                    (yas/reload-all)))
+          :type svn
+          :url "http://yasnippet.googlecode.com/svn/trunk/"
+          :features "yasnippet"
+          :post-init (lambda ()
+                       (yas/initialize)
+                                        ;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
+                                        ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
+                       (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
+                       (yas/reload-all)))
 
    (:name senny-textmate
           :type git
@@ -361,12 +371,12 @@
 
  ((string-match "linux" system-configuration)
   ;;start LINUX
-;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
+  ;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
-;  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+                                        ;  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
   (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
   (setq browse-url-generic-program (executable-find "firefox")
-          browse-url-browser-function 'browse-url-generic)
+        browse-url-browser-function 'browse-url-generic)
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
@@ -386,7 +396,7 @@
  )
 
 ;;------------------------------------------------
-                                        ;== INIT & CONFIG
+;; == INIT & CONFIG
 ;;------------------------------------------------
 
 ;; This is a little hacky since VC doesn't support git add internally
@@ -432,12 +442,12 @@
   (eshell/cd (locate-dominating-file default-directory "src")))
 
 (setq
-  uniquify-buffer-name-style 'post-forward
-  uniquify-separator ":")
+ uniquify-buffer-name-style 'post-forward
+ uniquify-separator ":")
 
 ;; (yas/initialize)
 ;; (yas/load-directory
- ;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
+;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
 
 ;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
 ;; Automatically save and restore sessions
@@ -518,6 +528,7 @@
 ;; (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
+;;=ido-mode
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
       ido-enable-last-directory-history t ; remember last used dirs
@@ -539,7 +550,7 @@
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
 
- ;; Display ido results vertically, rather than horizontally
+;; Display ido results vertically, rather than horizontally
 (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 
 (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
@@ -549,13 +560,13 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (set-default 'imenu-auto-rescan t)
 
-;; Eshell
+;;=eshell
 ;;
 (setq eshell-cmpl-ignore-case t)
 ;; (setq eshell-prompt-function
 ;;      (lambda nil (concat (eshell/pwd) (eshell/rvm-prompt) (if (= (user-uid) 0) " # " " $ "))))
 
-;; TERM
+;;=term
 ;;
 ;; If you do use M-x term, you will notice there's line mode that acts like
 ;; emacs buffers, and there's the default char mode that will send your
@@ -565,8 +576,8 @@
 ;; The default way to toggle between them is C-c C-j and C-c C-k, let's
 ;; better use just one key to do the same.
 (require 'term)
-(define-key term-raw-map (kbd "C-'") 'term-line-mode)
-(define-key term-mode-map (kbd "C-'") 'term-char-mode)
+(define-key term-raw-map (kbd "C-c '") 'term-line-mode)
+(define-key term-mode-map (kbd "C-c '") 'term-char-mode)
 
 ;; Have C-y act as usual in term-mode, to avoid C-' C-y C-'
 ;; Well the real default would be C-c C-j C-y C-c C-k.
@@ -592,7 +603,7 @@
 ;; (setq windmove-wrap-around t) ;windmove-wrap
 
 
-;;ECB
+;;=ECB
 ;; (setq ecb-tree-buffer-style 'ascii-guides)
 ;; (setq ecb-tip-of-the-day nil) ;inhibit startup message
 
@@ -608,25 +619,22 @@
 (font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- ;; '(ecb-directories-update-speedbar t)
- ;; '(ecb-options-version "2.40")
- ;; '(ecb-tree-indent 2)
- '(sr-show-file-attributes nil))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(sr-show-file-attributes nil)
+ '(wg-morph-on nil)
+ '(wg-switch-on-load nil)
+ )
 
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- ;; '(lusty-match-face ((t (:foreground "salmon"))))
- '(org-upcoming-deadline ((t (:foreground "yellow"))))
- ;; '(sr-directory-face ((t (:foreground "yellow" :weight bold))))
- ;; '(sr-symlink-directory-face ((t (:foreground "yellow4" :slant italic))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ ;; '(org-upcoming-deadline ((t (:foreground "yellow"))))
  )
 
 ;;------------------------------------------------
@@ -634,10 +642,10 @@
 ;;------------------------------------------------
 
 (defun delete-file-and-buffer ()
-    "Deletes the current file and buffer, assumes file exists"
-      (interactive)
-        (delete-file buffer-file-name)
-          (kill-buffer (buffer-name)))
+  "Deletes the current file and buffer, assumes file exists"
+  (interactive)
+  (delete-file buffer-file-name)
+  (kill-buffer (buffer-name)))
 
 ;; I-search with initial contents
 ;; from http://platypope.org/blog/2007/8/5/a-compendium-of-awesomeness
@@ -667,13 +675,13 @@
 
 ;; Emacs macro to add a pomodoro item
 (fset 'pomodoro
-   "[ ]")
+      "[ ]")
 
 ;; Emacs macro to add a pomodoro table
 ;; | G | Organization | [ ] |
 ;; |   |              |     |
 (fset 'pomodoro-table
-   [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
+      [?| ?  ?G ?  ?| ?  ?O ?r ?g ?a ?n ?i ?z ?a ?t ?i ?o ?n ?  ?| ?  ?\[ ?  ?\] ?  ?| tab])
 
 (defun select-current-word ()
   "Select the word under cursor.
@@ -718,14 +726,14 @@
   "Kill up to ARG'th occurrence of CHAR.
      Case is ignored if `case-fold-search' is non-nil in the current buffer.
      Goes forward if ARG is negative; error if CHAR not found."
-       (interactive "p\ncZap back to char: ")
-       (if (char-table-p translation-table-for-input)
-           (setq char (or (aref translation-table-for-input char) char)))
-       (kill-region (point) (progn
-                              (search-backward (char-to-string char)
-                                               nil nil arg)
-                              (point)))
-       (insert char))
+  (interactive "p\ncZap back to char: ")
+  (if (char-table-p translation-table-for-input)
+      (setq char (or (aref translation-table-for-input char) char)))
+  (kill-region (point) (progn
+                         (search-backward (char-to-string char)
+                                          nil nil arg)
+                         (point)))
+  (insert char))
 
 ;; Behave like vi's o command
 (defun open-next-line (arg)
@@ -809,11 +817,11 @@
     (backward-char 1)))
 
 (defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
-    "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
+  "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
   you are deleting forward, the CHAR is replaced and the point is
   put before CHAR"
-    (insert char)
-    (if (< 0 arg) (forward-char -1)))
+  (insert char)
+  (if (< 0 arg) (forward-char -1)))
 
 (defmacro bind (key fn)
   "shortcut for global-set-key"
@@ -843,7 +851,7 @@
   (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
   (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."));"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
-  ;; (shell-command "etags -a --Ruby-kinds=f -o TAGS -R . "))
+;; (shell-command "etags -a --Ruby-kinds=f -o TAGS -R . "))
 
 (defun isearch-occur ()
   "Invoke `occur' from within isearch."
@@ -1161,12 +1169,12 @@ an .ics file that has been downloaded from Google Calendar "
 ;;==Plugins
 ;;------------------------------------------------
 
-;;*****Dired & Tramp*****
+;;=dired & Tramp
 (setq tramp-default-method "ssh")
 (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
 (setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
 
-;;*****ORG-MODE*****
+;;=org-mode
 (defun planner ()
   (interactive)
   (find-file "~/Dropbox/doc/planner.org")
@@ -1177,7 +1185,7 @@ an .ics file that has been downloaded from Google Calendar "
   )
 
 (setq org-habit-graph-column 60)
-;(setq org-log-done 'time)
+                                        ;(setq org-log-done 'time)
 (setq org-agenda-include-diary nil)
 (setq org-deadline-warning-days 14)
 (setq org-timeline-show-empty-dates t)
@@ -1199,7 +1207,7 @@ an .ics file that has been downloaded from Google Calendar "
 (setq org-deadline-warning-days 14)
 (setq org-export-html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyles.css\">")
 (setq org-fast-tag-selection-single-key nil)
-;(setq org-log-done (quote (done)))
+                                        ;(setq org-log-done (quote (done)))
 (setq org-reverse-note-order t)
 (setq org-tags-column -78)
 (setq org-tags-match-list-sublevels nil)
@@ -1359,7 +1367,7 @@ an .ics file that has been downloaded from Google Calendar "
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
 
-;;*****ERC STUFF*****
+;;=erc
 ;; check channels
 (erc-track-mode t)
 (erc-autojoin-mode t)
@@ -1373,42 +1381,42 @@ an .ics file that has been downloaded from Google Calendar "
 ;; Use libnotify
 (defun clean-message (s)
   (setq s (replace-regexp-in-string "'" "&apos;"
-  (replace-regexp-in-string "\"" "&quot;"
-  (replace-regexp-in-string "&" "&"
-  (replace-regexp-in-string "<" "&lt;"
-  (replace-regexp-in-string ">" "&gt;" s)))))))
+                                    (replace-regexp-in-string "\"" "&quot;"
+                                                              (replace-regexp-in-string "&" "&"
+                                                                                        (replace-regexp-in-string "<" "&lt;"
+                                                                                                                  (replace-regexp-in-string ">" "&gt;" s)))))))
 
 (defun call-libnotify (matched-type nick msg)
   (let* ((cmsg  (split-string (clean-message msg)))
-        (nick   (first (split-string nick "!")))
-        (msg    (mapconcat 'identity (rest cmsg) " ")))
+         (nick   (first (split-string nick "!")))
+         (msg    (mapconcat 'identity (rest cmsg) " ")))
     (shell-command-to-string
      (format "notify-send -u critical '%s says:' '%s'" nick msg))))
 
-;; (defvar growlnotify-command (executable-find "growlnotify") "The path to growlnotify")
+(defvar growlnotify-command (executable-find "growlnotify") "The path to growlnotify")
 
-;; (defun growl (title message)
-;;   "Shows a message through the growl notification system using
-;;  `growlnotify-command` as the program."
-;;       (flet ((encfn (s) (encode-coding-string s (keyboard-coding-system))) )
-;;             (let* ((process (start-process "growlnotify" nil
-;;                                            growlnotify-command
-;;                                            (encfn title)
-;;                                            "-a" "Emacs"
-;;                                            "-n" "Emacs")))
-;;               (process-send-string process (encfn message))
-;;               (process-send-string process "\n")
-;;               (process-send-eof process))) t)
+(defun growl (title message)
+  "Shows a message through the growl notification system using
+ `growlnotify-command` as the program."
+  (flet ((encfn (s) (encode-coding-string s (keyboard-coding-system))) )
+    (let* ((process (start-process "growlnotify" nil
+                                   growlnotify-command
+                                   (encfn title)
+                                   "-a" "Emacs"
+                                   "-n" "Emacs")))
+      (process-send-string process (encfn message))
+      (process-send-string process "\n")
+      (process-send-eof process))) t)
 
-;; (defun my-erc-hook (match-type nick message)
-;;     "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
-;;       (unless (posix-string-match "^\\** *Users on #" message)
-;;             (growl
-;;                   (concat "ERC: name mentioned on: " (buffer-name (current-buffer)))
-;;                        message
-;;                             )))
+(defun my-erc-hook (match-type nick message)
+  "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
+  (unless (posix-string-match "^\\** *Users on #" message)
+    (growl
+     (concat "ERC: name mentioned on: " (buffer-name (current-buffer)))
+     message
+     )))
 
-;; (add-hook 'erc-text-matched-hook 'my-erc-hook)
+(add-hook 'erc-text-matched-hook 'my-erc-hook)
 ;; (add-hook 'erc-text-matched-hook 'call-libnotify)
 
 (setq erc-server "irc.freenode.net"
@@ -1435,7 +1443,7 @@ an .ics file that has been downloaded from Google Calendar "
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#emacs"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#scala" "#emacs"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
@@ -1458,6 +1466,36 @@ an .ics file that has been downloaded from Google Calendar "
 ;;                                         name "SpeedBar"
 ;;                                         width 24
 ;;                                         unsplittable t))
+
+
+(setq ibuffer-saved-filter-groups
+      (quote (("default"
+               ("Ruby" (mode . ruby-mode))
+               ("Org" ;; all org-related buffers
+                (mode . org-mode))
+               ("Mail"
+                (or  ;; mail-related buffers
+                 (mode . mew-message-mode)
+                 (mode . mew-summary-mode)
+                 (mode . mew-draft-mode)
+                 ))
+               ("Programming" ;; prog stuff
+                (or
+                 (mode . c-mode)
+                 (mode . perl-mode)
+                 (mode . python-mode)
+                 (mode . emacs-lisp-mode)
+                 (mode . clojure-mode)
+                 ))
+               ("ERC"   (mode . erc-mode))
+               ("Jabber"
+                (or
+                 (mode . jabber-chat-mode)
+                 (mode . jabber-roster-mode)))))))
+
+(add-hook 'ibuffer-mode-hook
+          (lambda ()
+            (ibuffer-switch-to-saved-filter-groups "default")))
 
 ;;------------------------------------------------
 ;; == GLOBAL KEYBINDS
@@ -1602,8 +1640,10 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "M-2") 'split-window-vertically)
 (global-set-key (kbd "M-3") 'split-window-horizontally)
 (global-set-key (kbd "M-4") 'balance-windows)
-(global-set-key (kbd "C-, r") 'my-desktop-read)
-(global-set-key (kbd "C-, s") 'my-desktop-save)
+(global-set-key (kbd "C-x SPC s") 'my-desktop-save)
+(global-set-key (kbd "C-x SPC r") 'my-desktop-read)
+;; (global-set-key (kbd "C-, r") 'my-desktop-read)
+;; (global-set-key (kbd "C-, s") 'my-desktop-save)
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1616,8 +1656,6 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
-(global-set-key (kbd "C-x SPC s") 'my-desktop-save)
-(global-set-key (kbd "C-x SPC r") 'my-desktop-read)
 ;; (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
 ;; (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
 ;; (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
@@ -1637,3 +1675,16 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-j") 'join-line)
 (global-set-key (kbd "C-o") 'open-next-line)
 (global-set-key (kbd "M-o") 'open-previous-line)
+
+
+;; http://tsengf.blogspot.com/2011/06/scroll-up-and-down-line-by-line-in.html
+(defun scroll-up-one-line()
+  (interactive)
+  (scroll-up 1))
+
+(defun scroll-down-one-line()
+  (interactive)
+  (scroll-down 1))
+
+(global-set-key [?\C-i] 'scroll-down-one-line)
+(global-set-key [?\C-o] 'scroll-up-one-line)
