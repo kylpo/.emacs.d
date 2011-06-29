@@ -5,7 +5,7 @@
 
 (server-start)
 
-(setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
+       (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
 
 ;;http://www.hollenback.net/index.php/EmacsModeLine
@@ -44,9 +44,6 @@
      (expand-file-name "~/.emacs.d/elpa/package.el"))
   (package-initialize))
 
-;;*****EL-GET INIT*****
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
 (setq package-archives
       '(("original" . "http://tromey.com/elpa/")
         ("gnu" . "http://elpa.gnu.org/packages/")
@@ -54,31 +51,33 @@
         ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
         ))
 
-(if (require 'el-get nil t)
-    (progn
-      (message "el-get already installed"))
-  (url-retrieve
+(require 'cl)				; common lisp goodies, loop
+
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil t)
+:  (url-retrieve
    "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
 
-;;=el-get
+;; now either el-get is `require'd already, or have been `load'ed by the
+;; el-get installer.
+
+;; set local recipes
 (setq
- el-get-sources ;order does matter for some of these
- '(el-get
-   ack
-   magithub
-   rvm
-   ;; (:name bookmark+
+ el-get-sources
+ '(
+   (:name goto-last-change		; move pointer back to last change
+          :after (lambda ()
+        	   ;; when using AZERTY keyboard, consider C-x C-_
+        	   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
+      ;; (:name bookmark+
    ;;        :type git
    ;;        :url "https://github.com/emacsmirror/bookmark-plus.git"
    ;;        :features bookmark+)
-   dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
-   erc-highlight-nicknames
-   sunrise-commander
-   scala-mode
-   ensime
+
    (:name multi-term
           :after (lambda ()
                    (multi-term-keystroke-setup)
@@ -95,7 +94,7 @@
 
    ;;          ))
 
-   rainbow-mode ;color-highlight
+
    ;; (:name color-theme-topfunky
    ;;       :type http
    ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
@@ -104,30 +103,14 @@
    ;;                ;; (color-theme-topfunky)
    ;;                ))
 
-   (:name kylpo-sunrise-x-buttons
-          :type http
-          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-buttons.el"
-          :features sunrise-x-buttons)
-   (:name kylpo-sunrise-x-tree
-          :type http
-          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tree.el"
-          :features sunrise-x-tree)
-   (:name sunrise-x-tabs
-          :type http
-          :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tabs.el"
-          :features sunrise-x-tabs)
-   ;; todochiku
-   color-theme
-   wrap-region
-   yari
    ;; (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
    ;;        :features ecb
    ;;        :post-init (lambda ()
    ;;                     (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
    ;;        :after (lambda ()
    ;;                 (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
-   (:name auto-complete :after
-          (lambda ()
+   (:name auto-complete
+          ;; :after (lambda ()
             ;; (setq ac-auto-start nil
             ;;       ac-modes '(erlang-mode
             ;;                  espresso-mode
@@ -141,10 +124,10 @@
             ;;                  emacs-lisp-mode
             ;;                  css-mode
             ;;                  sql-interactive-mode))
-            (global-set-key (kbd "s-/") 'auto-complete)
+            ;; (global-set-key (kbd "<M-tab>") 'auto-complete)
             ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
-            ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous)))
-            ))
+            ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous))))
+          )
 
    (:name buffer-move ; have to add your own keys
           :after (lambda ()
@@ -152,20 +135,13 @@
                    (global-set-key (kbd "<C-S-down>") 'buf-move-down)
                    (global-set-key (kbd "<C-S-left>") 'buf-move-left)
                    (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
-   ;;http://emacs-fu.blogspot.com/2010/07/navigating-through-files-and-buffers.html
-   ;; (:name lusty-explorer
-   ;;        :type git
-   ;;        :url "git://github.com/sjbach/lusty-emacs.git"
-   ;;        :features lusty-explorer
-   ;;        :after (lambda ()
-   ;;                 (require 'lusty-explorer)))
-   (:name dot-mode
-          :type git
-          :url "https://github.com/emacsmirror/dot-mode.git"
-          :features dot-mode
-          :after (lambda ()
-                   (require 'dot-mode)
-                   (add-hook 'find-file-hooks 'dot-mode-on)))
+  (:name dot-mode
+         :type git
+         :url "https://github.com/emacsmirror/dot-mode.git"
+         :features dot-mode
+         :after (lambda ()
+                  (require 'dot-mode)
+                  (add-hook 'find-file-hooks 'dot-mode-on)))
    (:name goto-last-change ; move pointer back to last change
           :after (lambda ()
                    ;; when using AZERTY keyboard, consider C-x C-_
@@ -185,24 +161,24 @@
                    (global-set-key (kbd "M-x") 'smex)
                    (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
-   (:name yasnippet
-          :type svn
-          :url "http://yasnippet.googlecode.com/svn/trunk/"
-          :features "yasnippet"
-          :post-init (lambda ()
-                       (yas/initialize)
-                                        ;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
-                                        ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
-                       (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
-                       (yas/reload-all)))
+   ;; (:name yasnippet
+   ;;        :type svn
+   ;;        :url "http://yasnippet.googlecode.com/svn/trunk/"
+   ;;        :features "yasnippet"
+   ;;        :post-init (lambda ()
+   ;;                     (yas/initialize)
+   ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
+   ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
+   ;;                     (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
+   ;;                     (yas/reload-all)))
 
-   (:name senny-textmate
-          :type git
-          :url "https://github.com/defunkt/textmate.el.git"
-          :features textmate
-          ;; customization
-          :after (lambda ()
-                   (textmate-mode t)))
+   ;; (:name senny-textmate
+   ;;        :type git
+   ;;        :url "https://github.com/defunkt/textmate.el.git"
+   ;;        :features textmate
+   ;;        ;; customization
+   ;;        :after (lambda ()
+   ;;                 (textmate-mode t)))
    (:name idle-highlight :type elpa)
    (:name kylpo-org-mode
           :type git
@@ -277,13 +253,7 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   ruby-end ;necessary to place after ruby-mode
-   flymake-ruby
-   (:name senny-rspec-mode
-          :type git
-          :url "https://github.com/pezra/rspec-mode.git"
-          :compile "rspec-mode.el"
-          :features rspec-mode)
+
    (:name etags-table :type emacswiki
           :features etags-table
           :after (lambda ()
@@ -300,7 +270,7 @@
    (:name yaml-mode
           :type git
           :url "http://github.com/yoshiki/yaml-mode.git"
-          :features yaml-mode
+;          :features yaml-mode
           :after (lambda ()
                    (autoload 'yaml-mode "yaml-mode" nil t)
                    (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
@@ -308,15 +278,46 @@
                    (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
    ))
 
-(el-get 'sync)
+(setq
+ my:el-get-packages
+ '(el-get				; el-get is self-hosting
+   ack
+   emacs-goodies-el
+   rvm
+   rspec-mode
+   dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
+   php-mode-improved			; if you're into php...
+   erc-highlight-nicknames
+   sunrise-commander
+   sunrise-x-tree
+   sunrise-x-buttons
+   sunrise-x-tabs
+   scala-mode
+   rainbow-mode ;color-highlight
+;  ensime
+   color-theme
+   wrap-region
+   yari
+   ruby-end ;necessary to place after ruby-mode
+   flymake-ruby
+   auto-complete			; complete as you type with overlays
+   yasnippet
+   zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
+   ))
+
+(setq my:el-get-packages
+      (append
+       my:el-get-packages
+       (loop for src in el-get-sources collect (el-get-source-name src))))
+
+;; install new packages and init already installed packages
+(el-get 'sync my:el-get-packages)
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
 (require 'tinyeat)
 (require 'tramp)
 (require 'redo+) ;;from elpa
 (require 'uniquify)
-(require 'cl)
-
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
@@ -1437,7 +1438,7 @@ an .ics file that has been downloaded from Google Calendar "
       ;;       erc-send-whitespace-lines          nil
       erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-      erc-keywords '("ruby" "rails" "erc" "tmux" "screen")
+      erc-keywords '(" ruby " " rails " " erc " " tmux " " screen ")
       erc-pals '("technomancy")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477")
       ;; joining && autojoing
@@ -1595,7 +1596,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-L") 'next-buffer)
 (global-set-key (kbd "M-H") 'previous-buffer)
-(global-set-key (kbd "M-/") 'hippie-expand)
+;; (global-set-key (kbd "M-/") 'hippie-expand)
 (global-set-key "\r" 'newline-and-indent)
                                         ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
@@ -1686,5 +1687,6 @@ an .ics file that has been downloaded from Google Calendar "
   (interactive)
   (scroll-down 1))
 
-(global-set-key [?\C-i] 'scroll-down-one-line)
-(global-set-key [?\C-o] 'scroll-up-one-line)
+;;TODO
+;; (global-set-key [?\C-i] 'scroll-down-one-line)
+;; (global-set-key [?\C-o] 'scroll-up-one-line)
