@@ -1,5 +1,5 @@
 ;;Done at start to load faster
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
@@ -67,7 +67,7 @@
 
 ;; set local recipes
 (setq
- el-get-sources
+el-get-sources
  '(
    (:name goto-last-change		; move pointer back to last change
           :after (lambda ()
@@ -77,24 +77,19 @@
    ;;        :type git
    ;;        :url "https://github.com/emacsmirror/bookmark-plus.git"
    ;;        :features bookmark+)
-
    (:name multi-term
           :after (lambda ()
                    (multi-term-keystroke-setup)
                    (setq multi-term-program "/bin/bash")))
-   ;; (:name workgroups :after ;disabled b/c using tmux now
-   ;;        (lambda ()
-   ;;          ;; (setq wg-prefix-key (kbd "C-c w"))
-   ;;          ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-   ;;          (workgroups-mode t)
-   ;;          ;; (wg-switch-on-load nil)
-   ;;          (wg-load "~/.emacs.d/workgroups/default")
-   ;;          (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
-   ;;          ;; (wg-fill-keymap "C-z" 'wg-previous-workgroup)
-
-   ;;          ))
-
-
+   (:name workgroups
+          :after (lambda ()
+                   ;; (setq wg-prefix-key (kbd "C-c w"))
+                   ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+                   (workgroups-mode t)
+                   ;; (wg-switch-on-load nil)
+                   (wg-load "~/.emacs.d/workgroups/default")
+                   (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
+                   ))
    ;; (:name color-theme-topfunky
    ;;       :type http
    ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
@@ -149,7 +144,6 @@
    (:name magit
           :after (lambda ()
                    (global-set-key (kbd "C-x g") 'magit-status)))
-
    (:name kylpo-smex
           :type git
           :url "http://github.com/nonsequitur/smex.git"
@@ -160,7 +154,6 @@
           :after (lambda ()
                    (global-set-key (kbd "M-x") 'smex)
                    (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-
    ;; (:name yasnippet
    ;;        :type svn
    ;;        :url "http://yasnippet.googlecode.com/svn/trunk/"
@@ -171,7 +164,6 @@
    ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
    ;;                     (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
    ;;                     (yas/reload-all)))
-
    ;; (:name senny-textmate
    ;;        :type git
    ;;        :url "https://github.com/defunkt/textmate.el.git"
@@ -253,7 +245,6 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-
    (:name etags-table :type emacswiki
           :features etags-table
           :after (lambda ()
@@ -328,14 +319,15 @@
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-(load "~/.emacs.d/colors/zenburn/zenburn.el")
-(color-theme-zenburn)
+;; (load "~/.emacs.d/colors/zenburn/zenburn.el")
+;; (color-theme-zenburn)
 ;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
 ;; (color-theme-topfunky)
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
-;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
-;; (require 'color-theme-solarized)
-;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+(add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
+(require 'color-theme-solarized)
+(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+(color-theme-solarized-light);https://github.com/sellout/emacs-color-theme-solarized
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
