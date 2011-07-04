@@ -39,17 +39,17 @@
 (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
 ;;*****ELPA****
 ;;early in .emacs to be able to use plugins later down
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
+ (when
+     (load
+      (expand-file-name "~/.emacs.d/elpa/package.el"))
+   (package-initialize))
 
-(setq package-archives
-      '(("original" . "http://tromey.com/elpa/")
-        ("gnu" . "http://elpa.gnu.org/packages/")
-        ("marmalade" . "http://marmalade-repo.org/packages/")
-        ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
-        ))
+ (setq package-archives
+       '(("original" . "http://tromey.com/elpa/")
+         ("gnu" . "http://elpa.gnu.org/packages/")
+         ("marmalade" . "http://marmalade-repo.org/packages/")
+;;         ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
+         ))
 
 (require 'cl)				; common lisp goodies, loop
 
@@ -267,6 +267,10 @@ el-get-sources
                    (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
+  (:name ack
+         :after (lambda ()
+                  (setq ack-command "ack ")))
+
    ))
 
 (setq
@@ -274,6 +278,8 @@ el-get-sources
  '(el-get				; el-get is self-hosting
    ack
    emacs-goodies-el
+   ;; full-ack
+   js2-mode
    rvm
    rspec-mode
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
@@ -319,15 +325,15 @@ el-get-sources
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-;; (load "~/.emacs.d/colors/zenburn/zenburn.el")
-;; (color-theme-zenburn)
+(load "~/.emacs.d/colors/zenburn/zenburn.el")
+(color-theme-zenburn)
 ;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
 ;; (color-theme-topfunky)
 ;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
-(add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
-(require 'color-theme-solarized)
-(color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
-(color-theme-solarized-light);https://github.com/sellout/emacs-color-theme-solarized
+;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
+;; (require 'color-theme-solarized)
+;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+;; (color-theme-solarized-light);https://github.com/sellout/emacs-color-theme-solarized
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
