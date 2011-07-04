@@ -1,5 +1,5 @@
 ;;Done at start to load faster
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
@@ -39,17 +39,17 @@
 (setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
 ;;*****ELPA****
 ;;early in .emacs to be able to use plugins later down
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
+ (when
+     (load
+      (expand-file-name "~/.emacs.d/elpa/package.el"))
+   (package-initialize))
 
-(setq package-archives
-      '(("original" . "http://tromey.com/elpa/")
-        ("gnu" . "http://elpa.gnu.org/packages/")
-        ("marmalade" . "http://marmalade-repo.org/packages/")
-        ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
-        ))
+ (setq package-archives
+       '(("original" . "http://tromey.com/elpa/")
+         ("gnu" . "http://elpa.gnu.org/packages/")
+         ("marmalade" . "http://marmalade-repo.org/packages/")
+;;         ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
+         ))
 
 (require 'cl)				; common lisp goodies, loop
 
@@ -67,7 +67,7 @@
 
 ;; set local recipes
 (setq
- el-get-sources
+el-get-sources
  '(
    (:name goto-last-change		; move pointer back to last change
           :after (lambda ()
@@ -77,24 +77,19 @@
    ;;        :type git
    ;;        :url "https://github.com/emacsmirror/bookmark-plus.git"
    ;;        :features bookmark+)
-
    (:name multi-term
           :after (lambda ()
                    (multi-term-keystroke-setup)
                    (setq multi-term-program "/bin/bash")))
-   ;; (:name workgroups :after ;disabled b/c using tmux now
-   ;;        (lambda ()
-   ;;          ;; (setq wg-prefix-key (kbd "C-c w"))
-   ;;          ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-   ;;          (workgroups-mode t)
-   ;;          ;; (wg-switch-on-load nil)
-   ;;          (wg-load "~/.emacs.d/workgroups/default")
-   ;;          (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
-   ;;          ;; (wg-fill-keymap "C-z" 'wg-previous-workgroup)
-
-   ;;          ))
-
-
+   (:name workgroups
+          :after (lambda ()
+                   ;; (setq wg-prefix-key (kbd "C-c w"))
+                   ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+                   (workgroups-mode t)
+                   ;; (wg-switch-on-load nil)
+                   (wg-load "~/.emacs.d/workgroups/default")
+                   (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
+                   ))
    ;; (:name color-theme-topfunky
    ;;       :type http
    ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
@@ -149,7 +144,6 @@
    (:name magit
           :after (lambda ()
                    (global-set-key (kbd "C-x g") 'magit-status)))
-
    (:name kylpo-smex
           :type git
           :url "http://github.com/nonsequitur/smex.git"
@@ -160,7 +154,6 @@
           :after (lambda ()
                    (global-set-key (kbd "M-x") 'smex)
                    (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-
    ;; (:name yasnippet
    ;;        :type svn
    ;;        :url "http://yasnippet.googlecode.com/svn/trunk/"
@@ -171,7 +164,6 @@
    ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
    ;;                     (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
    ;;                     (yas/reload-all)))
-
    ;; (:name senny-textmate
    ;;        :type git
    ;;        :url "https://github.com/defunkt/textmate.el.git"
@@ -253,7 +245,6 @@
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-
    (:name etags-table :type emacswiki
           :features etags-table
           :after (lambda ()
@@ -276,6 +267,10 @@
                    (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
+  (:name ack
+         :after (lambda ()
+                  (setq ack-command "ack ")))
+
    ))
 
 (setq
@@ -283,6 +278,8 @@
  '(el-get				; el-get is self-hosting
    ack
    emacs-goodies-el
+   ;; full-ack
+   js2-mode
    rvm
    rspec-mode
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
@@ -336,6 +333,7 @@
 ;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
 ;; (require 'color-theme-solarized)
 ;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+;; (color-theme-solarized-light);https://github.com/sellout/emacs-color-theme-solarized
 ;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
 ;; (color-theme-sanityinc-solarized-dark)
 ;; (load "~/.emacs.d/colors/color-theme-wombat")
