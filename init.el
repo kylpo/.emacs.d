@@ -83,7 +83,8 @@ el-get-sources
                    ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
                    (workgroups-mode t)
                    ;; (wg-switch-on-load nil)
-                   (wg-load "~/.emacs.d/workgroups/default")
+                   (wg-toggle-mode-line)
+                   (wg-load "~/.emacs.d/workgroups");;/default")
                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
                    ))
    (:name auto-complete
@@ -257,7 +258,7 @@ el-get-sources
 (el-get 'sync my:el-get-packages)
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
-;; (require 'tinyeat)
+(require 'tinyeat)
 (require 'tramp)
 (require 'redo+) ;;from elpa
 (require 'uniquify)
@@ -1023,7 +1024,7 @@ an .ics file that has been downloaded from Google Calendar "
 (defun insert-date ()
   "Insert a time-stamp according to locale's date and time format."
   (interactive)
-  (insert (format-time-string "%c" (current-time))))
+  (insert (format-time-string "%Y%m%d" (current-time))))
 
 (defun senny-grep-project (pattern)
   (interactive (list (read-string "Pattern: "
@@ -1181,13 +1182,14 @@ an .ics file that has been downloaded from Google Calendar "
           (org-agenda-time-grid nil)))
         ))
 
-;;*****Capture*****
+;;=capture
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
                                         ;             "* TODO %?\n----Entered on %U\n  %i")
          "* TODO %?  %i")
         ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal/journal.org"))
-                                        ; "** %?")
+        ("p" "Pic-of-the-day" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
+         "* [[~/Dropbox/doc/journal/%?.jpg]]")
         ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
          "** %U - %^{Activity}  :TIME:")
         ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
@@ -1383,13 +1385,13 @@ an .ics file that has been downloaded from Google Calendar "
 ;;-----------------------------------------------------------------------------
 ;; F9: Emacs programs
 ;;-----------------------------------------------------------------------------
-(bind "<f9> e" eshell)
-(bind "<f9> f" rgrep)
-(bind "<f9> h" (lambda () (interactive) (dired "~")))
-(bind "<f9> c" calendar)
-(bind "<f9> r" org-remember)
-(bind "<f9> g" gnus)
-(bind "<f9> M-g" gnus-unplugged)
+;; (bind "<f9> e" eshell)
+;; (bind "<f9> f" rgrep)
+;; (bind "<f9> h" (lambda () (interactive) (dired "~")))
+;; (bind "<f9> c" calendar)
+;; (bind "<f9> r" org-remember)
+;; (bind "<f9> g" gnus)
+;; (bind "<f9> M-g" gnus-unplugged)
 
 
 ;;-----------------------------------------------------------------------------
@@ -1502,3 +1504,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;;TODO
 ;; (global-set-key [?\C-i] 'scroll-down-one-line)
 ;; (global-set-key [?\C-o] 'scroll-up-one-line)
+
+;; (global-unset-key (kbd "<C-tab>"))
+(global-unset-key (kbd "<M-tab>"))
