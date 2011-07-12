@@ -84,7 +84,7 @@ el-get-sources
                    (workgroups-mode t)
                    ;; (wg-switch-on-load nil)
                    (wg-toggle-mode-line)
-                   (wg-load "~/.emacs.d/workgroups");;/default")
+                   (wg-load "~/.emacs.d/workgroups/default")
                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
                    ))
    (:name auto-complete
@@ -214,9 +214,9 @@ el-get-sources
                    (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
-  (:name ack
-         :after (lambda ()
-                  (setq ack-command "ack ")))
+  ;; (:name ack
+  ;;        :after (lambda ()
+  ;;                 (setq ack-command "ack ")))
 
    ))
 
@@ -1048,9 +1048,14 @@ an .ics file that has been downloaded from Google Calendar "
 ;;------------------------------------------------
 
 ;;=dired & Tramp
+;; (require 'dired-history)
 (setq tramp-default-method "ssh")
 (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
 (setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
+(add-hook 'dired-mode-hook
+          (lambda ()
+            ;; (define-key dired-mode-map (kbd "o") 'dired-display-file)
+            (define-key dired-mode-map (kbd "M-l") 'nil)))
 
 ;;=org-mode
 (defun planner ()
@@ -1223,6 +1228,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;=erc
 ;; check channels
+(set-face-foreground 'erc-pal-face "#8cd0d3")
 (erc-track-mode t)
 (erc-autojoin-mode t)
 
