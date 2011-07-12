@@ -1303,7 +1303,7 @@ an .ics file that has been downloaded from Google Calendar "
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#scala" "#emacs"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#scala" "#clojure" "#emacs"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
