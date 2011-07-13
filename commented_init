@@ -1,0 +1,185 @@
+;; (setq org-capture-templates
+;;      (quote (("w" "web note" entry (file+headline "~/org/web.org" "Notes") "* Source: %u, %c\n  %i")
+;;              ("l" "scriptjure political or economic references" entry (file+headline "~/org/scripture-study.org" "Politics or Economic")
+;;               "* %c %^{Type|descriptive|prescriptive|other} %U\n  %i\n\n   Notes: %^{Notes}")
+;;              ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %c %U\n  %i")
+;;              ("x" "co template" entry (file+headline "~/org/co.org" "co") "* %c\n" :immediate-finish 1)
+;;              ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
+;;             ("t" "todo" entry (file+headline "~/org/todo.org" "Tasks") "* TODO %?")
+;;            ("c" "calendar" entry (file+headline "~/org/calendar.org" "Events") "* %?\n  %^t")
+;;           ("p" "phone-calls" entry (file+headline "~/doc/phone-calls.org" "Phone Calls") "* %T %?")
+;;              ("j" "journal" entry (file+headline "~/doc/personal/journal.org" "Journal") "* %U\n%?")
+;;              ("m" "music" entry (file+headline "~/org/music.org" "Music to checkout") "* :%^{Field|song|artist|album} %^{Value} :%^{Field|song|artist|album} %^{Value}")
+;;              ("v" "movie" entry (file+headline "~/org/movies.org" "Movies to see") "* %^{Movie name}")
+;;              ("n" "note" entry (file+headline "~/org/notes.org" "Notes") "* %U\n  %?")
+;;              ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %U\n  - %?")
+;;              ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
+;;              ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
+;;              ("o" "other" entry (file+headline "~/remember.org" "") "* %a\n%i"))))
+
+
+;; (defun senny-ido-find-work ()
+;;   (interactive)
+;;   (let ((project-name (ido-completing-read "Work: "
+;;                                            (directory-files "~/Work/" nil "^[^.]"))))
+;;     (senny-persp project-name)
+;;     (find-file (ido-open-find-directory-files
+;;                 (concat "~/Work/" project-name)))))
+
+
+;; (defun rtags ()
+;;   (interactive)
+;;   (shell-command "rtags --recurse ."))
+
+
+;;=ECB
+;; (setq ecb-tree-buffer-style 'ascii-guides)
+;; (setq ecb-tip-of-the-day nil) ;inhibit startup message
+
+;; (setq hippie-expand-try-functions-list ‘(try-expand-dabbrev
+;;                                          try-expand-dabbrev-all-buffers
+;;                                          try-expand-dabbrev-from-kill
+;;                                          try-complete-file-name-partially
+;;                                          try-complete-file-name
+;;                                          try-complete-lisp-symbol-partially
+;;                                          try-complete-lisp-symbol
+;;                                          try-expand-whole-kill))
+
+
+;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
+;; (setq windmove-wrap-around t) ;windmove-wrap
+
+
+;; (yas/initialize)
+;; (yas/load-directory
+;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
+
+;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
+;; Automatically save and restore sessions
+;; (setq desktop-dirname             "~/.emacs.d/"
+;;       desktop-base-file-name      ".emacs.desktop"
+;; ;      desktop-base-lock-name      "lock"
+;;       desktop-path                (list desktop-dirname)
+;;       desktop-save                t
+;;       desktop-files-not-to-save   "^$" ;reload tramp paths
+;;       desktop-load-locked-desktop nil)
+;; (desktop-save-mode 1)
+
+;; whenever an external process changes a file underneath emacs, and there
+;; was no unsaved changes in the corresponding buffer, just revert its
+;; content to reflect what's on-disk.
+;; (global-auto-revert-mode 1)
+
+
+;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
+;; (color-theme-topfunky)
+;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
+;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
+;; (require 'color-theme-solarized)
+;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
+;; (color-theme-solarized-light);https://github.com/sellout/emacs-color-theme-solarized
+;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
+;; (color-theme-sanityinc-solarized-dark)
+;; (load "~/.emacs.d/colors/color-theme-wombat")
+;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
+
+
+   ;; (:name yasnippet
+   ;;        :type svn
+   ;;        :url "http://yasnippet.googlecode.com/svn/trunk/"
+   ;;        :features "yasnippet"
+   ;;        :post-init (lambda ()
+   ;;                     (yas/initialize)
+   ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
+   ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
+   ;;                     (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
+   ;;                     (yas/reload-all)))
+   ;; (:name senny-textmate
+   ;;        :type git
+   ;;        :url "https://github.com/defunkt/textmate.el.git"
+   ;;        :features textmate
+   ;;        ;; customization
+   ;;        :after (lambda ()
+   ;;                 (textmate-mode t)))
+   ;; (:name color-theme-topfunky
+   ;;       :type http
+   ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
+   ;;       :after (lambda ()
+   ;;                (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
+   ;;                ;; (color-theme-topfunky)
+   ;;                ))
+
+   ;; (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
+   ;;        :features ecb
+   ;;        :post-init (lambda ()
+   ;;                     (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
+   ;;        :after (lambda ()
+   ;;                 (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
+         ;; (:name bookmark+
+   ;;        :type git
+   ;;        :url "https://github.com/emacsmirror/bookmark-plus.git"
+   ;;        :features bookmark+)
+      ;; (:name ruby-electric :type elpa)
+   ;; (:name sr-speedbar
+   ;;        :type emacswiki ;http://www.emacswiki.org/emacs/sr-speedbar.el
+   ;;        :after (lambda ()
+   ;;                 (require 'sr-speedbar)))
+
+   (:name auto-complete
+          ;; :after (lambda ()
+            ;; (setq ac-auto-start nil
+            ;;       ac-modes '(erlang-mode
+            ;;                  espresso-mode
+            ;;                  js2-mode
+            ;;                  sql-mode
+            ;;                  ruby-mode
+            ;;                  haml-mode
+            ;;                  sass-mode
+            ;;                  css-mode
+            ;;                  lisp-interaction-mode
+            ;;                  emacs-lisp-mode
+            ;;                  css-mode
+            ;;                  sql-interactive-mode))
+            ;; (global-set-key (kbd "<M-tab>") 'auto-complete)
+            ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
+            ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous))))
+          )
+
+
+;;*****SPEEDBAR*****
+;; (setq speedbar-use-imenu-flag 'nil)
+;; (setq speedbar-fetch-etags-command "/usr/bin/ctags")
+;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
+
+;;Setup speedbar, an additional frame for viewing source files
+;; (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
+;; (autoload 'speedbar-get-focus "speedbar" "Jump to speedbar frame" t)
+(autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
+;; (setq speedbar-frame-plist '(minibuffer nil
+;;                                         border-width 0
+;;                                         internal-border-width 0
+;;                                         menu-bar-lines 0
+;;                                         modeline t
+;;                                         name "SpeedBar"
+;;                                         width 24
+;;                                         unsplittable t))
+
+;; (global-set-key (kbd "<f6> e") 'senny-persp/emacs)
+;; (global-set-key (kbd "<f6> t") 'senny-persp/terminal)
+;; (global-set-key (kbd "<f6> m") 'senny-persp/main)
+;; (global-set-key (kbd "<f6> i") 'senny-persp/irc)
+;; (global-set-key (kbd "<f6> o") 'senny-persp/org)
+;; (global-set-key (kbd "<f6> s") 'persp-switch)
+;; (global-set-key (kbd "<f6> p") 'senny-persp-last)
+;;-----------------------------------------------------------------------------
+;; F11:
+;;-----------------------------------------------------------------------------
+;; (bind "<M-f11>" recentf-open-files)
+
+
+;; (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
+;; (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
+;; (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
+;; (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
+
+;; (global-set-key "\C-w" 'tinyeat-backward)

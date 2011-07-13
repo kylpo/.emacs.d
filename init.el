@@ -80,10 +80,6 @@ el-get-sources
           :after (lambda ()
         	   ;; when using AZERTY keyboard, consider C-x C-_
         	   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
-      ;; (:name bookmark+
-   ;;        :type git
-   ;;        :url "https://github.com/emacsmirror/bookmark-plus.git"
-   ;;        :features bookmark+)
    (:name multi-term
           :after (lambda ()
                    (multi-term-keystroke-setup)
@@ -94,43 +90,14 @@ el-get-sources
                    ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
                    (workgroups-mode t)
                    ;; (wg-switch-on-load nil)
+                   (wg-toggle-mode-line)
                    (wg-load "~/.emacs.d/workgroups/default")
                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
                    ))
-   ;; (:name color-theme-topfunky
-   ;;       :type http
-   ;;       :url "https://raw.github.com/topfunky/emacs-starter-kit/master/topfunky/theme.el"
-   ;;       :after (lambda ()
-   ;;                (load "~/.emacs.d/el-get/color-theme-topfunky/theme.el")
-   ;;                ;; (color-theme-topfunky)
-   ;;                ))
-
-   ;; (:name kylpo-ecb :type git :url "git://github.com/emacsmirror/ecb.git"
-   ;;        :features ecb
-   ;;        :post-init (lambda ()
-   ;;                     (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/"))
-   ;;        :after (lambda ()
-   ;;                 (add-to-list 'load-path "~/.emacs.d/el-get/kylpo-ecb/")))
    (:name auto-complete
           ;; :after (lambda ()
-            ;; (setq ac-auto-start nil
-            ;;       ac-modes '(erlang-mode
-            ;;                  espresso-mode
-            ;;                  js2-mode
-            ;;                  sql-mode
-            ;;                  ruby-mode
-            ;;                  haml-mode
-            ;;                  sass-mode
-            ;;                  css-mode
-            ;;                  lisp-interaction-mode
-            ;;                  emacs-lisp-mode
-            ;;                  css-mode
-            ;;                  sql-interactive-mode))
             ;; (global-set-key (kbd "<M-tab>") 'auto-complete)
-            ;;(define-key ac-complete-mode-map (kbd "C-n") 'ac-next)
-            ;;(define-key ac-complete-mode-map (kbd "C-p") 'ac-previous))))
           )
-
    (:name buffer-move ; have to add your own keys
           :after (lambda ()
                    (global-set-key (kbd "<C-S-up>") 'buf-move-up)
@@ -161,23 +128,6 @@ el-get-sources
           :after (lambda ()
                    (global-set-key (kbd "M-x") 'smex)
                    (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-   ;; (:name yasnippet
-   ;;        :type svn
-   ;;        :url "http://yasnippet.googlecode.com/svn/trunk/"
-   ;;        :features "yasnippet"
-   ;;        :post-init (lambda ()
-   ;;                     (yas/initialize)
-   ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat el-get-dir "yasnippet/snippets"))
-   ;;                                      ;                    (add-to-list 'yas/snippet-dirs (concat this-directory "snippets"))
-   ;;                     (add-to-list 'yas/snippet-dirs (concat (file-name-directory (or load-file-name buffer-file-name)) "snippets/"))
-   ;;                     (yas/reload-all)))
-   ;; (:name senny-textmate
-   ;;        :type git
-   ;;        :url "https://github.com/defunkt/textmate.el.git"
-   ;;        :features textmate
-   ;;        ;; customization
-   ;;        :after (lambda ()
-   ;;                 (textmate-mode t)))
    (:name idle-highlight :type elpa)
    (:name kylpo-org-mode
           :type git
@@ -196,7 +146,6 @@ el-get-sources
             (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
    (:name inf-ruby  :type elpa)
    (:name ruby-compilation :type elpa)
-   ;; (:name ruby-electric :type elpa)
    (:name ruby-mode
           :type elpa
           :after
@@ -243,8 +192,7 @@ el-get-sources
                          (setq css-indent-level 2)
                          (setq css-indent-offset 2)))))
    (:name rhtml-mode
-          :after
-          (lambda ()
+          :after (lambda ()
             (autoload 'rhtml-mode "rhtml-mode" nil t)
             (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
             (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
@@ -252,19 +200,18 @@ el-get-sources
             (add-hook 'rhtml-mode
                       '(lambda ()
                          (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
-   (:name etags-table :type emacswiki
+   (:name etags-table
+          :type emacswiki
           :features etags-table
           :after (lambda ()
                    ;; (require 'etags-table)
                    (setq etags-table-search-up-depth 10)))
-   (:name framemove :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
+   (:name framemove
+          :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
                    (setq framemove-hook-into-windmove t)
                    ))
-   (:name sr-speedbar :type emacswiki ;http://www.emacswiki.org/emacs/sr-speedbar.el
-          :after (lambda ()
-                   (require 'sr-speedbar)))
    (:name yaml-mode
           :type git
           :url "http://github.com/yoshiki/yaml-mode.git"
@@ -274,9 +221,9 @@ el-get-sources
                    (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
                    (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
-  (:name ack
-         :after (lambda ()
-                  (setq ack-command "ack ")))
+  ;; (:name ack
+  ;;        :after (lambda ()
+  ;;                 (setq ack-command "ack ")))
 
    ))
 
@@ -334,17 +281,6 @@ el-get-sources
 
 (load "~/.emacs.d/colors/zenburn/zenburn.el")
 (color-theme-zenburn)
-;; (load "~/.emacs.d/colors/color-theme-topfunky.el")
-;; (color-theme-topfunky)
-;; (add-to-list 'load-path "~/.emacs.d/colors/emacs-color-theme-solarized")
-;; (add-to-list 'load-path (concat dotfiles-dir "/colors/emacs-color-theme-solarized"))
-;; (require 'color-theme-solarized)
-;; (color-theme-solarized-dark);https://github.com/sellout/emacs-color-theme-solarized
-;; (color-theme-solarized-light);https://github.com/sellout/emacs-color-theme-solarized
-;; (load "~/.emacs.d/colors/color-theme-sanityinc-solarized/color-theme-sanityinc-solarized")
-;; (color-theme-sanityinc-solarized-dark)
-;; (load "~/.emacs.d/colors/color-theme-wombat")
-;; (color-theme-wombat);http://jaderholm.com/color-themes/color-theme-wombat.el
 
 ;;------------------------------------------------
 ;; == Platform Dependencies
@@ -413,10 +349,9 @@ el-get-sources
                                      (shell-command (format "git add %s" buffer-file-name))
                                      (message "Staged changes.")))))
 
-
-;;; starter-kit-eshell.el --- Making the defaults a bit saner
-;;
+;;=eshell
 ;; Part of the Emacs Starter Kit
+(setq eshell-cmpl-ignore-case t)
 
 (setq eshell-cmpl-cycle-completions nil
       eshell-save-history-on-exit t
@@ -451,23 +386,9 @@ el-get-sources
  uniquify-buffer-name-style 'post-forward
  uniquify-separator ":")
 
-;; (yas/initialize)
-;; (yas/load-directory
-;; (concat (file-name-directory (or load-file-name buffer-file-name)) "rails-snippets/"))
-
-;; from http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
-;; Automatically save and restore sessions
-;; (setq desktop-dirname             "~/.emacs.d/"
-;;       desktop-base-file-name      ".emacs.desktop"
-;; ;      desktop-base-lock-name      "lock"
-;;       desktop-path                (list desktop-dirname)
-;;       desktop-save                t
-;;       desktop-files-not-to-save   "^$" ;reload tramp paths
-;;       desktop-load-locked-desktop nil)
-;; (desktop-save-mode 1)
-
-;; ;; save a bunch of variables to the desktop file
-;; ;; for lists specify the len of the maximal saved data also
+;;=desktop
+;; save a bunch of variables to the desktop file
+;; for lists specify the len of the maximal saved data also
 (setq desktop-globals-to-save
       (append '((extended-command-history . 30)
                 (file-name-history        . 100)
@@ -490,18 +411,11 @@ el-get-sources
 (setq ibuffer-sorting-mode 'recency)
 (setq ibuffer-use-header-line t)
 
-;; whenever an external process changes a file underneath emacs, and there
-;; was no unsaved changes in the corresponding buffer, just revert its
-;; content to reflect what's on-disk.
-;; (global-auto-revert-mode 1)
-
 ;;Display
 ;; Use a vertical bar as cursor
 (blink-cursor-mode 1)
 ;;(setq-default cursor-type '(bar . 2))
 (setq-default indicate-empty-lines t)
-
-
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
@@ -562,15 +476,8 @@ el-get-sources
 (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
 (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
 
-
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (set-default 'imenu-auto-rescan t)
-
-;;=eshell
-;;
-(setq eshell-cmpl-ignore-case t)
-;; (setq eshell-prompt-function
-;;      (lambda nil (concat (eshell/pwd) (eshell/rvm-prompt) (if (= (user-uid) 0) " # " " $ "))))
 
 ;;=term
 ;;
@@ -605,22 +512,7 @@ el-get-sources
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-;;(setq next-line-add-newlines t);C-n at end of buffer will create new line
-;; (setq windmove-wrap-around t) ;windmove-wrap
 
-
-;;=ECB
-;; (setq ecb-tree-buffer-style 'ascii-guides)
-;; (setq ecb-tip-of-the-day nil) ;inhibit startup message
-
-;; (setq hippie-expand-try-functions-list ‘(try-expand-dabbrev
-;;                                          try-expand-dabbrev-all-buffers
-;;                                          try-expand-dabbrev-from-kill
-;;                                          try-complete-file-name-partially
-;;                                          try-complete-file-name
-;;                                          try-complete-lisp-symbol-partially
-;;                                          try-complete-lisp-symbol
-;;                                          try-expand-whole-kill))
 
 (font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
 
@@ -633,7 +525,6 @@ el-get-sources
  '(wg-morph-on nil)
  '(wg-switch-on-load nil)
  )
-
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -849,10 +740,6 @@ el-get-sources
 (defun eshell/emacs (tags) ;;eshell rtags alias
   (rtags --recurse .))
 
-;; (defun rtags ()
-;;   (interactive)
-;;   (shell-command "rtags --recurse ."))
-
 (defun rtags ()
   (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
@@ -911,14 +798,6 @@ el-get-sources
           (progn (goto-char min) (line-beginning-position))
           (progn (goto-char max) (line-end-position))))))
 
-;; (defun senny-ido-find-work ()
-;;   (interactive)
-;;   (let ((project-name (ido-completing-read "Work: "
-;;                                            (directory-files "~/Work/" nil "^[^.]"))))
-;;     (senny-persp project-name)
-;;     (find-file (ido-open-find-directory-files
-;;                 (concat "~/Work/" project-name)))))
-;;TODO
 (defun ido-open-find-directory-files (directory)
   (let ((directory (concat (expand-file-name directory) "/")))
     (concat directory (ido-completing-read (concat directory ": ")
@@ -1152,7 +1031,7 @@ an .ics file that has been downloaded from Google Calendar "
 (defun insert-date ()
   "Insert a time-stamp according to locale's date and time format."
   (interactive)
-  (insert (format-time-string "%c" (current-time))))
+  (insert (format-time-string "%Y%m%d" (current-time))))
 
 (defun senny-grep-project (pattern)
   (interactive (list (read-string "Pattern: "
@@ -1176,9 +1055,14 @@ an .ics file that has been downloaded from Google Calendar "
 ;;------------------------------------------------
 
 ;;=dired & Tramp
+;; (require 'dired-history)
 (setq tramp-default-method "ssh")
 (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
 (setq tramp-auto-save-directory "~/.emacs.d/tramp-autosave")
+(add-hook 'dired-mode-hook
+          (lambda ()
+            ;; (define-key dired-mode-map (kbd "o") 'dired-display-file)
+            (define-key dired-mode-map (kbd "M-l") 'nil)))
 
 ;;=org-mode
 (defun planner ()
@@ -1189,9 +1073,7 @@ an .ics file that has been downloaded from Google Calendar "
   (interactive)
   (find-file "~/Dropbox/doc/journal/journal.org")
   )
-
 (setq org-habit-graph-column 60)
-                                        ;(setq org-log-done 'time)
 (setq org-agenda-include-diary nil)
 (setq org-deadline-warning-days 14)
 (setq org-timeline-show-empty-dates t)
@@ -1261,11 +1143,9 @@ an .ics file that has been downloaded from Google Calendar "
         ("DISMISSED"  . (:foreground "forest green" :weight bold))
         ("CANCELLED"  . (:foreground "forest green" :weight bold))
         ))
-
 (setq org-agenda-custom-commands
       '(;; ("P" "Projects"
         ;; ((tags "PROJECT")))
-
         ("H" "Office and Home Lists"
          ((agenda)
           (tags-todo "OFFICE")
@@ -1273,7 +1153,6 @@ an .ics file that has been downloaded from Google Calendar "
           (tags-todo "COMPUTER")
           (tags-todo "DVD")
           (tags-todo "READING")))
-
         ("d" "Daily Action List"
          ((agenda "" ((org-agenda-ndays 1)
                       (org-agenda-sorting-strategy
@@ -1315,13 +1194,15 @@ an .ics file that has been downloaded from Google Calendar "
           (org-agenda-time-grid nil)))
         ))
 
-;;*****Capture*****
+;;=capture
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
                                         ;             "* TODO %?\n----Entered on %U\n  %i")
          "* TODO %?  %i")
         ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
                                         "** %?")
+        ("p" "Pic-of-the-day" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
+         "* [[~/Dropbox/doc/journal/%?.jpg]]")
         ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
          "** %U - %^{Activity}  :TIME:")
         ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
@@ -1345,25 +1226,6 @@ an .ics file that has been downloaded from Google Calendar "
         ("b" "book" entry (file+headline "~/Dropbox/doc/media.org" "Books")
          "* %? \n----Entered on %U\n  %i")
         ))
-;; (setq org-capture-templates
-;;      (quote (("w" "web note" entry (file+headline "~/org/web.org" "Notes") "* Source: %u, %c\n  %i")
-;;              ("l" "scriptjure political or economic references" entry (file+headline "~/org/scripture-study.org" "Politics or Economic")
-;;               "* %c %^{Type|descriptive|prescriptive|other} %U\n  %i\n\n   Notes: %^{Notes}")
-;;              ("s" "scripture" entry (file+headline "~/org/scripture-study.org" "Notes") "* %c %U\n  %i")
-;;              ("x" "co template" entry (file+headline "~/org/co.org" "co") "* %c\n" :immediate-finish 1)
-;;              ("b" "book" entry (file+headline "~/www/org/truth.org" "Notes") "* %U\n  %?")
-;;             ("t" "todo" entry (file+headline "~/org/todo.org" "Tasks") "* TODO %?")
-;;            ("c" "calendar" entry (file+headline "~/org/calendar.org" "Events") "* %?\n  %^t")
-;;           ("p" "phone-calls" entry (file+headline "~/doc/phone-calls.org" "Phone Calls") "* %T %?")
-;;              ("j" "journal" entry (file+headline "~/doc/personal/journal.org" "Journal") "* %U\n%?")
-;;              ("m" "music" entry (file+headline "~/org/music.org" "Music to checkout") "* :%^{Field|song|artist|album} %^{Value} :%^{Field|song|artist|album} %^{Value}")
-;;              ("v" "movie" entry (file+headline "~/org/movies.org" "Movies to see") "* %^{Movie name}")
-;;              ("n" "note" entry (file+headline "~/org/notes.org" "Notes") "* %U\n  %?")
-;;              ("f" "food" entry (file+headline "~/org/food.org" "Food") "* %U\n  - %?")
-;;              ("f" "programming" entry (file+headline "~/org/programming.org" "Questions") "* %U\n  - %?")
-;;              ("e" "exercise" entry (file+headline "~/org/exercise.org" "Exercise") "* %U\n  - %?")
-;;              ("o" "other" entry (file+headline "~/remember.org" "") "* %a\n%i"))))
-
 
 ;;*****CALENDAR/DIARY MODE*****
 (setq view-diary-entries-initially t
@@ -1372,9 +1234,9 @@ an .ics file that has been downloaded from Google Calendar "
 (add-hook 'diary-display-hook 'fancy-diary-display)
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
-
 ;;=erc
 ;; check channels
+(set-face-foreground 'erc-pal-face "#8cd0d3")
 (erc-track-mode t)
 (erc-autojoin-mode t)
 
@@ -1449,30 +1311,11 @@ an .ics file that has been downloaded from Google Calendar "
       ;; joining && autojoing
       ;; make sure to use wildcards for e.g. freenode as the actual server
       ;; name can be be a bit different, which would screw up autoconnect
-      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#scala" "#emacs"))
+      erc-autojoin-channels-alist '((".*\\.freenode.net" "#lubuntu" "#scala" "#clojure" "#emacs"))
 
       ;; (".*\\.gimp.org" "#gimp" "#gimp-users")))
       ;;       erc-ignore-list                    '("jibot")
       )
-
-;;*****SPEEDBAR*****
-;; (setq speedbar-use-imenu-flag 'nil)
-;; (setq speedbar-fetch-etags-command "/usr/bin/ctags")
-;; (setq speedbar-fetch-etags-arguments '("-e" "-f" "-"))
-
-;;Setup speedbar, an additional frame for viewing source files
-;; (autoload 'speedbar-frame-mode "speedbar" "Popup a speedbar frame" t)
-;; (autoload 'speedbar-get-focus "speedbar" "Jump to speedbar frame" t)
-(autoload 'speedbar-toggle-etags "speedbar" "Add argument to etags command" t)
-;; (setq speedbar-frame-plist '(minibuffer nil
-;;                                         border-width 0
-;;                                         internal-border-width 0
-;;                                         menu-bar-lines 0
-;;                                         modeline t
-;;                                         name "SpeedBar"
-;;                                         width 24
-;;                                         unsplittable t))
-
 
 (setq ibuffer-saved-filter-groups
       (quote (("default"
@@ -1568,7 +1411,7 @@ an .ics file that has been downloaded from Google Calendar "
     `(progn (defun ,fname () (interactive) (find-file ,file))
             (global-set-key (kbd ,key) ',fname))))
 
-(set-key-find-file "<f2> e" "~/.emacs")
+(set-key-find-file "<f2> e" "~/.emacs.d/init.el")
 (set-key-find-file "<f2> g" "~/.gnus.el")
 (set-key-find-file "<f2> t" "~/org/todo.org")
 (set-key-find-file "<f2> n" "~/org/notes.org")
@@ -1598,37 +1441,24 @@ an .ics file that has been downloaded from Google Calendar "
 ;;-----------------------------------------------------------------------------
 ;; F6: Emacs functions
 ;;-----------------------------------------------------------------------------
-                                        ;(bind "<f6> t" 'visit-tags-table)
-                                        ;(bind "<f6> h" 'jao-toggle-selective-display)
-                                        ;(bind "<f6> h" 'hs-org/minor-mode)
-                                        ;(bind "<f6> d" 'color-theme-wombat)
-                                        ;(bind "<f6> l" 'color-theme-active)
-                                        ;(bind "<f6> n" 'linum-mode)
-;; (global-set-key (kbd "<f6> e") 'senny-persp/emacs)
-;; (global-set-key (kbd "<f6> t") 'senny-persp/terminal)
-;; (global-set-key (kbd "<f6> m") 'senny-persp/main)
-;; (global-set-key (kbd "<f6> i") 'senny-persp/irc)
-;; (global-set-key (kbd "<f6> o") 'senny-persp/org)
-;; (global-set-key (kbd "<f6> s") 'persp-switch)
-;; (global-set-key (kbd "<f6> p") 'senny-persp-last)
+(bind "<f6> t" 'visit-tags-table)
+(bind "<f6> h" 'jao-toggle-selective-display)
+(bind "<f6> h" 'hs-org/minor-mode)
+;; (bind "<f6> d" 'color-theme-wombat)
+(bind "<f6> l" 'color-theme-active)
+(bind "<f6> n" 'linum-mode)
 
 ;;-----------------------------------------------------------------------------
 ;; F9: Emacs programs
 ;;-----------------------------------------------------------------------------
-                                        ;(bind "<f9> e" eshell)
-                                        ;(bind "<f9> f" rgrep)
-                                        ;(bind "<f9> h" (lambda () (interactive) (dired "~")))
-                                        ;(bind "<f9> c" calendar)
-                                        ;(bind "<f9> r" org-remember)
-                                        ;(bind "<f9> g" gnus)
-                                        ;(bind "<f9> M-g" gnus-unplugged)
+;; (bind "<f9> e" eshell)
+;; (bind "<f9> f" rgrep)
+;; (bind "<f9> h" (lambda () (interactive) (dired "~")))
+;; (bind "<f9> c" calendar)
+;; (bind "<f9> r" org-remember)
+;; (bind "<f9> g" gnus)
+;; (bind "<f9> M-g" gnus-unplugged)
 
-
-;;-----------------------------------------------------------------------------
-;; F11:
-;;-----------------------------------------------------------------------------
-
-(bind "<M-f11>" recentf-open-files)
 
 ;;-----------------------------------------------------------------------------
 ;; F12: Agenda
@@ -1714,13 +1544,7 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-v") 'sfp-page-down)
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
-;; (global-set-key (kbd "C-x SPC m") 'senny-persp/main)
-;; (global-set-key (kbd "C-x SPC i") 'senny-persp/irc)
-;; (global-set-key (kbd "C-x SPC o") 'senny-persp/org)
-;; (global-set-key (kbd "C-x SPC p") 'senny-persp-last)
-
 (global-set-key (kbd "M-d") 'tinyeat-forward)
-;; (global-set-key "\C-w" 'tinyeat-backward)
 (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
 
@@ -1734,7 +1558,6 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-o") 'open-next-line)
 (global-set-key (kbd "M-o") 'open-previous-line)
 
-
 ;; http://tsengf.blogspot.com/2011/06/scroll-up-and-down-line-by-line-in.html
 (defun scroll-up-one-line()
   (interactive)
@@ -1747,3 +1570,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;;TODO
 ;; (global-set-key [?\C-i] 'scroll-down-one-line)
 ;; (global-set-key [?\C-o] 'scroll-up-one-line)
+
+;; (global-unset-key (kbd "<C-tab>"))
+(global-unset-key (kbd "<M-tab>"))
