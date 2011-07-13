@@ -1353,6 +1353,9 @@ an .ics file that has been downloaded from Google Calendar "
 ;;                       (local-set-key (kbd "<tab>") 'bbdb-complete-name)
 ;;                       )))
 
+;; auto-create bbdb contact
+;; (setq bbdb/news-auto-create-p t)
+
 (setq user-mail-address "2kylepoole@gmail.com")
 
 (setq user-full-name "Kyle Poole")
