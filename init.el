@@ -1,11 +1,18 @@
 ;;Done at start to load faster
-;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
+(cond
+ ((string-match "linux" system-configuration)
+;  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  );;end windows
+ ((string-match "apple" system-configuration)
+  ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  ))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 (server-start)
 
-       (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
+(setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
 
 ;;http://www.hollenback.net/index.php/EmacsModeLine
@@ -276,7 +283,7 @@ el-get-sources
 (setq
  my:el-get-packages
  '(el-get				; el-get is self-hosting
-   ack
+   ;; ack
    emacs-goodies-el
    ;; full-ack
    js2-mode
@@ -286,9 +293,9 @@ el-get-sources
    php-mode-improved			; if you're into php...
    erc-highlight-nicknames
    sunrise-commander
-   sunrise-x-tree
-   sunrise-x-buttons
-   sunrise-x-tabs
+;   sunrise-x-tree
+;   sunrise-x-buttons
+;   sunrise-x-tabs
    scala-mode
    rainbow-mode ;color-highlight
 ;  ensime
@@ -372,8 +379,8 @@ el-get-sources
   ;;start LINUX
   ;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
-                                        ;  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
-  (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
+  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+  ;; (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
   (setq browse-url-generic-program (executable-find "firefox")
         browse-url-browser-function 'browse-url-generic)
 
@@ -1313,8 +1320,8 @@ an .ics file that has been downloaded from Google Calendar "
       '(("t" "Todo" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
                                         ;             "* TODO %?\n----Entered on %U\n  %i")
          "* TODO %?  %i")
-        ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal/journal.org"))
-                                        ; "** %?")
+        ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
+                                        "** %?")
         ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
          "** %U - %^{Activity}  :TIME:")
         ("r" "Tracker" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
@@ -1495,6 +1502,58 @@ an .ics file that has been downloaded from Google Calendar "
 (add-hook 'ibuffer-mode-hook
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
+
+;;=gnus
+;;tab complete recipients
+;; (add-hook 'message-mode-hook
+;;           (function (lambda()
+;;                       (local-set-key (kbd "<tab>") 'bbdb-complete-name)
+;;                       )))
+
+(setq user-mail-address "2kylepoole@gmail.com")
+
+(setq user-full-name "Kyle Poole")
+;; (setq gnus-select-method '(nnimap "gmail"))
+;; (setq gnus-select-method '(nnml ""))
+
+;; (setq gnus-secondary-select-methods
+;;       '((nnimap "gmail"
+;;                 (nnimap-address "imap.gmail.com")
+;;                 (nnimap-server-port 993)
+;;                 (nnimap-stream ssl)
+;;                 ;; (nnimap-autheticator login)
+;;                 )))
+
+;; (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
+;;                                  (nnimap-address "imap.gmail.com")
+;;                                  (nnimap-server-port 993)
+;;                                  (nnimap-stream ssl)))
+
+(setq gnus-select-method '(nnimap "gmail"
+                                  (nnimap-address "imap.gmail.com")
+                                  (nnimap-server-port 993)
+                                  (nnimap-stream ssl)))
+
+;; (setq gnus-summary-line-format "%U%R%z%B%(%[%5L: %-23,23f%]%) %s\n")
+(setq gnus-summary-line-format "%U%R│%B%(%s%80=%) │ %f %110=│ %6&user-date;\n")
+(setq gnus-summary-make-false-root 'dummy
+      gnus-sum-thread-tree-false-root      "┈─► "
+      gnus-sum-thread-tree-single-indent   "●  "
+      gnus-sum-thread-tree-root            "●  "
+      gnus-sum-thread-tree-vertical        "│"
+      gnus-sum-thread-tree-leaf-with-other "├─► "
+      gnus-sum-thread-tree-single-leaf     "╰─► "
+      gnus-sum-thread-tree-indent          " ")
+(setq mm-discouraged-alternatives '("text/html" "text/richtext"))
+(setq mm-text-html-renderer 'w3m)
+
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "2kylepoole@gmail.com" nil))
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      smtpmail-local-domain "yourcompany.com")
 
 ;;------------------------------------------------
 ;; == GLOBAL KEYBINDS
