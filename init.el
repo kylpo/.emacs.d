@@ -2,7 +2,7 @@
 
 (cond
  ((string-match "linux" system-configuration)
-;  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+ (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   );;end windows
  ((string-match "apple" system-configuration)
   ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
