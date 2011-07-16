@@ -235,7 +235,7 @@ el-get-sources
    ;; full-ack
    js2-mode
    rvm
-   rspec-mode
+;   rspec-mode
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    php-mode-improved			; if you're into php...
    erc-highlight-nicknames
@@ -1284,8 +1284,8 @@ an .ics file that has been downloaded from Google Calendar "
      message
      )))
 
-(add-hook 'erc-text-matched-hook 'my-erc-hook)
-;; (add-hook 'erc-text-matched-hook 'call-libnotify)
+;; (add-hook 'erc-text-matched-hook 'my-erc-hook)
+(add-hook 'erc-text-matched-hook 'call-libnotify)
 
 (setq erc-server "irc.freenode.net"
       erc-port 6667
@@ -1576,3 +1576,4 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;; (global-unset-key (kbd "<C-tab>"))
 (global-unset-key (kbd "<M-tab>"))
+(global-unset-key (kbd "<M-h>"))
