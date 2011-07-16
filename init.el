@@ -279,8 +279,13 @@ el-get-sources
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
+;;=color
 (load "~/.emacs.d/colors/zenburn/zenburn.el")
 (color-theme-zenburn)
+(set-face-foreground 'erc-pal-face "#8cd0d3")
+(setq term-default-bg-color "#3f3f3f")        ;; background color (black)
+(setq term-default-fg-color "#dcdccc")       ;; foreground color (yellow)
+
 
 ;;------------------------------------------------
 ;; == Platform Dependencies
@@ -491,6 +496,9 @@ el-get-sources
 (require 'term)
 (define-key term-raw-map (kbd "C-c '") 'term-line-mode)
 (define-key term-mode-map (kbd "C-c '") 'term-char-mode)
+
+;; (setq term-default-bg-color "#3f3f3f")        ;; background color (black)
+;; (setq term-default-fg-color "#dcdccc")       ;; foreground color (yellow)
 
 ;; Have C-y act as usual in term-mode, to avoid C-' C-y C-'
 ;; Well the real default would be C-c C-j C-y C-c C-k.
@@ -1236,7 +1244,7 @@ an .ics file that has been downloaded from Google Calendar "
 
 ;;=erc
 ;; check channels
-(set-face-foreground 'erc-pal-face "#8cd0d3")
+;; (set-face-foreground 'erc-pal-face "#8cd0d3")
 (erc-track-mode t)
 (erc-autojoin-mode t)
 
