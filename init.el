@@ -254,6 +254,7 @@ el-get-sources
    auto-complete			; complete as you type with overlays
    yasnippet
    zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
+   nav
    ))
 
 (setq my:el-get-packages
