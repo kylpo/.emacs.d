@@ -224,6 +224,15 @@ el-get-sources
   ;; (:name ack
   ;;        :after (lambda ()
   ;;                 (setq ack-command "ack ")))
+   (:name window-numbering
+          :type http
+          :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
+          :features window-numbering
+          :after (lambda ()
+                   (window-numbering-mode 1)
+                   ;; (setq window-numbering-assign-func
+                               ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
+                   ))
 
    ))
 
