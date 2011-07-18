@@ -72,6 +72,7 @@
 ;; now either el-get is `require'd already, or have been `load'ed by the
 ;; el-get installer.
 
+;;=el-get
 ;; set local recipes
 (setq
 el-get-sources
@@ -264,6 +265,7 @@ el-get-sources
    yasnippet
    zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
    nav
+   rinari
    ))
 
 (setq my:el-get-packages
