@@ -72,6 +72,7 @@
 ;; now either el-get is `require'd already, or have been `load'ed by the
 ;; el-get installer.
 
+;;=el-get
 ;; set local recipes
 (setq
 el-get-sources
@@ -224,6 +225,15 @@ el-get-sources
   ;; (:name ack
   ;;        :after (lambda ()
   ;;                 (setq ack-command "ack ")))
+   (:name window-numbering
+          :type http
+          :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
+          :features window-numbering
+          :after (lambda ()
+                   (window-numbering-mode 1)
+                   ;; (setq window-numbering-assign-func
+                               ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
+                   ))
 
    ))
 
@@ -254,6 +264,8 @@ el-get-sources
    auto-complete			; complete as you type with overlays
    yasnippet
    zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
+   nav
+   rinari
    ))
 
 (setq my:el-get-packages
