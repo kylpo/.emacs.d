@@ -320,7 +320,7 @@ el-get-sources
   ;;start LINUX
   ;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
-  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Droid Sans Mono")
+  (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Droid Sans Mono")
   ;; (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
   (setq browse-url-generic-program (executable-find "firefox")
         browse-url-browser-function 'browse-url-generic)
