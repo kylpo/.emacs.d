@@ -1536,7 +1536,7 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
-(setq mouse-autoselect-window t) ;;focus follows mouse
+;; (setq mouse-autoselect-window t) ;;focus follows mouse
 
 ;; Window/Desktop Navigation/Manipulation
 (bind "C-^" 'enlarge-window)
