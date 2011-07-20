@@ -334,8 +334,8 @@ el-get-sources
   ;;10pt font aka :height 10*10=100
   (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Droid Sans Mono")
   ;; (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
-  (setq browse-url-generic-program (executable-find "firefox")
-        browse-url-browser-function 'browse-url-generic)
+  ;; (setq browse-url-generic-program (executable-find "firefox")
+  ;;       browse-url-browser-function 'browse-url-generic)
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
