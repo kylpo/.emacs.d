@@ -225,15 +225,15 @@ el-get-sources
   ;; (:name ack
   ;;        :after (lambda ()
   ;;                 (setq ack-command "ack ")))
-   (:name window-numbering
-          :type http
-          :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
-          :features window-numbering
-          :after (lambda ()
-                   (window-numbering-mode 1)
-                   ;; (setq window-numbering-assign-func
-                               ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
-                   ))
+   ;; (:name window-numbering
+   ;;        :type http
+   ;;        :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
+   ;;        :features window-numbering
+   ;;        :after (lambda ()
+   ;;                 (window-numbering-mode 1)
+                   ;; ;; (setq window-numbering-assign-func
+                   ;;             ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
+                   ;; ))
 
    ))
 
@@ -1151,18 +1151,18 @@ an .ics file that has been downloaded from Google Calendar "
 (setq org-log-into-drawer t)
 
 ;; Custom keywords
-(setq org-todo-keyword-faces
-      '(("TODO"  . (:foreground "red" :weight bold))
-        ("STARTED" :foreground "blue" :weight bold)
-        ("GOAL"  . (:foreground "purple" :weight bold))
-        ("WAITING"  . (:foreground "orange" :weight bold))
-        ("DELEGATED"  . (:foreground "orange" :weight bold))
-        ("SOMEDAY"  . (:foreground "orange" :weight bold))
-        ("ONGOING"  . (:foreground "orange" :weight bold))
-        ("DONE"  . (:foreground "forest green" :weight bold))
-        ("DISMISSED"  . (:foreground "forest green" :weight bold))
-        ("CANCELLED"  . (:foreground "forest green" :weight bold))
-        ))
+;; (setq org-todo-keyword-faces
+;;       '(("TODO"  . (:foreground "red" :weight bold))
+;;         ("STARTED" :foreground "blue" :weight bold)
+;;         ("GOAL"  . (:foreground "purple" :weight bold))
+;;         ("WAITING"  . (:foreground "orange" :weight bold))
+;;         ("DELEGATED"  . (:foreground "orange" :weight bold))
+;;         ("SOMEDAY"  . (:foreground "orange" :weight bold))
+;;         ("ONGOING"  . (:foreground "orange" :weight bold))
+;;         ("DONE"  . (:foreground "forest green" :weight bold))
+;;         ("DISMISSED"  . (:foreground "forest green" :weight bold))
+;;         ("CANCELLED"  . (:foreground "forest green" :weight bold))
+;;         ))
 (setq org-agenda-custom-commands
       '(;; ("P" "Projects"
         ;; ((tags "PROJECT")))
@@ -1536,7 +1536,7 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
-(setq mouse-autoselect-window t) ;;focus follows mouse
+;; (setq mouse-autoselect-window t) ;;focus follows mouse
 
 ;; Window/Desktop Navigation/Manipulation
 (bind "C-^" 'enlarge-window)
