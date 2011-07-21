@@ -297,6 +297,7 @@ el-get-sources
    zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
    nav
    rinari
+   rainbow-delimiters
    ))
 
 (setq my:el-get-packages
