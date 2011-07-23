@@ -652,7 +652,7 @@ el-get-sources
     (set-mark pt)
     ))
 
-;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
+;; http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
 (defvar my-desktop-session-dir
   (concat (getenv "HOME") "/.emacs.d/desktop-sessions/")
   "*Directory to save desktop sessions in")
@@ -716,13 +716,13 @@ el-get-sources
 
 ;; Autoindent open-*-lines
 (defvar newline-and-indent t
-  "Modify the behavior of the open-*-line functions to cause them to autoindent.")
+  "Modify the behavior of the open-*-line functions to autoindent.")
 
 (defun my-delete-backward-to-ws ()
   (interactive)
   (delete-region (point) (save-excursion (skip-syntax-backward "^ ") (point))))
 
-(defun window-half-height () ;taken from http://www.emacswiki.org/emacs/HalfScrolling
+(defun window-half-height () ;http://www.emacswiki.org/emacs/HalfScrolling
   (max 1 (/ (1- (window-height (selected-window))) 2)))
 
 (defun sfp-page-down ()
@@ -804,7 +804,8 @@ el-get-sources
 (defun rtags ()
   (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
-  (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."));"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
+  (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."))
+;;"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
 ;; (shell-command "etags -a --Ruby-kinds=f -o TAGS -R . "))
 
 (defun isearch-occur ()
@@ -861,14 +862,14 @@ el-get-sources
 
 (defun ido-open-find-directory-files (directory)
   (let ((directory (concat (expand-file-name directory) "/")))
-    (concat directory (ido-completing-read (concat directory ": ")
-                                           (mapcar (lambda (path)
-                                                     (replace-regexp-in-string (concat "^" (regexp-quote directory) "/") "" path))
-                                                   (split-string
-                                                    (shell-command-to-string
-                                                     (concat
-                                                      "find \"" directory
-                                                      "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
+    (concat directory
+            (ido-completing-read
+             (concat directory ": ")
+             (mapcar (lambda (path)
+                       (replace-regexp-in-string (concat "^" (regexp-quote directory) "/") "" path))
+                     (split-string
+                      (shell-command-to-string
+                       (concat "find \"" directory "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
 
 (cmd xsteve-ido-choose-from-recentf
      "Use ido to select a recently opened file from the `recentf-list'"
