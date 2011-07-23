@@ -266,6 +266,10 @@ el-get-sources
                    ;; (add-hook 'c-mode-hook          'set-column-marker)
                    ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
                    ;; (add-hook 'html-mode-hook       'set-column-marker)))
+   (:name undo-tree
+       :type http
+       :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
+       :features undo-tree)
    ))
 
 (setq
