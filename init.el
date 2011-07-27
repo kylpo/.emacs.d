@@ -245,7 +245,7 @@ el-get-sources
    ;; full-ack
    js2-mode
    rvm
-;   rspec-mode
+   rspec-mode
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
    php-mode-improved			; if you're into php...
    erc-highlight-nicknames
@@ -332,8 +332,8 @@ el-get-sources
   ;;start LINUX
   ;;  (setq browse-url-browser-function 'browse-url-generic browse-url-generic-program "/usr/bin/conkeror")
   ;;10pt font aka :height 10*10=100
-  (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Droid Sans Mono")
-  ;; (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Monaco")
+  ;; (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Droid Sans Mono")
+  (set-face-attribute 'default (not 'this-frame-only) :height 80 :foundry "unknown" :family "Monaco")
   ;; (setq browse-url-generic-program (executable-find "firefox")
   ;;       browse-url-browser-function 'browse-url-generic)
 
@@ -1245,6 +1245,8 @@ an .ics file that has been downloaded from Google Calendar "
          "* %? \n----Entered on %U\n  %i")
         ("b" "book" entry (file+headline "~/Dropbox/doc/media.org" "Books")
          "* %? \n----Entered on %U\n  %i")
+        ("P" "pomodoro" entry (file+headline "~/Dropbox/doc/planner.org" "Tasks")
+         "* | %? |  | [] | %i")
         ))
 
 ;;*****CALENDAR/DIARY MODE*****
@@ -1305,7 +1307,7 @@ an .ics file that has been downloaded from Google Calendar "
      )))
 
 ;; (add-hook 'erc-text-matched-hook 'my-erc-hook)
-(add-hook 'erc-text-matched-hook 'call-libnotify)
+;; (add-hook 'erc-text-matched-hook 'call-libnotify)
 
 (setq erc-server "irc.freenode.net"
       erc-port 6667
