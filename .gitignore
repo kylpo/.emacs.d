@@ -13,3 +13,6 @@ url/
 .DS_Store
 .emacs.bmk
 emacs.bmk
+/colors/zenburn/#zenburn.el#
+/elpa/idle-highlight-1.0/idle-highlight.elc
+workgroups/

@@ -1,5 +1,4 @@
 ;;Done at start to load faster
-
 (cond
  ((string-match "linux" system-configuration)
  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -208,7 +207,8 @@ el-get-sources
                    ;; (require 'etags-table)
                    (setq etags-table-search-up-depth 10)))
    (:name framemove
-          :type emacswiki ;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
+          :type emacswiki
+          ;;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
           :after (lambda ()
                    (require 'framemove)
                    (setq framemove-hook-into-windmove t)
@@ -234,7 +234,42 @@ el-get-sources
                    ;; ;; (setq window-numbering-assign-func
                    ;;             ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
                    ;; ))
+   (:name column-marker
+          :type emacswiki
+          :features column-marker
+          :after (lambda ()
+                   ;; (defun set-column-marker ()
+                   ;;   (column-marker-1 80)
+                   ;;   (column-marker-2 120))
+                   (dolist (hook '(emacs-lisp-mode-hook
+                                   cperl-mode-hook
+                                   shell-mode-hook
+                                   text-mode-hook
+                                   change-log-mode-hook
+                                   makefile-mode-hook
+                                   message-mode-hook
+                                   texinfo-mode-hook
+                                   c-mode-hook
+                                   emacs-listp-mode-hook
+                                   html-mode-hook
+                                   ruby-mode-hook))
+                     (add-hook hook (lambda ()
+                                      (interactive)
+                                      (column-marker-1 80)
+                                      (column-marker-2 120)
+                                      ;; (column-marker-3 80)
+                                      )))
 
+                   (set-face-background 'column-marker-1 "#2b2b2b")
+                   (set-face-background 'column-marker-2 "red")))
+
+                   ;; (add-hook 'c-mode-hook          'set-column-marker)
+                   ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
+                   ;; (add-hook 'html-mode-hook       'set-column-marker)))
+   (:name undo-tree
+       :type http
+       :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
+       :features undo-tree)
    ))
 
 (setq
@@ -266,6 +301,7 @@ el-get-sources
    zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
    nav
    rinari
+   rainbow-delimiters
    ))
 
 (setq my:el-get-packages
@@ -357,6 +393,13 @@ el-get-sources
 ;;------------------------------------------------
 ;; == INIT & CONFIG
 ;;------------------------------------------------
+
+;;highlight lines that pass 80 chars
+;; (let ((whitespace-line-column 80)       ;80 is the default
+;;       (whitespace-style '(lines-tail))) ;or '(lines) for the whole line
+;;   (whitespace-mode 1))
+
+
 
 ;; This is a little hacky since VC doesn't support git add internally
 (eval-after-load 'vc
@@ -537,21 +580,19 @@ el-get-sources
 (font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  '(sr-show-file-attributes nil)
  '(wg-morph-on nil)
- '(wg-switch-on-load nil)
- )
+ '(wg-switch-on-load nil))
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- ;; '(org-upcoming-deadline ((t (:foreground "yellow"))))
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  )
 
 ;;------------------------------------------------
@@ -611,7 +652,7 @@ el-get-sources
     (set-mark pt)
     ))
 
-;; my-desktop from http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
+;; http://stackoverflow.com/questions/847962/what-alternate-session-managers-are-available-for-emacs
 (defvar my-desktop-session-dir
   (concat (getenv "HOME") "/.emacs.d/desktop-sessions/")
   "*Directory to save desktop sessions in")
@@ -675,13 +716,13 @@ el-get-sources
 
 ;; Autoindent open-*-lines
 (defvar newline-and-indent t
-  "Modify the behavior of the open-*-line functions to cause them to autoindent.")
+  "Modify the behavior of the open-*-line functions to autoindent.")
 
 (defun my-delete-backward-to-ws ()
   (interactive)
   (delete-region (point) (save-excursion (skip-syntax-backward "^ ") (point))))
 
-(defun window-half-height () ;taken from http://www.emacswiki.org/emacs/HalfScrolling
+(defun window-half-height () ;http://www.emacswiki.org/emacs/HalfScrolling
   (max 1 (/ (1- (window-height (selected-window))) 2)))
 
 (defun sfp-page-down ()
@@ -763,7 +804,8 @@ el-get-sources
 (defun rtags ()
   (interactive)
   ;; (shell-command "etags -a -f TAGS *"))
-  (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."));"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
+  (shell-command "ctags -e -a --Ruby-kinds=-fF -o TAGS -R ."))
+;;"ctags -e -a --Ruby-kinds=-fF -o TAGS -R . "))
 ;; (shell-command "etags -a --Ruby-kinds=f -o TAGS -R . "))
 
 (defun isearch-occur ()
@@ -820,14 +862,14 @@ el-get-sources
 
 (defun ido-open-find-directory-files (directory)
   (let ((directory (concat (expand-file-name directory) "/")))
-    (concat directory (ido-completing-read (concat directory ": ")
-                                           (mapcar (lambda (path)
-                                                     (replace-regexp-in-string (concat "^" (regexp-quote directory) "/") "" path))
-                                                   (split-string
-                                                    (shell-command-to-string
-                                                     (concat
-                                                      "find \"" directory
-                                                      "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
+    (concat directory
+            (ido-completing-read
+             (concat directory ": ")
+             (mapcar (lambda (path)
+                       (replace-regexp-in-string (concat "^" (regexp-quote directory) "/") "" path))
+                     (split-string
+                      (shell-command-to-string
+                       (concat "find \"" directory "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
 
 (cmd xsteve-ido-choose-from-recentf
      "Use ido to select a recently opened file from the `recentf-list'"
