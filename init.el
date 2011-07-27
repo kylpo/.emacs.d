@@ -91,7 +91,7 @@ el-get-sources
                    (workgroups-mode t)
                    ;; (wg-switch-on-load nil)
                    (wg-toggle-mode-line)
-                   (wg-load "~/.emacs.d/workgroups/default")
+;                   (wg-load "~/.emacs.d/workgroups/default")
                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
                    ))
    (:name auto-complete
@@ -1641,3 +1641,4 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-unset-key (kbd "<C-tab>"))
 (global-unset-key (kbd "<M-tab>"))
 (global-unset-key (kbd "<M-h>"))
+(global-unset-key (kbd "C-.") 'dot-mode-execute)
