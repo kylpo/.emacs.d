@@ -288,13 +288,13 @@ el-get-sources
 ;   sunrise-x-tree
 ;   sunrise-x-buttons
 ;   sunrise-x-tabs
-   scala-mode
+;   scala-mode
    rainbow-mode ;color-highlight
 ;  ensime
    color-theme
    wrap-region
    yari
-   ruby-end ;necessary to place after ruby-mode
+;   ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    auto-complete			; complete as you type with overlays
    yasnippet
@@ -302,6 +302,7 @@ el-get-sources
    nav
    rinari
    rainbow-delimiters
+   paredit
    ))
 
 (setq my:el-get-packages
@@ -1641,4 +1642,6 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-unset-key (kbd "<C-tab>"))
 (global-unset-key (kbd "<M-tab>"))
 (global-unset-key (kbd "<M-h>"))
-(global-unset-key (kbd "C-.") 'dot-mode-execute)
+;; (global-set-key (kbd "C-.") 'dot-mode-execute)
+(global-set-key [?\C-h] 'delete-backward-char)
+(global-set-key [?\C-x ?h] 'help-command) ; overrides mark-whole-buffer
