@@ -68,9 +68,6 @@
      (end-of-buffer)
      (eval-print-last-sexp))))
 
-;; now either el-get is `require'd already, or have been `load'ed by the
-;; el-get installer.
-
 ;;=el-get
 ;; set local recipes
 (setq
@@ -96,7 +93,8 @@ el-get-sources
                    ))
    (:name auto-complete
           ;; :after (lambda ()
-            ;; (global-set-key (kbd "<M-tab>") 'auto-complete)
+          ;;          (global-unset-key (kbd "<C-o>"))
+          ;;          (global-set-key (kbd "<C-o>") 'auto-complete))
           )
    (:name buffer-move ; have to add your own keys
           :after (lambda ()
@@ -204,15 +202,14 @@ el-get-sources
           :type emacswiki
           :features etags-table
           :after (lambda ()
-                   ;; (require 'etags-table)
                    (setq etags-table-search-up-depth 10)))
-   (:name framemove
-          :type emacswiki
-          ;;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
-          :after (lambda ()
-                   (require 'framemove)
-                   (setq framemove-hook-into-windmove t)
-                   ))
+   ;; (:name framemove
+   ;;        :type emacswiki
+   ;;        ;;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
+   ;;        :after (lambda ()
+   ;;                 (require 'framemove)
+   ;;                 (setq framemove-hook-into-windmove t)
+   ;;                 ))
    (:name yaml-mode
           :type git
           :url "http://github.com/yoshiki/yaml-mode.git"
@@ -266,10 +263,10 @@ el-get-sources
                    ;; (add-hook 'c-mode-hook          'set-column-marker)
                    ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
                    ;; (add-hook 'html-mode-hook       'set-column-marker)))
-   (:name undo-tree
-       :type http
-       :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
-       :features undo-tree)
+   ;; (:name undo-tree
+   ;;     :type http
+   ;;     :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
+   ;;     :features undo-tree)
    ))
 
 (setq
@@ -277,12 +274,11 @@ el-get-sources
  '(el-get				; el-get is self-hosting
    ;; ack
    emacs-goodies-el
-   ;; full-ack
    js2-mode
    rvm
-   rspec-mode
+   ;rspec-mode
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
-   php-mode-improved			; if you're into php...
+;   php-mode-improved			; if you're into php...
    erc-highlight-nicknames
    sunrise-commander
 ;   sunrise-x-tree
@@ -343,6 +339,7 @@ el-get-sources
  ((string-match "nt" system-configuration)
   );;end windows
  ((string-match "apple" system-configuration)
+  (set-face-attribute 'default (not 'this-frame-only) :height 100 :foundry "unknown" :family "Monaco")
   (defun dired-do-shell-mac-open-vqn ()
     (interactive)
     (save-window-excursion
@@ -371,8 +368,8 @@ el-get-sources
   ;;10pt font aka :height 10*10=100
   ;; (set-face-attribute 'default (not 'this-frame-only) :height 90 :foundry "unknown" :family "Droid Sans Mono")
   (set-face-attribute 'default (not 'this-frame-only) :height 80 :foundry "unknown" :family "Monaco")
-  ;; (setq browse-url-generic-program (executable-find "firefox")
-  ;;       browse-url-browser-function 'browse-url-generic)
+  (setq browse-url-generic-program (executable-find "firefox")
+        browse-url-browser-function 'browse-url-generic)
 
   (defun gnome-open-file (filename)
     "gnome-opens the specified file."
@@ -1421,50 +1418,50 @@ an .ics file that has been downloaded from Google Calendar "
 ;; auto-create bbdb contact
 ;; (setq bbdb/news-auto-create-p t)
 
-(setq user-mail-address "2kylepoole@gmail.com")
+;; (setq user-mail-address "2kylepoole@gmail.com")
 
-(setq user-full-name "Kyle Poole")
-;; (setq gnus-select-method '(nnimap "gmail"))
-;; (setq gnus-select-method '(nnml ""))
+;; (setq user-full-name "Kyle Poole")
+;; ;; (setq gnus-select-method '(nnimap "gmail"))
+;; ;; (setq gnus-select-method '(nnml ""))
 
-;; (setq gnus-secondary-select-methods
-;;       '((nnimap "gmail"
-;;                 (nnimap-address "imap.gmail.com")
-;;                 (nnimap-server-port 993)
-;;                 (nnimap-stream ssl)
-;;                 ;; (nnimap-autheticator login)
-;;                 )))
+;; ;; (setq gnus-secondary-select-methods
+;; ;;       '((nnimap "gmail"
+;; ;;                 (nnimap-address "imap.gmail.com")
+;; ;;                 (nnimap-server-port 993)
+;; ;;                 (nnimap-stream ssl)
+;; ;;                 ;; (nnimap-autheticator login)
+;; ;;                 )))
 
-;; (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
-;;                                  (nnimap-address "imap.gmail.com")
-;;                                  (nnimap-server-port 993)
-;;                                  (nnimap-stream ssl)))
+;; ;; (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
+;; ;;                                  (nnimap-address "imap.gmail.com")
+;; ;;                                  (nnimap-server-port 993)
+;; ;;                                  (nnimap-stream ssl)))
 
-(setq gnus-select-method '(nnimap "gmail"
-                                  (nnimap-address "imap.gmail.com")
-                                  (nnimap-server-port 993)
-                                  (nnimap-stream ssl)))
+;; (setq gnus-select-method '(nnimap "gmail"
+;;                                   (nnimap-address "imap.gmail.com")
+;;                                   (nnimap-server-port 993)
+;;                                   (nnimap-stream ssl)))
 
-;; (setq gnus-summary-line-format "%U%R%z%B%(%[%5L: %-23,23f%]%) %s\n")
-(setq gnus-summary-line-format "%U%R│%B%(%s%80=%) │ %f %110=│ %6&user-date;\n")
-(setq gnus-summary-make-false-root 'dummy
-      gnus-sum-thread-tree-false-root      "┈─► "
-      gnus-sum-thread-tree-single-indent   "●  "
-      gnus-sum-thread-tree-root            "●  "
-      gnus-sum-thread-tree-vertical        "│"
-      gnus-sum-thread-tree-leaf-with-other "├─► "
-      gnus-sum-thread-tree-single-leaf     "╰─► "
-      gnus-sum-thread-tree-indent          " ")
-(setq mm-discouraged-alternatives '("text/html" "text/richtext"))
-(setq mm-text-html-renderer 'w3m)
+;; ;; (setq gnus-summary-line-format "%U%R%z%B%(%[%5L: %-23,23f%]%) %s\n")
+;; (setq gnus-summary-line-format "%U%R│%B%(%s%80=%) │ %f %110=│ %6&user-date;\n")
+;; (setq gnus-summary-make-false-root 'dummy
+;;       gnus-sum-thread-tree-false-root      "┈─► "
+;;       gnus-sum-thread-tree-single-indent   "●  "
+;;       gnus-sum-thread-tree-root            "●  "
+;;       gnus-sum-thread-tree-vertical        "│"
+;;       gnus-sum-thread-tree-leaf-with-other "├─► "
+;;       gnus-sum-thread-tree-single-leaf     "╰─► "
+;;       gnus-sum-thread-tree-indent          " ")
+;; (setq mm-discouraged-alternatives '("text/html" "text/richtext"))
+;; (setq mm-text-html-renderer 'w3m)
 
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "2kylepoole@gmail.com" nil))
-      smtpmail-default-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      smtpmail-local-domain "yourcompany.com")
+;; (setq message-send-mail-function 'smtpmail-send-it
+;;       smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+;;       smtpmail-auth-credentials '(("smtp.gmail.com" 587 "2kylepoole@gmail.com" nil))
+;;       smtpmail-default-smtp-server "smtp.gmail.com"
+;;       smtpmail-smtp-server "smtp.gmail.com"
+;;       smtpmail-smtp-service 587
+;;       smtpmail-local-domain "yourcompany.com")
 
 ;;------------------------------------------------
 ;; == GLOBAL KEYBINDS
@@ -1600,6 +1597,8 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-x SPC r") 'my-desktop-read)
 ;; (global-set-key (kbd "C-, r") 'my-desktop-read)
 ;; (global-set-key (kbd "C-, s") 'my-desktop-save)
+(global-set-key (kbd "s-p") 'wg-switch-left)
+(global-set-key (kbd "s-n") 'wg-switch-right)
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1623,8 +1622,8 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "s-p") 'wg-switch-left)
 (global-set-key (kbd "M-#") 'isearch-forward-at-point)
 (global-set-key (kbd "C-j") 'join-line)
-(global-set-key (kbd "C-o") 'open-next-line)
-(global-set-key (kbd "M-o") 'open-previous-line)
+;; (global-set-key (kbd "C-o") 'open-next-line)
+;; (global-set-key (kbd "M-o") 'open-previous-line)
 
 ;; http://tsengf.blogspot.com/2011/06/scroll-up-and-down-line-by-line-in.html
 (defun scroll-up-one-line()
@@ -1645,3 +1644,5 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "C-.") 'dot-mode-execute)
 (global-set-key [?\C-h] 'delete-backward-char)
 (global-set-key [?\C-x ?h] 'help-command) ; overrides mark-whole-buffer
+;; (global-unset-key (kbd "<C-o>"))
+;; (global-set-key (kbd "<C-o>") 'auto-complete)
