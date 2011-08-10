@@ -263,6 +263,11 @@ el-get-sources
                    ;; (add-hook 'c-mode-hook          'set-column-marker)
                    ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
                    ;; (add-hook 'html-mode-hook       'set-column-marker)))
+   (:name less-css-mode
+          :type http
+          :url "http://jdhuntington.com/emacs/less-css-mode.el")
+
+          ;; :features less-mode)
    ;; (:name undo-tree
    ;;     :type http
    ;;     :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
@@ -299,6 +304,7 @@ el-get-sources
    rinari
    rainbow-delimiters
    paredit
+   smart-tab
    ))
 
 (setq my:el-get-packages
@@ -1599,6 +1605,7 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "C-, s") 'my-desktop-save)
 (global-set-key (kbd "s-p") 'wg-switch-left)
 (global-set-key (kbd "s-n") 'wg-switch-right)
+(global-set-key (kbd "s-t") 'wg-create-workgroup)
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1646,3 +1653,4 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key [?\C-x ?h] 'help-command) ; overrides mark-whole-buffer
 ;; (global-unset-key (kbd "<C-o>"))
 ;; (global-set-key (kbd "<C-o>") 'auto-complete)
+(global-set-key (kbd "M-n") 'auto-complete)
