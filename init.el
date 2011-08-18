@@ -9,7 +9,9 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(server-start)
+(unless (file-exists-p (format "/tmp/emacs%d/server" (user-uid)))
+  (server-start))
+;; (server-start)
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
@@ -81,16 +83,16 @@ el-get-sources
           :after (lambda ()
                    (multi-term-keystroke-setup)
                    (setq multi-term-program "/bin/bash")))
-   (:name workgroups
-          :after (lambda ()
-                   ;; (setq wg-prefix-key (kbd "C-c w"))
-                   ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-                   (workgroups-mode t)
-                   ;; (wg-switch-on-load nil)
-                   (wg-toggle-mode-line)
-;                   (wg-load "~/.emacs.d/workgroups/default")
-                   (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
-                   ))
+;;    (:name workgroups
+;;           :after (lambda ()
+;;                    ;; (setq wg-prefix-key (kbd "C-c w"))
+;;                    ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+;;                    (workgroups-mode t)
+;;                    ;; (wg-switch-on-load nil)
+;;                    (wg-toggle-mode-line)
+;; ;                   (wg-load "~/.emacs.d/workgroups/default")
+;;                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
+;;                    ))
    (:name auto-complete
           ;; :after (lambda ()
           ;;          (global-unset-key (kbd "<C-o>"))
@@ -272,6 +274,13 @@ el-get-sources
    ;;     :type http
    ;;     :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
    ;;     :features undo-tree)
+   (:name elscreen
+          :description "Screen Manager for Emacsen"
+          :type http-tar
+          :depends apel
+          :options ("xzf")
+          :url "ftp://210.155.141.202/pub/morishima.net/naoto/ElScreen/elscreen-1.4.6.tar.gz"
+          :features elscreen)
    ))
 
 (setq
@@ -295,7 +304,7 @@ el-get-sources
    color-theme
    wrap-region
    yari
-;   ruby-end ;necessary to place after ruby-mode
+   ruby-end ;necessary to place after ruby-mode
    flymake-ruby
    auto-complete			; complete as you type with overlays
    yasnippet
@@ -304,6 +313,8 @@ el-get-sources
    rinari
    rainbow-delimiters
    paredit
+   haml-mode
+   sass-mode
    smart-tab
    ))
 
@@ -579,7 +590,7 @@ el-get-sources
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-
+;; (setq tab-always-indent 'complete) ;smart tab integrated into emacs
 
 (font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
 
@@ -588,6 +599,9 @@ el-get-sources
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ ;; '(elscreen-display-screen-number nil)
+ ;; '(elscreen-display-tab nil)
+ ;; '(elscreen-tab-display-control nil)
  '(sr-show-file-attributes nil)
  '(wg-morph-on nil)
  '(wg-switch-on-load nil))
@@ -1414,6 +1428,22 @@ an .ics file that has been downloaded from Google Calendar "
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
 
+;;=elscreen
+(if (featurep 'elscreen)
+    (progn
+      (setq elscreen-display-screen-number nil)
+      (setq  elscreen-display-tab nil)
+      (setq  elscreen-tab-display-control nil)
+      (global-set-key (kbd "s-p") 'elscreen-previous)
+      (global-set-key (kbd "s-n") 'elscreen-next)
+      (global-set-key (kbd "s-t") 'elscreen-create))
+  (message "INSTALL elscreen"))
+
+(if (featurep 'ZZZZZZ)
+    (message "ZZZZ true")
+  (message"ZZZZ False"))
+
+
 ;;=gnus
 ;;tab complete recipients
 ;; (add-hook 'message-mode-hook
@@ -1581,9 +1611,15 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-x M-f" 'find-file-other-window)
 (global-set-key "\M-?" 'comment-or-uncomment-current-line-or-region)
 
+;; Movements
 (bind "C-M-S" isearch-other-window)
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
+;; todo
+;; M 'move-to-window-line
+;; H 'move-to-window-line-top-bottom 1
+;; L 'move-to-window-line-top-bottom -1
+
 ;; (setq mouse-autoselect-window t) ;;focus follows mouse
 
 ;; Window/Desktop Navigation/Manipulation
@@ -1603,9 +1639,10 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key (kbd "C-x SPC r") 'my-desktop-read)
 ;; (global-set-key (kbd "C-, r") 'my-desktop-read)
 ;; (global-set-key (kbd "C-, s") 'my-desktop-save)
-(global-set-key (kbd "s-p") 'wg-switch-left)
-(global-set-key (kbd "s-n") 'wg-switch-right)
-(global-set-key (kbd "s-t") 'wg-create-workgroup)
+;; (global-set-key (kbd "s-p") 'wg-switch-left)
+;; (global-set-key (kbd "s-n") 'wg-switch-right)
+;; (global-set-key (kbd "s-t") 'wg-create-workgroup)
+
 
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur) ;occur in isearch
 (global-set-key [S-return]   'open-next-line)
@@ -1654,3 +1691,5 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-unset-key (kbd "<C-o>"))
 ;; (global-set-key (kbd "<C-o>") 'auto-complete)
 (global-set-key (kbd "M-n") 'auto-complete)
+
+;;=commented
