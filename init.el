@@ -1133,6 +1133,15 @@ an .ics file that has been downloaded from Google Calendar "
 ;;------------------------------------------------
 ;;==Plugins
 ;;------------------------------------------------
+;;TODO write notes on the format of featurep, progn, etc
+
+;;=yasnippet
+(if (featurep 'yasnippet)
+    (progn
+      (yas/initialize)
+      (yas/load-directory "~/.emacs.d/yasnippets"))
+  (message "INSTALL yasnippet"))
+
 
 ;;=dired & Tramp
 ;; (require 'dired-history)
