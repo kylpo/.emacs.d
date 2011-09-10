@@ -19,23 +19,56 @@
 ;;http://www.hollenback.net/index.php/EmacsModeLine
 ;;http://www.gnu.org/software/emacs/elisp/html_node/Mode-Line-Variables.html#Mode-Line-Variables
 (setq-default mode-line-format
-              (list "-"
-                    'mode-line-mule-info
+              (list ""
+                    ;; 'mode-line-mule-info
                     'mode-line-modified
-                    'mode-line-frame-identification
+                    ;; 'mode-line-frame-identification
                     'mode-line-buffer-identification
-                    ;; "%b  "
-                    '(getenv "HOST")
+                    ;; '(getenv "HOST")
                     ;; ":"
                     ;; 'default-directory
                     ;; "   "
-                    'mode-line-position
+                    ;; was this buffer modified since the last save?
+                    ;; the buffer name; the file name as a tool tip
+                    ;; '(:eval (propertize "%b " 'face 'font-lock-keyword-face
+                    ;;                     'help-echo (buffer-file-name)))
+
+
+                   (propertize "%p" 'face 'font-lock-constant-face) ;; % above top line and column
+                   "(" ;; '%02' to set to 2 chars at least; prevents flickering
+                   (propertize "%02l" 'face 'font-lock-type-face) ","
+                   (propertize "%02c" 'face 'font-lock-type-face)
+                   ")"
+
+
+                     ;; 'mode-line-position
                     '(vc-mode vc-mode)
-                    "   "
+
+                    ;; ;; the current major mode for the buffer.
+                    ;; "["
+                    ;; '(:eval (propertize "%m" 'face 'font-lock-string-face
+                    ;;                     'help-echo buffer-file-coding-system))
+                    ;; "] "
+
+                    " "
                     'mode-line-modes
                     '(which-func-mode ("" which-func-format "--"))
                     '(global-mode-string ("--" global-mode-string))
-                    "-%-")
+
+                   ;; "["
+                   ;; '(:eval (when (buffer-modified-p)
+                   ;;           (concat " "   (propertize "Mod"
+                   ;;                                    'face 'font-lock-warning-face
+                   ;;                                    'help-echo "Buffer has been modified"))))
+
+                   ;;  is this buffer read-only?
+                   ;; '(:eval (when buffer-read-only
+                   ;;           (concat ","  (propertize "RO"
+                   ;;                                    'face 'font-lock-type-face
+                   ;;                                    'help-echo "Buffer is read-only"))))
+                   ;; "]"
+                    "-%-"
+                    )
               )
 
 (push "/usr/local/bin" exec-path) ;needed for the mac, doesn't break/hurt linux
@@ -316,6 +349,7 @@ el-get-sources
    haml-mode
    sass-mode
    smart-tab
+   anything
    ))
 
 (setq my:el-get-packages
@@ -327,6 +361,8 @@ el-get-sources
 (el-get 'sync my:el-get-packages)
 
 (add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
+(add-to-list 'load-path "~/.emacs.d/vendor/find-file-in-project/")
+(require 'find-file-in-project)
 (require 'tinyeat)
 (require 'tramp)
 (require 'redo+) ;;from elpa
@@ -523,6 +559,10 @@ el-get-sources
 ;; (display-battery-mode t)
 (global-hl-line-mode t) ; Highlight the current line
 
+;;=ispell
+(setq ispell-program-name "/usr/local/bin/aspell");;homebrew default location
+(setq ispell-list-command "list")
+
 ;;=ido-mode
 (setq ido-enable-prefix nil
       ido-case-fold  t ; be case-insensitive
@@ -616,6 +656,11 @@ el-get-sources
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+
+(defun edit-init ()
+  "Load the .emacs file into a buffer for editing."
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
 
 (defun delete-file-and-buffer ()
   "Deletes the current file and buffer, assumes file exists"
@@ -1700,5 +1745,17 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-unset-key (kbd "<C-o>"))
 ;; (global-set-key (kbd "<C-o>") 'auto-complete)
 (global-set-key (kbd "M-n") 'auto-complete)
+
+(global-set-key (kbd "C-c b")
+ (lambda() (interactive)
+   (anything
+    :prompt "Switch to: "
+    :candidate-number-limit 10                 ;; up to 10 of each
+    :sources
+    '( anything-c-source-buffers               ;; buffers
+       anything-c-source-recentf               ;; recent files
+       anything-c-source-bookmarks             ;; bookmarks
+       anything-c-source-files-in-current-dir+ ;; current dir
+       anything-c-source-locate))))            ;; use 'locate'
 
 ;;=commented
