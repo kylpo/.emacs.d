@@ -1,7 +1,7 @@
 ;;Done at start to load faster
 (cond
  ((string-match "linux" system-configuration)
- (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   );;end windows
  ((string-match "apple" system-configuration)
   ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -11,7 +11,6 @@
 
 (unless (file-exists-p (format "/tmp/emacs%d/server" (user-uid)))
   (server-start))
-;; (server-start)
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
 
@@ -34,14 +33,14 @@
                     ;;                     'help-echo (buffer-file-name)))
 
 
-                   (propertize "%p" 'face 'font-lock-constant-face) ;; % above top line and column
-                   "(" ;; '%02' to set to 2 chars at least; prevents flickering
-                   (propertize "%02l" 'face 'font-lock-type-face) ","
-                   (propertize "%02c" 'face 'font-lock-type-face)
-                   ")"
+                    (propertize "%p" 'face 'font-lock-constant-face) ;; % above top line and column
+                    "(" ;; '%02' to set to 2 chars at least; prevents flickering
+                    (propertize "%02l" 'face 'font-lock-type-face) ","
+                    (propertize "%02c" 'face 'font-lock-type-face)
+                    ")"
 
 
-                     ;; 'mode-line-position
+                    ;; 'mode-line-position
                     '(vc-mode vc-mode)
 
                     ;; ;; the current major mode for the buffer.
@@ -55,18 +54,18 @@
                     '(which-func-mode ("" which-func-format "--"))
                     '(global-mode-string ("--" global-mode-string))
 
-                   ;; "["
-                   ;; '(:eval (when (buffer-modified-p)
-                   ;;           (concat " "   (propertize "Mod"
-                   ;;                                    'face 'font-lock-warning-face
-                   ;;                                    'help-echo "Buffer has been modified"))))
+                    ;; "["
+                    ;; '(:eval (when (buffer-modified-p)
+                    ;;           (concat " "   (propertize "Mod"
+                    ;;                                    'face 'font-lock-warning-face
+                    ;;                                    'help-echo "Buffer has been modified"))))
 
-                   ;;  is this buffer read-only?
-                   ;; '(:eval (when buffer-read-only
-                   ;;           (concat ","  (propertize "RO"
-                   ;;                                    'face 'font-lock-type-face
-                   ;;                                    'help-echo "Buffer is read-only"))))
-                   ;; "]"
+                    ;;  is this buffer read-only?
+                    ;; '(:eval (when buffer-read-only
+                    ;;           (concat ","  (propertize "RO"
+                    ;;                                    'face 'font-lock-type-face
+                    ;;                                    'help-echo "Buffer is read-only"))))
+                    ;; "]"
                     "-%-"
                     )
               )
@@ -77,162 +76,271 @@
 ;;------------------------------------------------
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
-(setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
-;;*****ELPA****
-;;early in .emacs to be able to use plugins later down
- (when
-     (load
-      (expand-file-name "~/.emacs.d/elpa/package.el"))
-   (package-initialize))
-
- (setq package-archives
-       '(("original" . "http://tromey.com/elpa/")
-         ("gnu" . "http://elpa.gnu.org/packages/")
-         ("marmalade" . "http://marmalade-repo.org/packages/")
-;;         ;; ("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/")
-         ))
+(setq emacs-dir (file-name-directory (or (buffer-file-name) load-file-name)))
+(add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
+(add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
 
 (require 'cl)				; common lisp goodies, loop
+(require 'tinyeat)
+(require 'starter-kit-defuns)
+(require 'tramp)
 
+;;=elpa
+(require 'package)
+
+(add-to-list 'package-archives
+             '( "original" . "http://tromey.com/elpa/" ))
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives
+             '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives
+             '("sunrise-commander" . "http://joseito.republika.pl/sunrise-commander/"))
+(package-initialize)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(defvar my-packages '(
+                      ;; starter-kit
+                      ;; starter-kit-lisp
+                      starter-kit-ruby
+                      ;; starter-kit-js
+                      flymake-cursor
+                      redo+
+                      css-mode
+                      buffer-move
+                      auto-complete
+                      goto-last-change
+                      multi-term
+                      yaml-mode
+                      less-css-mode
+                      rvm
+                      erc-hl-nicks
+                      sunrise-commander
+                      rainbow-mode
+                      wrap-region
+                      yari
+                      flymake-ruby
+                      haml-mode
+                      sass-mode
+                      yasnippet
+                      smart-tab
+                      org
+                      js2-mode
+                      find-file-in-project
+                      ido-ubiquitous
+                      elisp-slime-nav
+                      paredit
+                      ;; php-mode
+                      ))
+
+(dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
+
+(require 'flymake-cursor)
+(require 'redo+) ;;from elpa
+(require 'auto-complete)
+(require 'ido-ubiquitous)
+(when (require 'yasnippet nil 'noerror)
+  (yas/initialize)
+  (yas/load-directory "~/.emacs.d/yasnippets"))
+
+;;=smex
+(setq smex-save-file (concat emacs-dir ".smex-items"))
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+
+
+(global-set-key (kbd "<C-S-up>") 'buf-move-up)
+(global-set-key (kbd "<C-S-down>") 'buf-move-down)
+(global-set-key (kbd "<C-S-left>") 'buf-move-left)
+(global-set-key (kbd "<C-S-right>") 'buf-move-right)
+
+(global-set-key (kbd "C-x C-/") 'goto-last-change)
+
+;;(multi-term-keystroke-setup)
+(setq multi-term-program "/bin/bash")
+
+(autoload 'yaml-mode "yaml-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+
+(add-hook 'ruby-mode-hook
+          '(lambda ()
+             (setq ruby-deep-arglist t)
+             (setq ruby-deep-indent-paren nil)
+             (setq c-tab-always-indent nil)
+             (require 'inf-ruby)
+             (require 'ruby-compilation)))
+(add-hook 'ruby-mode-hook
+          (lambda()
+            (add-hook 'local-write-file-hooks
+                      '(lambda()
+                         (save-excursion
+                           (untabify (point-min) (point-max))
+                           (delete-trailing-whitespace)
+                           )))
+            (set (make-local-variable 'indent-tabs-mode) 'nil)
+            (set (make-local-variable 'tab-width) 2)
+            (imenu-add-to-menubar "IMENU")
+            (local-set-key "\r" 'newline-and-indent);ret indents
+            ;; (require 'ruby-electric)
+            (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
+            ;; (ruby-electric-mode t)
+))
+
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook 'turn-on-flyspell)
+
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'esk-prog-mode-hook)
+(add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
+
+
+;;=el-get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil t)
-:  (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-   (lambda (s)
-     (end-of-buffer)
-     (eval-print-last-sexp))))
+  :  (url-retrieve
+      "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+      (lambda (s)
+        (end-of-buffer)
+        (eval-print-last-sexp))))
+
+
 
 ;;=el-get
 ;; set local recipes
 (setq
-el-get-sources
+ el-get-sources
  '(
-   (:name goto-last-change		; move pointer back to last change
-          :after (lambda ()
-        	   ;; when using AZERTY keyboard, consider C-x C-_
-        	   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
-   (:name multi-term
-          :after (lambda ()
-                   (multi-term-keystroke-setup)
-                   (setq multi-term-program "/bin/bash")))
-;;    (:name workgroups
-;;           :after (lambda ()
-;;                    ;; (setq wg-prefix-key (kbd "C-c w"))
-;;                    ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-;;                    (workgroups-mode t)
-;;                    ;; (wg-switch-on-load nil)
-;;                    (wg-toggle-mode-line)
-;; ;                   (wg-load "~/.emacs.d/workgroups/default")
-;;                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
-;;                    ))
-   (:name auto-complete
+   ;; (:name goto-last-change		; move pointer back to last change
+   ;;        :after (lambda ()
+   ;;      	   ;; when using AZERTY keyboard, consider C-x C-_
+   ;;      	   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
+   ;; (:name multi-term
+   ;;        :after (lambda ()
+   ;;                 (multi-term-keystroke-setup)
+   ;;                 (setq multi-term-program "/bin/bash")))
+
+   ;;    (:name workgroups
+   ;;           :after (lambda ()
+   ;;                    ;; (setq wg-prefix-key (kbd "C-c w"))
+   ;;                    ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
+   ;;                    (workgroups-mode t)
+   ;;                    ;; (wg-switch-on-load nil)
+   ;;                    (wg-toggle-mode-line)
+   ;; ;                   (wg-load "~/.emacs.d/workgroups/default")
+   ;;                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
+   ;;                    ))
+   ;; (:name auto-complete
           ;; :after (lambda ()
           ;;          (global-unset-key (kbd "<C-o>"))
           ;;          (global-set-key (kbd "<C-o>") 'auto-complete))
-          )
-   (:name buffer-move ; have to add your own keys
-          :after (lambda ()
-                   (global-set-key (kbd "<C-S-up>") 'buf-move-up)
-                   (global-set-key (kbd "<C-S-down>") 'buf-move-down)
-                   (global-set-key (kbd "<C-S-left>") 'buf-move-left)
-                   (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
-  (:name dot-mode
-         :type git
-         :url "https://github.com/emacsmirror/dot-mode.git"
-         :features dot-mode
-         :after (lambda ()
-                  (require 'dot-mode)
-                  (add-hook 'find-file-hooks 'dot-mode-on)))
-   (:name goto-last-change ; move pointer back to last change
-          :after (lambda ()
-                   ;; when using AZERTY keyboard, consider C-x C-_
-                   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
+          ;; )
+   ;; (:name buffer-move ; have to add your own keys
+   ;;        :after (lambda ()
+   ;;                 (global-set-key (kbd "<C-S-up>") 'buf-move-up)
+   ;;                 (global-set-key (kbd "<C-S-down>") 'buf-move-down)
+   ;;                 (global-set-key (kbd "<C-S-left>") 'buf-move-left)
+   ;;                 (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
+   (:name dot-mode
+          :type git
+          :url "https://github.com/emacsmirror/dot-mode.git"
+          :features dot-mode)
+
+   ;; :after (lambda ()
+   ;;          (require 'dot-mode)
+   ;;          (add-hook 'find-file-hooks 'dot-mode-on)))
+
    (:name magit
           :after (lambda ()
                    (global-set-key (kbd "C-x g") 'magit-status)))
-   (:name kylpo-smex
-          :type git
-          :url "http://github.com/nonsequitur/smex.git"
-          :features smex
-          :post-init (lambda ()
-                       (setq smex-save-file "~/.emacs.d/.smex-items")
-                       (smex-initialize))
-          :after (lambda ()
-                   (global-set-key (kbd "M-x") 'smex)
-                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-   (:name idle-highlight :type elpa)
-   (:name kylpo-org-mode
-          :type git
-          :url "git://orgmode.org/org-mode.git"
-	  :info "doc"
-	  :build `,(mapcar
-		    (lambda (target)
-		      (concat "make " target " EMACS=" el-get-emacs))
-		    '("clean" "all"))
-	  :load-path ("lisp" "contrib/lisp")
-	  :autoloads nil
-	  :features org-install
-	  :after
-          (lambda ()
-            (require 'org-habit)
-            (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
-   (:name inf-ruby  :type elpa)
-   (:name ruby-compilation :type elpa)
-   (:name ruby-mode
-          :type elpa
-          :after
-          (lambda ()
-            (autoload 'ruby-mode "ruby-mode" nil t)
-            (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
-            (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
-            (add-hook 'ruby-mode-hook
-                      '(lambda ()
-                         (setq ruby-deep-arglist t)
-                         (setq ruby-deep-indent-paren nil)
-                         (setq c-tab-always-indent nil)
-                         (require 'inf-ruby)
-                         (require 'ruby-compilation)))
-            (add-hook 'ruby-mode-hook
-                      (lambda()
-                        (add-hook 'local-write-file-hooks
-                                  '(lambda()
-                                     (save-excursion
-                                       (untabify (point-min) (point-max))
-                                       (delete-trailing-whitespace)
-                                       )))
-                        (set (make-local-variable 'indent-tabs-mode) 'nil)
-                        (set (make-local-variable 'tab-width) 2)
-                        (imenu-add-to-menubar "IMENU")
-                        (local-set-key "\r" 'newline-and-indent);ret indents
-                        ;; (require 'ruby-electric)
-                        (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
-                        ;; (ruby-electric-mode t)
-                        ))))
-   (:name css-mode
-          :type elpa
-          :after
-          (lambda ()
-            (autoload 'css-mode "css-mode" nil t)
-            (add-hook 'css-mode-hook
-                      '(lambda ()
-                         (setq css-indent-level 2)
-                         (setq css-indent-offset 2)))))
+   ;; (:name kylpo-smex
+   ;;        :type git
+   ;;        :url "http://github.com/nonsequitur/smex.git"
+   ;;        :features smex
+   ;;        :post-init (lambda ()
+   ;;                     (setq smex-save-file "~/.emacs.d/.smex-items")
+   ;;                     (smex-initialize))
+   ;;        :after (lambda ()
+   ;;                 (global-set-key (kbd "M-x") 'smex)
+   ;;                 (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+
+   ;; (:name kylpo-org-mode
+   ;;        :type git
+   ;;        :url "git://orgmode.org/org-mode.git"
+   ;;        :info "doc"
+   ;;        :build `,(mapcar
+   ;;      	    (lambda (target)
+   ;;      	      (concat "make " target " EMACS=" el-get-emacs))
+   ;;      	    '("clean" "all"))
+   ;;        :load-path ("lisp" "contrib/lisp")
+   ;;        :autoloads nil
+   ;;        :features org-install
+   ;;        :after
+   ;;        (lambda ()
+   ;;          (require 'org-habit)
+   ;;          (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
+   ;; (:name inf-ruby  :type elpa)
+   ;; (:name ruby-compilation :type elpa)
+   ;; (:name ruby-mode
+   ;;        :type elpa
+   ;;        :after
+   ;;        (lambda ()
+   ;;          (autoload 'ruby-mode "ruby-mode" nil t)
+   ;;          (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
+   ;;          (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+            ;; (add-hook 'ruby-mode-hook
+            ;;           '(lambda ()
+            ;;              (setq ruby-deep-arglist t)
+            ;;              (setq ruby-deep-indent-paren nil)
+            ;;              (setq c-tab-always-indent nil)
+            ;;              (require 'inf-ruby)
+            ;;              (require 'ruby-compilation)))
+            ;; (add-hook 'ruby-mode-hook
+            ;;           (lambda()
+            ;;             (add-hook 'local-write-file-hooks
+            ;;                       '(lambda()
+            ;;                          (save-excursion
+            ;;                            (untabify (point-min) (point-max))
+            ;;                            (delete-trailing-whitespace)
+            ;;                            )))
+            ;;             (set (make-local-variable 'indent-tabs-mode) 'nil)
+            ;;             (set (make-local-variable 'tab-width) 2)
+            ;;             (imenu-add-to-menubar "IMENU")
+            ;;             (local-set-key "\r" 'newline-and-indent);ret indents
+            ;;             ;; (require 'ruby-electric)
+            ;;             (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
+            ;;             ;; (ruby-electric-mode t)
+            ;;             ))))
+   ;; (:name css-mode
+   ;;        :type elpa
+   ;;        :after
+   ;;        (lambda ()
+   ;;          (autoload 'css-mode "css-mode" nil t)
+   ;;          (add-hook 'css-mode-hook
+   ;;                    '(lambda ()
+   ;;                       (setq css-indent-level 2)
+   ;;                       (setq css-indent-offset 2)))))
    (:name rhtml-mode
           :after (lambda ()
-            (autoload 'rhtml-mode "rhtml-mode" nil t)
-            (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
-            (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
-            (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
-            (add-hook 'rhtml-mode
-                      '(lambda ()
-                         (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
+                   (autoload 'rhtml-mode "rhtml-mode" nil t)
+                   (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
+                   (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
+                   (add-to-list 'auto-mode-alist '("\\.rhtml$" . rhtml-mode))
+                   (add-hook 'rhtml-mode
+                             '(lambda ()
+                                (define-key rhtml-mode-map (kbd "M-s") 'save-buffer)))))
    (:name etags-table
           :type emacswiki
           :features etags-table
@@ -245,34 +353,31 @@ el-get-sources
    ;;                 (require 'framemove)
    ;;                 (setq framemove-hook-into-windmove t)
    ;;                 ))
-   (:name yaml-mode
-          :type git
-          :url "http://github.com/yoshiki/yaml-mode.git"
-;          :features yaml-mode
-          :after (lambda ()
-                   (autoload 'yaml-mode "yaml-mode" nil t)
-                   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-                   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-                   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
-  ;; (:name ack
-  ;;        :after (lambda ()
-  ;;                 (setq ack-command "ack ")))
+   ;; (:name yaml-mode
+   ;;        :type git
+   ;;        :url "http://github.com/yoshiki/yaml-mode.git"
+   ;;                                      ;          :features yaml-mode
+   ;;        :after (lambda ()
+   ;;                 (autoload 'yaml-mode "yaml-mode" nil t)
+   ;;                 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+   ;;                 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+   ;;                 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
+   ;; (:name ack
+   ;;        :after (lambda ()
+   ;;                 (setq ack-command "ack ")))
    ;; (:name window-numbering
    ;;        :type http
    ;;        :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
    ;;        :features window-numbering
    ;;        :after (lambda ()
    ;;                 (window-numbering-mode 1)
-                   ;; ;; (setq window-numbering-assign-func
-                   ;;             ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
-                   ;; ))
+   ;; ;; (setq window-numbering-assign-func
+   ;;             ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
+   ;; ))
    (:name column-marker
           :type emacswiki
           :features column-marker
           :after (lambda ()
-                   ;; (defun set-column-marker ()
-                   ;;   (column-marker-1 80)
-                   ;;   (column-marker-2 120))
                    (dolist (hook '(emacs-lisp-mode-hook
                                    cperl-mode-hook
                                    shell-mode-hook
@@ -295,14 +400,14 @@ el-get-sources
                    (set-face-background 'column-marker-1 "#2b2b2b")
                    (set-face-background 'column-marker-2 "red")))
 
-                   ;; (add-hook 'c-mode-hook          'set-column-marker)
-                   ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
-                   ;; (add-hook 'html-mode-hook       'set-column-marker)))
-   (:name less-css-mode
-          :type http
-          :url "http://jdhuntington.com/emacs/less-css-mode.el")
+   ;; (add-hook 'c-mode-hook          'set-column-marker)
+   ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
+   ;; (add-hook 'html-mode-hook       'set-column-marker)))
+   ;; (:name less-css-mode
+   ;;        :type http
+   ;;        :url "http://jdhuntington.com/emacs/less-css-mode.el")
 
-          ;; :features less-mode)
+   ;; :features less-mode)
    ;; (:name undo-tree
    ;;     :type http
    ;;     :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
@@ -320,36 +425,18 @@ el-get-sources
  my:el-get-packages
  '(el-get				; el-get is self-hosting
    ;; ack
-   emacs-goodies-el
-   js2-mode
-   rvm
-   ;rspec-mode
+   ;; emacs-goodies-el
+   ;; js2-mode
+   ;; rvm
+   ;; rspec-mode
+   ;; magit
    dired+ ;;http://www.emacswiki.org/emacs/DiredPlus#Dired%2b
-;   php-mode-improved			; if you're into php...
+   ;; php-mode-improved			; if you're into php...
    erc-highlight-nicknames
-   sunrise-commander
-;   sunrise-x-tree
-;   sunrise-x-buttons
-;   sunrise-x-tabs
-;   scala-mode
-   rainbow-mode ;color-highlight
-;  ensime
-   color-theme
-   wrap-region
-   yari
-   ruby-end ;necessary to place after ruby-mode
-   flymake-ruby
-   auto-complete			; complete as you type with overlays
-   yasnippet
-   zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
+   ;; scala-mode
+   ;; zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
    nav
    rinari
-   rainbow-delimiters
-   paredit
-   haml-mode
-   sass-mode
-   smart-tab
-   anything
    ))
 
 (setq my:el-get-packages
@@ -360,13 +447,8 @@ el-get-sources
 ;; install new packages and init already installed packages
 (el-get 'sync my:el-get-packages)
 
-(add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
-(add-to-list 'load-path "~/.emacs.d/vendor/find-file-in-project/")
-(require 'find-file-in-project)
-(require 'tinyeat)
-(require 'tramp)
-(require 'redo+) ;;from elpa
-(require 'uniquify)
+
+;; (require 'uniquify)
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
@@ -445,20 +527,39 @@ el-get-sources
 ;; == INIT & CONFIG
 ;;------------------------------------------------
 
-;;highlight lines that pass 80 chars
-;; (let ((whitespace-line-column 80)       ;80 is the default
-;;       (whitespace-style '(lines-tail))) ;or '(lines) for the whole line
-;;   (whitespace-mode 1))
+(set-default 'indent-tabs-mode nil)
+(set-default 'indicate-empty-lines t)
+(set-default 'imenu-auto-rescan t)
+
+;; Hippie expand: at times perhaps too hip
+(dolist (f '(try-expand-line try-expand-list try-complete-file-name-partially))
+  (delete f hippie-expand-try-functions-list))
+
+;; Add this back in at the end of the list.
+(add-to-list 'hippie-expand-try-functions-list 'try-complete-file-name-partially t)
+
+(eval-after-load 'grep
+  '(when (boundp 'grep-find-ignored-files)
+     (add-to-list 'grep-find-ignored-files "*.class")))
 
 
+;;=autocomplete
+;; Start auto-completion after 2 characters of a word
+(setq ac-auto-start 2)
+;; case sensitivity is important when finding matches
+(setq ac-ignore-case nil)
+
+(when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
+  (load "~/.emacs.d/kylpo-secrets-file"))
 
 ;; This is a little hacky since VC doesn't support git add internally
 (eval-after-load 'vc
-  (define-key vc-prefix-map "i" '(lambda () (interactive)
-                                   (if (not (eq 'Git (vc-backend buffer-file-name)))
-                                       (vc-register)
-                                     (shell-command (format "git add %s" buffer-file-name))
-                                     (message "Staged changes.")))))
+  (define-key vc-prefix-map "i"
+    '(lambda () (interactive)
+       (if (not (eq 'Git (vc-backend buffer-file-name)))
+           (vc-register)
+         (shell-command (format "git add %s" buffer-file-name))
+         (message "Staged changes.")))))
 
 ;;=eshell
 ;; Part of the Emacs Starter Kit
@@ -563,9 +664,11 @@ el-get-sources
 (setq ispell-program-name "/usr/local/bin/aspell");;homebrew default location
 (setq ispell-list-command "list")
 
+
+
 ;;=ido-mode
 (setq ido-enable-prefix nil
-      ido-case-fold  t ; be case-insensitive
+      ;; ido-case-fold  t ; be case-insensitive
       ido-enable-last-directory-history t ; remember last used dirs
       ido-max-work-directory-list 30   ; should be enough
       ido-max-work-file-list 50   ; remember many
@@ -573,14 +676,17 @@ el-get-sources
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
       ;; ido-show-dot-for-dired t
-      ido-everywhere t ;use for many file dialogs
+      ;; ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ;; ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
       ido-max-prospects 20
       ido-confirm-unique-completion nil
+      ido-auto-merge-work-directories-length nil
+      ido-use-virtual-buffers t
+      ido-handle-duplicate-virtual-buffers 2
       )
-(ido-mode 'both) ; User ido mode for both buffers and files
+(ido-mode t) ; User ido mode for both buffers and files
 
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -616,7 +722,7 @@ el-get-sources
 
 (setq whitespace-style '(trailing lines space-before-tab indentation space-after-tab))
 
-(recentf-mode 1)
+;; (recentf-mode 1)
 (setq backup-directory-alist (list (cons ".*" (expand-file-name "~/bak/emacs/")))) ; Temp files
 (setq x-select-enable-clipboard t) ; Integrate with X11s clipboard
 (setq-default indent-tabs-mode nil) ; Dont indent with tabs
@@ -635,10 +741,10 @@ el-get-sources
 (font-lock-add-keywords nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\) " 1 font-lock-warning-face t)))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  ;; '(elscreen-display-screen-number nil)
  ;; '(elscreen-display-tab nil)
  ;; '(elscreen-tab-display-control nil)
@@ -647,10 +753,10 @@ el-get-sources
  '(wg-switch-on-load nil))
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 ;;------------------------------------------------
@@ -934,16 +1040,6 @@ el-get-sources
                       (shell-command-to-string
                        (concat "find \"" directory "\" -type f | grep -v \"/.git/\" | grep -v \"/.yardoc/\""))))))))
 
-(cmd xsteve-ido-choose-from-recentf
-     "Use ido to select a recently opened file from the `recentf-list'"
-     (let ((home (expand-file-name (getenv "HOME"))))
-       (find-file
-        (ido-completing-read "Recentf open: "
-                             (mapcar (lambda (path)
-                                       (replace-regexp-in-string home "~" path))
-                                     recentf-list)
-                             nil t))))
-
 (defun ido-find-file-in-tag-files ()
   (interactive)
   (save-excursion
@@ -965,55 +1061,6 @@ el-get-sources
           tags-completion-table)
     (find-tag (ido-completing-read "Tag: " tag-names))))
 
-(defun ido-goto-symbol (&optional symbol-list)
-  ;;http://www.emacswiki.org/cgi-bin/wiki/ImenuMode#toc10
-  "Refresh imenu and jump to a place in the buffer using Ido."
-  (interactive)
-  (unless (featurep 'imenu)
-    (require 'imenu nil t))
-  (cond
-   ((not symbol-list)
-    (let ((ido-mode ido-mode)
-          (ido-enable-flex-matching
-           (if (boundp 'ido-enable-flex-matching)
-               ido-enable-flex-matching t))
-          name-and-pos symbol-names position)
-      (unless ido-mode
-        (ido-mode 1)
-        (setq ido-enable-flex-matching t))
-      (while (progn
-               (imenu--cleanup)
-               (setq imenu--index-alist nil)
-               (ido-goto-symbol (imenu--make-index-alist))
-               (setq selected-symbol
-                     (ido-completing-read "Symbol? " symbol-names))
-               (string= (car imenu--rescan-item) selected-symbol)))
-      (unless (and (boundp 'mark-active) mark-active)
-        (push-mark nil t nil))
-      (setq position (cdr (assoc selected-symbol name-and-pos)))
-      (cond
-       ((overlayp position)
-        (goto-char (overlay-start position)))
-       (t
-        (goto-char position)))))
-   ((listp symbol-list)
-    (dolist (symbol symbol-list)
-      (let (name position)
-        (cond
-         ((and (listp symbol) (imenu--subalist-p symbol))
-          (ido-goto-symbol symbol))
-         ((listp symbol)
-          (setq name (car symbol))
-          (setq position (cdr symbol)))
-         ((stringp symbol)
-          (setq name symbol)
-          (setq position
-                (get-text-property 1 'org-imenu-marker symbol))))
-        (unless (or (null position) (null name)
-                    (string= (car imenu--rescan-item) name))
-          (add-to-list 'symbol-names name)
-          (add-to-list 'name-and-pos (cons name position))))))))
-
 (defun org-gcal-sync ()
   "Export org to ics to be uploaded to Google Calendar and import
 an .ics file that has been downloaded from Google Calendar "
@@ -1021,33 +1068,7 @@ an .ics file that has been downloaded from Google Calendar "
   (icalendar-import-file "~/tmp/.basic.ics" "~/tmp/.gcal"))
 
 
-(cmd indent-whole-buffer ()
-     "indent whole buffer"
-     (delete-trailing-whitespace)
-     (indent-region (point-min) (point-max) nil)
-     (untabify (point-min) (point-max)))
-(defalias 'iwb 'indent-whole-buffer)
-
-(defun add-watchwords ()
-  (interactive)
-  (font-lock-add-keywords
-   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
-          1 font-lock-warning-face t))))
-
-(defun untabify-buffer ()
-  (interactive)
-  (untabify (point-min) (point-max)))
-
-(defun indent-buffer ()
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-(defun cleanup-buffer ()
-  "Perform a bunch of operations on the whitespace content of a buffer."
-  (interactive)
-  (indent-buffer)
-  (untabify-buffer)
-  (delete-trailing-whitespace))
+;;(defalias 'iwb 'indent-whole-buffer)
 
 (defun toggle-fullscreen ()
   (interactive)
@@ -1136,23 +1157,6 @@ an .ics file that has been downloaded from Google Calendar "
   (setq-default mode-line-format nil)
   (call-interactively command))
 
-(defun sudo-edit (&optional arg)
-  (interactive "p")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-
-(defun lorem ()
-  "Insert a lorem ipsum."
-  (interactive)
-  (insert "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
-          "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim"
-          "ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
-          "aliquip ex ea commodo consequat. Duis aute irure dolor in "
-          "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
-          "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
-          "culpa qui officia deserunt mollit anim id est laborum."))
-
 (defun insert-date ()
   "Insert a time-stamp according to locale's date and time format."
   (interactive)
@@ -1181,11 +1185,11 @@ an .ics file that has been downloaded from Google Calendar "
 ;;TODO write notes on the format of featurep, progn, etc
 
 ;;=yasnippet
-(if (featurep 'yasnippet)
-    (progn
-      (yas/initialize)
-      (yas/load-directory "~/.emacs.d/yasnippets"))
-  (message "INSTALL yasnippet"))
+;; (if (featurep 'yasnippet)
+;;     (progn
+;;       (yas/initialize)
+;;       (yas/load-directory "~/.emacs.d/yasnippets"))
+;;   (message "INSTALL yasnippet"))
 
 
 ;;=dired & Tramp
@@ -1334,7 +1338,7 @@ an .ics file that has been downloaded from Google Calendar "
                                         ;             "* TODO %?\n----Entered on %U\n  %i")
          "* TODO %?  %i")
         ("j" "Journal" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
-                                        "** %?")
+         "** %?")
         ("p" "Pic-of-the-day" entry (file+datetree "~/Dropbox/doc/journal/journal.org")
          "* [[~/Dropbox/doc/journal/%?.jpg]]")
         ("l" "Log Time" entry (file+datetree "~/Dropbox/doc/timelog.org" )
@@ -1638,13 +1642,20 @@ an .ics file that has been downloaded from Google Calendar "
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key (kbd "M-L") 'next-buffer)
 (global-set-key (kbd "M-H") 'previous-buffer)
-;; (global-set-key (kbd "M-/") 'hippie-expand)
+(global-set-key (kbd "M-/") 'hippie-expand)
 (global-set-key "\r" 'newline-and-indent)
                                         ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
 (global-set-key "\C-xj" 'join-line)
-(global-set-key "\C-xi" 'ido-goto-symbol) ;own func
-(global-set-key "\C-xf" 'xsteve-ido-choose-from-recentf)
+
+;; (global-set-key (kbd "C-x f") 'esk-recentf-ido-find-file)
+
+;; Jump to a definition in the current file.
+(global-set-key (kbd "C-x C-i") 'esk-ido-imenu)
+
+;; Perform general cleanup.
+(global-set-key (kbd "C-c n") 'esk-cleanup-buffer)
+
 (global-set-key "\C-x," 'my-ido-find-tag)
 (global-set-key "\C-xc" 'calendar)
 (global-set-key "\C-xt" 'eshell)
@@ -1746,16 +1757,31 @@ an .ics file that has been downloaded from Google Calendar "
 ;; (global-set-key (kbd "<C-o>") 'auto-complete)
 (global-set-key (kbd "M-n") 'auto-complete)
 
-(global-set-key (kbd "C-c b")
- (lambda() (interactive)
-   (anything
-    :prompt "Switch to: "
-    :candidate-number-limit 10                 ;; up to 10 of each
-    :sources
-    '( anything-c-source-buffers               ;; buffers
-       anything-c-source-recentf               ;; recent files
-       anything-c-source-bookmarks             ;; bookmarks
-       anything-c-source-files-in-current-dir+ ;; current dir
-       anything-c-source-locate))))            ;; use 'locate'
+;; Start eshell or switch to it if it's active.
+(global-set-key (kbd "C-x m") 'eshell)
+
+;; Start a new eshell even if one is active.
+(global-set-key (kbd "C-x M") (lambda () (interactive) (eshell t)))
+
+;; Start a regular shell if you prefer that.
+(global-set-key (kbd "C-x C-m") 'shell)
+
+(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-c f") 'find-file-in-project)
+
+;; (global-set-key (kbd "M-x") 'smex)
+;; (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+;; (global-set-key (kbd "C-c b")
+;;                 (lambda() (interactive)
+;;                   (anything
+;;                    :prompt "Switch to: "
+;;                    :candidate-number-limit 10                 ;; up to 10 of each
+;;                    :sources
+;;                    '( anything-c-source-buffers               ;; buffers
+;;                       anything-c-source-recentf               ;; recent files
+;;                       anything-c-source-bookmarks             ;; bookmarks
+;;                       anything-c-source-files-in-current-dir+ ;; current dir
+;;                       anything-c-source-locate))))            ;; use 'locate'
 
 ;;=commented
