@@ -1,3 +1,6 @@
 [submodule "yasnippets"]
 	path = yasnippets
 	url = https://github.com/rejeep/yasnippets.git
+[submodule "vendor/emacs-starter-kit"]
+	path = vendor/emacs-starter-kit
+	url = git://github.com/technomancy/emacs-starter-kit.git
