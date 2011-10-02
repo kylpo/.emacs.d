@@ -3,8 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("redo+-pkg.el" "redo+.el") (19864 63710
-;;;;;;  987265))
+;;;### (autoloads nil nil ("redo+-pkg.el" "redo+.el") (20103 59920
+;;;;;;  551689))
 
 ;;;***
 

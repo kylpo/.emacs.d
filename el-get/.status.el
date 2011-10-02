@@ -1,0 +1,1 @@
+(:el-get "installed" :dired+ "installed" :erc-highlight-nicknames "installed" :nav "installed" :rinari "installed" :magit "installed" :rhtml-mode "installed" :etags-table "installed" :column-marker "installed" :apel "installed" :elscreen "installed")

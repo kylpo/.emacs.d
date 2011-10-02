@@ -85,7 +85,7 @@
 
 (require 'cl)				; common lisp goodies, loop
 (require 'tinyeat)
-(require 'starter-kit-defuns)
+
 (require 'tramp)
 
 ;;=elpa+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -107,6 +107,7 @@
 (defvar my-packages '(
                       ;; starter-kit
                       ;; starter-kit-lisp
+		      idle-highlight-mode
                       starter-kit-ruby
                       ;; starter-kit-js
                       flymake-cursor
@@ -120,7 +121,7 @@
                       less-css-mode
                       rvm
                       ;; erc-hl-nicks
-                      sunrise-commander
+;                      sunrise-commander
                       rainbow-mode
                       wrap-region
                       yari
@@ -135,6 +136,7 @@
                       ido-ubiquitous
                       elisp-slime-nav
                       paredit
+		      smex
                       ;; php-mode
                       ))
 
@@ -147,6 +149,8 @@
 (require 'redo+)
 (require 'auto-complete)
 (require 'ido-ubiquitous)
+(require 'idle-highlight-mode)
+(require 'starter-kit-defuns) ;must require after idle-highlight
 
 (when (require 'yasnippet nil 'noerror)
   (yas/initialize)
@@ -313,11 +317,11 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;;=color
-(load "~/.emacs.d/vendor/themes/zenburn/zenburn.el")
-(color-theme-zenburn)
-(set-face-foreground 'erc-pal-face "#8cd0d3")
-(setq term-default-bg-color "#3f3f3f")        ;; background color (black)
-(setq term-default-fg-color "#dcdccc")       ;; foreground color (yellow)
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/vendor/themes/zenburn-emacs")
+(load-theme 'zenburn)
+;;(set-face-foreground 'erc-pal-face "#8cd0d3")
+;;(setq term-default-bg-color "#3f3f3f")        ;; background color (black)
+;;(setq term-default-fg-color "#dcdccc")       ;; foreground color (yellow)
 
 
 ;;------------------------------------------------
@@ -596,9 +600,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; '(elscreen-display-screen-number nil)
- ;; '(elscreen-display-tab nil)
- ;; '(elscreen-tab-display-control nil)
+ '(custom-safe-themes (quote ("1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
  '(sr-show-file-attributes nil)
  '(wg-morph-on nil)
  '(wg-switch-on-load nil))

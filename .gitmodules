@@ -7,3 +7,6 @@
 [submodule "vendor/yasnippets"]
 	path = vendor/yasnippets
 	url = git://github.com/rejeep/yasnippets.git
+[submodule "vendor/themes/zenburn-emacs"]
+	path = vendor/themes/zenburn-emacs
+	url = https://github.com/bbatsov/zenburn-emacs.git
