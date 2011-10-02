@@ -17,3 +17,6 @@ emacs.bmk
 /elpa/idle-highlight-1.0/idle-highlight.elc
 workgroups/
 image-dired/
+backups/
+places
+kylpo-secrets-file
