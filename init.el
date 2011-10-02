@@ -77,15 +77,18 @@
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
 (setq emacs-dir (file-name-directory (or (buffer-file-name) load-file-name)))
-(add-to-list 'load-path "~/.emacs.d/packages/emacs-tiny-tools/lisp/tiny")
+(add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
+
+(when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
+  (load "~/.emacs.d/kylpo-secrets-file"))
 
 (require 'cl)				; common lisp goodies, loop
 (require 'tinyeat)
 (require 'starter-kit-defuns)
 (require 'tramp)
 
-;;=elpa
+;;=elpa+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (require 'package)
 
 (add-to-list 'package-archives
@@ -116,7 +119,7 @@
                       yaml-mode
                       less-css-mode
                       rvm
-                      erc-hl-nicks
+                      ;; erc-hl-nicks
                       sunrise-commander
                       rainbow-mode
                       wrap-region
@@ -139,18 +142,24 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
+;;from elpa
 (require 'flymake-cursor)
-(require 'redo+) ;;from elpa
+(require 'redo+)
 (require 'auto-complete)
 (require 'ido-ubiquitous)
+
 (when (require 'yasnippet nil 'noerror)
   (yas/initialize)
-  (yas/load-directory "~/.emacs.d/yasnippets"))
+  (yas/load-directory "~/.emacs.d/vendor/yasnippets"))
 
 ;;=smex
 (setq smex-save-file (concat emacs-dir ".smex-items"))
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
+
+;;=css
+(setq css-indent-level 2)
+(setq css-indent-offset 2)
 
 
 (global-set-key (kbd "<C-S-up>") 'buf-move-up)
@@ -200,7 +209,7 @@
 (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode)
 
 
-;;=el-get
+;;=el-get+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil t)
@@ -210,128 +219,13 @@
         (end-of-buffer)
         (eval-print-last-sexp))))
 
-
-
-;;=el-get
-;; set local recipes
 (setq
  el-get-sources
  '(
-   ;; (:name goto-last-change		; move pointer back to last change
-   ;;        :after (lambda ()
-   ;;      	   ;; when using AZERTY keyboard, consider C-x C-_
-   ;;      	   (global-set-key (kbd "C-x C-/") 'goto-last-change)))
-   ;; (:name multi-term
-   ;;        :after (lambda ()
-   ;;                 (multi-term-keystroke-setup)
-   ;;                 (setq multi-term-program "/bin/bash")))
-
-   ;;    (:name workgroups
-   ;;           :after (lambda ()
-   ;;                    ;; (setq wg-prefix-key (kbd "C-c w"))
-   ;;                    ;; (setq workgroups-default-file "~/.emacs.d/workgroups/default")
-   ;;                    (workgroups-mode t)
-   ;;                    ;; (wg-switch-on-load nil)
-   ;;                    (wg-toggle-mode-line)
-   ;; ;                   (wg-load "~/.emacs.d/workgroups/default")
-   ;;                    (global-set-key (kbd "C-z C-z") 'wg-switch-to-previous-workgroup)
-   ;;                    ))
-   ;; (:name auto-complete
-          ;; :after (lambda ()
-          ;;          (global-unset-key (kbd "<C-o>"))
-          ;;          (global-set-key (kbd "<C-o>") 'auto-complete))
-          ;; )
-   ;; (:name buffer-move ; have to add your own keys
-   ;;        :after (lambda ()
-   ;;                 (global-set-key (kbd "<C-S-up>") 'buf-move-up)
-   ;;                 (global-set-key (kbd "<C-S-down>") 'buf-move-down)
-   ;;                 (global-set-key (kbd "<C-S-left>") 'buf-move-left)
-   ;;                 (global-set-key (kbd "<C-S-right>") 'buf-move-right)))
-   (:name dot-mode
-          :type git
-          :url "https://github.com/emacsmirror/dot-mode.git"
-          :features dot-mode)
-
-   ;; :after (lambda ()
-   ;;          (require 'dot-mode)
-   ;;          (add-hook 'find-file-hooks 'dot-mode-on)))
-
    (:name magit
           :after (lambda ()
                    (global-set-key (kbd "C-x g") 'magit-status)))
-   ;; (:name kylpo-smex
-   ;;        :type git
-   ;;        :url "http://github.com/nonsequitur/smex.git"
-   ;;        :features smex
-   ;;        :post-init (lambda ()
-   ;;                     (setq smex-save-file "~/.emacs.d/.smex-items")
-   ;;                     (smex-initialize))
-   ;;        :after (lambda ()
-   ;;                 (global-set-key (kbd "M-x") 'smex)
-   ;;                 (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
-   ;; (:name kylpo-org-mode
-   ;;        :type git
-   ;;        :url "git://orgmode.org/org-mode.git"
-   ;;        :info "doc"
-   ;;        :build `,(mapcar
-   ;;      	    (lambda (target)
-   ;;      	      (concat "make " target " EMACS=" el-get-emacs))
-   ;;      	    '("clean" "all"))
-   ;;        :load-path ("lisp" "contrib/lisp")
-   ;;        :autoloads nil
-   ;;        :features org-install
-   ;;        :after
-   ;;        (lambda ()
-   ;;          (require 'org-habit)
-   ;;          (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))))
-   ;; (:name inf-ruby  :type elpa)
-   ;; (:name ruby-compilation :type elpa)
-   ;; (:name ruby-mode
-   ;;        :type elpa
-   ;;        :after
-   ;;        (lambda ()
-   ;;          (autoload 'ruby-mode "ruby-mode" nil t)
-   ;;          (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
-   ;;          (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
-            ;; (add-hook 'ruby-mode-hook
-            ;;           '(lambda ()
-            ;;              (setq ruby-deep-arglist t)
-            ;;              (setq ruby-deep-indent-paren nil)
-            ;;              (setq c-tab-always-indent nil)
-            ;;              (require 'inf-ruby)
-            ;;              (require 'ruby-compilation)))
-            ;; (add-hook 'ruby-mode-hook
-            ;;           (lambda()
-            ;;             (add-hook 'local-write-file-hooks
-            ;;                       '(lambda()
-            ;;                          (save-excursion
-            ;;                            (untabify (point-min) (point-max))
-            ;;                            (delete-trailing-whitespace)
-            ;;                            )))
-            ;;             (set (make-local-variable 'indent-tabs-mode) 'nil)
-            ;;             (set (make-local-variable 'tab-width) 2)
-            ;;             (imenu-add-to-menubar "IMENU")
-            ;;             (local-set-key "\r" 'newline-and-indent);ret indents
-            ;;             ;; (require 'ruby-electric)
-            ;;             (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
-            ;;             ;; (ruby-electric-mode t)
-            ;;             ))))
-   ;; (:name css-mode
-   ;;        :type elpa
-   ;;        :after
-   ;;        (lambda ()
-   ;;          (autoload 'css-mode "css-mode" nil t)
-   ;;          (add-hook 'css-mode-hook
-   ;;                    '(lambda ()
-   ;;                       (setq css-indent-level 2)
-   ;;                       (setq css-indent-offset 2)))))
    (:name rhtml-mode
           :after (lambda ()
                    (autoload 'rhtml-mode "rhtml-mode" nil t)
@@ -346,34 +240,7 @@
           :features etags-table
           :after (lambda ()
                    (setq etags-table-search-up-depth 10)))
-   ;; (:name framemove
-   ;;        :type emacswiki
-   ;;        ;;http://trey-jackson.blogspot.com/2010/02/emacs-tip-35-framemove.html
-   ;;        :after (lambda ()
-   ;;                 (require 'framemove)
-   ;;                 (setq framemove-hook-into-windmove t)
-   ;;                 ))
-   ;; (:name yaml-mode
-   ;;        :type git
-   ;;        :url "http://github.com/yoshiki/yaml-mode.git"
-   ;;                                      ;          :features yaml-mode
-   ;;        :after (lambda ()
-   ;;                 (autoload 'yaml-mode "yaml-mode" nil t)
-   ;;                 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
-   ;;                 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-   ;;                 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))))
-   ;; (:name ack
-   ;;        :after (lambda ()
-   ;;                 (setq ack-command "ack ")))
-   ;; (:name window-numbering
-   ;;        :type http
-   ;;        :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
-   ;;        :features window-numbering
-   ;;        :after (lambda ()
-   ;;                 (window-numbering-mode 1)
-   ;; ;; (setq window-numbering-assign-func
-   ;;             ;; (lambda () (when (equal (buffer-name) "*Calculator*") 9)))
-   ;; ))
+
    (:name column-marker
           :type emacswiki
           :features column-marker
@@ -400,18 +267,6 @@
                    (set-face-background 'column-marker-1 "#2b2b2b")
                    (set-face-background 'column-marker-2 "red")))
 
-   ;; (add-hook 'c-mode-hook          'set-column-marker)
-   ;; (add-hook 'emacs-lisp-mode-hook 'set-column-marker)
-   ;; (add-hook 'html-mode-hook       'set-column-marker)))
-   ;; (:name less-css-mode
-   ;;        :type http
-   ;;        :url "http://jdhuntington.com/emacs/less-css-mode.el")
-
-   ;; :features less-mode)
-   ;; (:name undo-tree
-   ;;     :type http
-   ;;     :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
-   ;;     :features undo-tree)
    (:name elscreen
           :description "Screen Manager for Emacsen"
           :type http-tar
@@ -423,7 +278,7 @@
 
 (setq
  my:el-get-packages
- '(el-get				; el-get is self-hosting
+ '(el-get
    ;; ack
    ;; emacs-goodies-el
    ;; js2-mode
@@ -448,8 +303,6 @@
 (el-get 'sync my:el-get-packages)
 
 
-;; (require 'uniquify)
-
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 ;; We never want to edit Rubinius bytecode
@@ -460,7 +313,7 @@
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;;=color
-(load "~/.emacs.d/colors/zenburn/zenburn.el")
+(load "~/.emacs.d/vendor/themes/zenburn/zenburn.el")
 (color-theme-zenburn)
 (set-face-foreground 'erc-pal-face "#8cd0d3")
 (setq term-default-bg-color "#3f3f3f")        ;; background color (black)
@@ -549,8 +402,6 @@
 ;; case sensitivity is important when finding matches
 (setq ac-ignore-case nil)
 
-(when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
-  (load "~/.emacs.d/kylpo-secrets-file"))
 
 ;; This is a little hacky since VC doesn't support git add internally
 (eval-after-load 'vc
