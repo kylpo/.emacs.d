@@ -10,3 +10,6 @@
 [submodule "vendor/themes/zenburn-emacs"]
 	path = vendor/themes/zenburn-emacs
 	url = https://github.com/bbatsov/zenburn-emacs.git
+[submodule "vendor/campfire"]
+	path = vendor/campfire
+	url = https://github.com/timcharper/campfire-el.git

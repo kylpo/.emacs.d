@@ -79,6 +79,7 @@
 (setq emacs-dir (file-name-directory (or (buffer-file-name) load-file-name)))
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
+(add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
 
 (when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
   (load "~/.emacs.d/kylpo-secrets-file"))
@@ -133,7 +134,7 @@
                       org
                       js2-mode
                       find-file-in-project
-                      ido-ubiquitous
+                      ;; ido-ubiquitous
                       elisp-slime-nav
                       paredit
 		      smex
@@ -148,7 +149,7 @@
 (require 'flymake-cursor)
 (require 'redo+)
 (require 'auto-complete)
-(require 'ido-ubiquitous)
+;;(require 'ido-ubiquitous)
 (require 'idle-highlight-mode)
 (require 'starter-kit-defuns) ;must require after idle-highlight
 
@@ -293,7 +294,9 @@
    ;; php-mode-improved			; if you're into php...
    erc-highlight-nicknames
    ;; scala-mode
-   ;; zencoding-mode			; http://www.emacswiki.org/emacs/ZenCoding
+   ;; zencoding-mode			;
+   ;; http://www.emacswiki.org/emacs/ZenCoding
+   sunrise-commander
    nav
    rinari
    ))
@@ -531,7 +534,7 @@
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
       ;; ido-show-dot-for-dired t
-      ;; ido-everywhere t ;use for many file dialogs
+      ido-everywhere t ;use for many file dialogs
       ido-save-directory-list-file "~/.emacs.d/.ido.last"
       ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "*scratch*" "^\\*tramp" "^\\*Messages\\*" " output\\*$" "^#" "^irc")
       ;; ido-ignore-files '("*\.jpg" "(pyc|jpg|png|gif)$");TODO doesn't work
@@ -1032,6 +1035,73 @@ an .ics file that has been downloaded from Google Calendar "
     (cond ((search-forward "<?xml" nil t) (xml-mode))
           ((search-forward "<html" nil t) (html-mode)))))
 
+
+(defun ido-goto-symbol (&optional symbol-list)
+  ;;http://www.emacswiki.org/cgi-bin/wiki/ImenuMode#toc10
+  "Refresh imenu and jump to a place in the buffer using Ido."
+  (interactive)
+  (unless (featurep 'imenu)
+    (require 'imenu nil t))
+  (cond
+   ((not symbol-list)
+    (let ((ido-mode ido-mode)
+          (ido-enable-flex-matching
+           (if (boundp 'ido-enable-flex-matching)
+               ido-enable-flex-matching t))
+          name-and-pos symbol-names position)
+      (unless ido-mode
+        (ido-mode 1)
+        (setq ido-enable-flex-matching t))
+      (while (progn
+               (imenu--cleanup)
+               (setq imenu--index-alist nil)
+               (ido-goto-symbol (imenu--make-index-alist))
+               (setq selected-symbol
+                     (ido-completing-read "Symbol? " symbol-names))
+               (string= (car imenu--rescan-item) selected-symbol)))
+      (unless (and (boundp 'mark-active) mark-active)
+        (push-mark nil t nil))
+      (setq position (cdr (assoc selected-symbol name-and-pos)))
+      (cond
+       ((overlayp position)
+        (goto-char (overlay-start position)))
+       (t
+        (goto-char position)))))
+   ((listp symbol-list)
+    (dolist (symbol symbol-list)
+      (let (name position)
+        (cond
+         ((and (listp symbol) (imenu--subalist-p symbol))
+          (ido-goto-symbol symbol))
+         ((listp symbol)
+          (setq name (car symbol))
+          (setq position (cdr symbol)))
+         ((stringp symbol)
+          (setq name symbol)
+          (setq position
+                (get-text-property 1 'org-imenu-marker symbol))))
+        (unless (or (null position) (null name)
+                    (string= (car imenu--rescan-item) name))
+          (add-to-list 'symbol-names name)
+          (add-to-list 'name-and-pos (cons name position))))))))
+
+;Move current line to top
+(defun line-to-top ()
+  "Move current line to top of window."
+  (interactive)
+  (recenter 0))
+
+;Move point to top
+(defun point-to-top ()
+  (interactive)
+  (move-to-window-line 0))
+
+;Move point to bottom
+(defun point-to-bottom ()
+  "Move current line to top of window."
+  (interactive)
+  (move-to-window-line -1))
+
 ;;------------------------------------------------
 ;;==Plugins
 ;;------------------------------------------------
@@ -1501,10 +1571,8 @@ an .ics file that has been downloaded from Google Calendar "
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
 (global-set-key "\C-xj" 'join-line)
 
-;; (global-set-key (kbd "C-x f") 'esk-recentf-ido-find-file)
-
 ;; Jump to a definition in the current file.
-(global-set-key (kbd "C-x C-i") 'esk-ido-imenu)
+(global-set-key (kbd "C-x C-i") 'ido-goto-symbol)
 
 ;; Perform general cleanup.
 (global-set-key (kbd "C-c n") 'esk-cleanup-buffer)
@@ -1534,7 +1602,9 @@ an .ics file that has been downloaded from Google Calendar "
 (bind "C-S-p" scroll-down-keep-cursor)
 (bind "C-S-n" scroll-up-keep-cursor)
 ;; todo
-;; M 'move-to-window-line
+(global-set-key (kbd "s-e") 'point-to-top)
+(global-set-key (kbd "s-d") 'move-to-window-line)
+(global-set-key (kbd "s-c") 'point-to-bottom)
 ;; H 'move-to-window-line-top-bottom 1
 ;; L 'move-to-window-line-top-bottom -1
 
@@ -1621,20 +1691,3 @@ an .ics file that has been downloaded from Google Calendar "
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-c f") 'find-file-in-project)
-
-;; (global-set-key (kbd "M-x") 'smex)
-;; (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-
-;; (global-set-key (kbd "C-c b")
-;;                 (lambda() (interactive)
-;;                   (anything
-;;                    :prompt "Switch to: "
-;;                    :candidate-number-limit 10                 ;; up to 10 of each
-;;                    :sources
-;;                    '( anything-c-source-buffers               ;; buffers
-;;                       anything-c-source-recentf               ;; recent files
-;;                       anything-c-source-bookmarks             ;; bookmarks
-;;                       anything-c-source-files-in-current-dir+ ;; current dir
-;;                       anything-c-source-locate))))            ;; use 'locate'
-
-;;=commented

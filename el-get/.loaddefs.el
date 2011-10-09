@@ -1520,6 +1520,30 @@ Run the current buffer through Ruby compilation.
 
 ;;;***
 
+;;;### (autoloads (sr-dired sunrise-cd sunrise) "sunrise-commander/sunrise-commander"
+;;;;;;  "sunrise-commander/sunrise-commander.el" (20105 10310))
+;;; Generated autoloads from sunrise-commander/sunrise-commander.el
+
+(autoload 'sunrise "sunrise-commander/sunrise-commander" "\
+Start the Sunrise Commander.
+If LEFT-DIRECTORY is given, the left window will display that
+directory (same for RIGHT-DIRECTORY). Specifying nil for any of
+these values uses the default, ie. $HOME.
+
+\(fn &optional LEFT-DIRECTORY RIGHT-DIRECTORY FILENAME)" t nil)
+
+(autoload 'sunrise-cd "sunrise-commander/sunrise-commander" "\
+Run Sunrise but give it the current directory to use.
+
+\(fn)" t nil)
+
+(autoload 'sr-dired "sunrise-commander/sunrise-commander" "\
+Visit the given directory in `sr-mode'.
+
+\(fn DIRECTORY &optional SWITCHES)" t nil)
+
+;;;***
+
 ;;;### (autoloads nil nil ("apel/site-lisp/apel/calist.el" "apel/site-lisp/apel/filename.el"
 ;;;;;;  "apel/site-lisp/apel/install.el" "apel/site-lisp/emu/apel-ver.el"
 ;;;;;;  "apel/site-lisp/emu/broken.el" "apel/site-lisp/emu/emu.el"
@@ -1540,7 +1564,7 @@ Run the current buffer through Ruby compilation.
 ;;;;;;  "rhtml-mode/rhtml-fonts.el" "rhtml-mode/rhtml-mode.el" "rhtml-mode/rhtml-navigation.el"
 ;;;;;;  "rhtml-mode/rhtml-ruby-hook.el" "rhtml-mode/rhtml-sgml-hacks.el"
 ;;;;;;  "rinari/util/jump/findr.el" "rinari/util/ruby-compilation-rspec.el")
-;;;;;;  (20103 60701 893307))
+;;;;;;  (20105 10311 216161))
 
 ;;;***
 
