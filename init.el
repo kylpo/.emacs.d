@@ -81,8 +81,8 @@
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
 (add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
 
-(when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
-  (load "~/.emacs.d/kylpo-secrets-file"))
+;; (when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
+;;   (load "~/.emacs.d/kylpo-secrets-file"))
 
 (require 'cl)				; common lisp goodies, loop
 (require 'tinyeat)
@@ -138,7 +138,10 @@
                       elisp-slime-nav
                       paredit
 		      smex
-                      ;; php-mode
+                      php-mode
+                      markdown-mode
+                      textmate
+                      full-ack
                       ))
 
 (dolist (p my-packages)
@@ -149,7 +152,7 @@
 (require 'flymake-cursor)
 (require 'redo+)
 (require 'auto-complete)
-;;(require 'ido-ubiquitous)
+(require 'buffer-move)
 (require 'idle-highlight-mode)
 (require 'starter-kit-defuns) ;must require after idle-highlight
 
@@ -299,6 +302,8 @@
    sunrise-commander
    nav
    rinari
+   nxhtml
+   coffee-mode
    ))
 
 (setq my:el-get-packages
@@ -387,16 +392,39 @@
 ;; == INIT & CONFIG
 ;;------------------------------------------------
 
+;; smart indenting and pairing for all
+(electric-pair-mode t)
+(electric-indent-mode t)
+(electric-layout-mode t)
+
+;; meaningful names for buffers with the same name
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-separator "/")
+(setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
+(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
 (set-default 'indent-tabs-mode nil)
 (set-default 'indicate-empty-lines t)
 (set-default 'imenu-auto-rescan t)
 
 ;; Hippie expand: at times perhaps too hip
-(dolist (f '(try-expand-line try-expand-list try-complete-file-name-partially))
-  (delete f hippie-expand-try-functions-list))
+;; (dolist (f '(try-expand-line try-expand-list try-complete-file-name-partially))
+;;   (delete f hippie-expand-try-functions-list))
 
-;; Add this back in at the end of the list.
-(add-to-list 'hippie-expand-try-functions-list 'try-complete-file-name-partially t)
+;; ;; Add this back in at the end of the list.
+;; (add-to-list 'hippie-expand-try-functions-list 'try-complete-file-name-partially t)
+
+(setq hippie-expand-try-functions-list '(try-expand-dabbrev
+                                         try-expand-dabbrev-all-buffers
+                                         try-expand-dabbrev-from-kill
+                                         try-complete-file-name-partially
+                                         try-complete-file-name
+                                         try-expand-all-abbrevs
+                                         try-expand-list
+                                         try-expand-line
+                                         try-complete-lisp-symbol-partially
+                                         try-complete-lisp-symbol))
 
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-files)
@@ -603,8 +631,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
+ '(custom-enabled-themes (quote (zenburn)))
+ '(custom-safe-themes (quote ("4920f9add5c557ae792965db34fc6f104ba24675" "1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
  '(sr-show-file-attributes nil)
+ '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(wg-morph-on nil)
  '(wg-switch-on-load nil))
 
@@ -613,11 +643,51 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(elscreen-tab-background-face ((t nil)))
+ '(elscreen-tab-other-screen-face ((t nil)))
+ '(mumamo-background-chunk-major ((t (:background "#3f3f3f"))))
+ '(mumamo-background-chunk-submode1 ((t (:background "#2f2f2f")))))
 
 ;;------------------------------------------------
 ;;== Custom Functions
 ;;------------------------------------------------
+
+;;TAKEN FROM ___
+(defun isearch-exit-at-opposite-end ()
+  "by default isearch forward ends at end and isearch backward
+  ends at beginning. this makes it do the opposite."
+  (interactive)
+  (add-hook 'isearch-mode-end-hook 'isearch-move-point-to-opposite-end)
+  (isearch-exit))
+
+(defun isearch-move-point-to-opposite-end ()
+  (funcall (if isearch-forward #'backward-char #'forward-char)
+           (length isearch-string))
+  (remove-hook 'isearch-mode-end-hook 'isearch-move-point-to-opposite-end))
+
+(define-key isearch-mode-map (kbd "<C-return>") 'isearch-exit-at-opposite-end)
+
+;;; similar to o and O in vim. Use M-1 C-o to go above and M-2 C-o to go
+;;; below. C-o is normal emacs behavior
+(defun jsj-open-line (&optional alt)
+  (interactive "P")
+  (case alt
+    (1 (beginning-of-line)
+       (newline)
+       (forward-line -1)
+       (indent-according-to-mode))
+    (2 (end-of-line)
+       (newline-and-indent))
+    (t (open-line 1))))
+
+(define-key global-map (kbd "C-o") 'jsj-open-line)
+
+
+(defun select-current-line ()
+  "Select the current line"
+  (interactive)
+  (end-of-line) ; move to end of line
+  (set-mark (line-beginning-position)))
 
 (defun edit-init ()
   "Load the .emacs file into a buffer for editing."
@@ -811,7 +881,7 @@
   `(global-set-key (kbd ,key)
                    ;; handle unquoted function names and lambdas
                    ,(if (listp fn)
-                        fn
+
                       `',fn)))
 
 (defmacro cmd (name &rest body)
@@ -1101,6 +1171,22 @@ an .ics file that has been downloaded from Google Calendar "
   "Move current line to top of window."
   (interactive)
   (move-to-window-line -1))
+
+;from http://sinewalker.wordpress.com/2008/06/26/pretty-printing-xml-with-emacs-nxml-mode/
+(defun bf-pretty-print-xml-region (begin end)
+  "Pretty format XML markup in region. You need to have nxml-mode
+http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+this.  The function inserts linebreaks to separate tags that have
+nothing but whitespace between them.  It then indents the markup
+by using nxml's indentation rules."
+  (interactive "r")
+  (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+        (backward-char) (insert "\n"))
+      (indent-region begin end))
+    (message "Ah, much better!"))
 
 ;;------------------------------------------------
 ;;==Plugins
@@ -1413,11 +1499,11 @@ an .ics file that has been downloaded from Google Calendar "
 (if (featurep 'elscreen)
     (progn
       (setq elscreen-display-screen-number nil)
-      (setq  elscreen-display-tab nil)
-      (setq  elscreen-tab-display-control nil)
+      ;; (setq elscreen-display-tab nil)
+      ;; (setq elscreen-tab-display-control nil)
       (global-set-key (kbd "s-p") 'elscreen-previous)
       (global-set-key (kbd "s-n") 'elscreen-next)
-      (global-set-key (kbd "s-t") 'elscreen-create))
+      (global-set-key (kbd "s-t") 'elscreen-clone))
   (message "INSTALL elscreen"))
 
 (if (featurep 'ZZZZZZ)
@@ -1691,3 +1777,6 @@ an .ics file that has been downloaded from Google Calendar "
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-c f") 'find-file-in-project)
+
+;;; start search at top of buffer
+(bind "C-S-s" (lambda () (interactive) (beginning-of-buffer) (isearch-forward)))

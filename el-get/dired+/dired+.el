@@ -7,9 +7,9 @@
 ;; Copyright (C) 1999-2011, Drew Adams, all rights reserved.
 ;; Created: Fri Mar 19 15:58:58 1999
 ;; Version: 21.2
-;; Last-Updated: Sat Sep  3 14:31:44 2011 (-0700)
+;; Last-Updated: Mon Oct 31 15:13:44 2011 (-0700)
 ;;           By: dradams
-;;     Update #: 4179
+;;     Update #: 4186
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/dired+.el
 ;; Keywords: unix, mouse, directories, diredp, dired
 ;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x
@@ -203,7 +203,7 @@
 ;;                              not flagged, files will be deleted.
 ;;  `dired-do-flagged-delete' - Display message to warn that flagged,
 ;;                              not marked, files will be deleted.
-;;  `dired-find-file'         - Allow `.' and `..' (Emacs 20 only). 
+;;  `dired-find-file'         - Allow `.' and `..' (Emacs 20 only).
 ;;  `dired-get-filename'      - Test `./' and `../' (like `.', `..').
 ;;  `dired-goto-file'         - Fix Emacs bug #7126.
 ;;                              Remove `/' from dir before compare.
@@ -221,7 +221,7 @@
 ;;  The following functions are included here with NO CHANGES to their
 ;;  definitions.  They are here only to take advantage of the new
 ;;  definition of macro `dired-map-over-marks':
-;;  
+;;
 ;;  `dired-do-redisplay', `dired-get-marked-files',
 ;;  `dired-map-over-marks-check',
 ;;  `image-dired-dired-insert-marked-thumbs' (from `image-dired.el').
@@ -253,8 +253,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;;; Change log:
+;;; Change Log:
 ;;
+;; 2011/10/31 dadams
+;;     dired-mode-hook: Call font-lock-refresh-defaults - see Emacs 24 bugs #6662 and #9919.
+;; 2011/10/24 dadams
+;;     Protect dired-show-file-type with fboundp.
 ;; 2011/09/03 dadams
 ;;     diredp-do-grep-1: Map shell-quote-argument over file names.  Thx to Joe Bloggs.
 ;; 2011/08/07 dadams
@@ -408,7 +412,7 @@
 ;; 2009/10/13 dadams
 ;;     Added: diredp(-do)-bookmark.  Added to Multiple menu, and bound to M-b.
 ;; 2009/10/11 dadams
-;;     diredp-menu-bar-immediate-menu: 
+;;     diredp-menu-bar-immediate-menu:
 ;;       Added items: image display items, dired-maybe-insert-subdir.
 ;;       Test dired-do-relsymlink, not diredp-relsymlink-this-file.
 ;;     diredp-menu-bar-operate-menu:
@@ -492,7 +496,7 @@
 ;;     Added: dired-display-msg.  Replace blue-foreground-face with it.
 ;;     Alias dired-do-toggle to dired-toggle-marks, if defined.
 ;; 2005/11/02 dadams
-;;     Added: dired-get-file-for-visit, dired(-mouse)-find-alternate-file*, 
+;;     Added: dired-get-file-for-visit, dired(-mouse)-find-alternate-file*,
 ;;            toggle-dired-find-file-reuse-dir, dired+-subst-find-*.
 ;;     Use defface for all faces.  Renamed without "-face".  No longer require def-face-const.
 ;;     dired-simultaneous-find-file: Minor bug fix (typo).
@@ -599,7 +603,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 
- 
+
 ;;; Variables
 
 ;; `dired-do-toggle' was renamed to `dired-toggle-marks' after Emacs 20.
@@ -642,7 +646,7 @@ name and DESCRIPTION describes DRIVE."
 ;;; The default value is designed to recognize dates and times
 ;;; regardless of the language."))
 
- 
+
 ;;; Macros
 
 
@@ -778,7 +782,7 @@ Argument ARG:
     (forward-line -1)
     fname))
 
- 
+
 ;;; UNALTERED vanilla Emacs code to be reloaded, to use the new definition
 ;;; of `dired-map-over-marks'.  Unless otherwise noted, these are from the Emacs 23+ libraries.
 ;;; These definitions should be IDENTICAL to what's in vanilla Emacs.
@@ -1009,7 +1013,7 @@ If HDR is non-nil, insert a header line with the directory name."
      nil)
     (add-hook 'dired-after-readin-hook 'image-dired-dired-after-readin-hook nil t)))
 
- 
+
 ;;; Key Bindings.
 
 
@@ -1668,7 +1672,8 @@ If HDR is non-nil, insert a header line with the directory name."
 (define-key dired-mode-map "r"       'diredp-rename-this-file) ; `r'
 (define-key dired-mode-map "y"       'diredp-relsymlink-this-file) ; `y'
 (define-key dired-mode-map "z"       'diredp-compress-this-file) ; `z'
-(define-key dired-mode-map "_"       'dired-show-file-type) ; `_' (underscore)
+(when (fboundp 'dired-show-file-type)
+  (define-key dired-mode-map "_"      'dired-show-file-type)) ; `_' (underscore)
 (substitute-key-definition 'kill-line 'diredp-delete-this-file ; `C-k', `delete'
                            dired-mode-map (current-global-map))
 
@@ -1709,11 +1714,11 @@ Don't forget to mention your Emacs and library versions."))
           "http://www.emacswiki.org/cgi-bin/wiki/DiredPlus")
   :link '(emacs-commentary-link :tag "Commentary" "dired+"))
 
- 
+
 ;;; Face Definitions
 
 ;;; Miscellaneous faces.
-(defface diredp-display-msg 
+(defface diredp-display-msg
     '((((background dark)) (:foreground "Yellow"))
       (t                   (:foreground "Blue")))
   "*Face used for message display."
@@ -1942,8 +1947,10 @@ In particular, inode number, number of hard links, and file size."
           '(lambda ()
             (set (make-local-variable 'font-lock-defaults)
              (cons '(dired-font-lock-keywords diredp-font-lock-keywords-1) ; Two levels.
-              (cdr font-lock-defaults)))))
- 
+              (cdr font-lock-defaults)))
+            ;; Emacs 24+: Need to refresh `font-lock-keywords' from `font-lock-defaults'.
+            (when (fboundp 'font-lock-refresh-defaults) (font-lock-refresh-defaults))))
+
 ;;; Function Definitions
 
 ;;;###autoload
@@ -2140,8 +2147,8 @@ Read names of Dired buffers to include, and then the new, Dired-union
                                          (expand-file-name file)
                                        file))
                                    files))))))
-  
-         
+
+
 
 ;;; `diredp-marked(-other-window)' tries to treat SWITCHES, but SWITCHES seems to be ignored
 ;;; by `dired' when the DIRNAME arg is a cons, at least on MS Windows.  I filed Emacs bug #952
@@ -3079,17 +3086,17 @@ As a side effect, killed dired buffers for DIR are removed from
     "`find-file', but use file on current line as default (`M-n')."
     (interactive (diredp-find-a-file-read-args "Find file: " nil))
     (find-file filename wildcards))
-  
+
   (defun diredp-find-a-file-other-frame (filename &optional wildcards) ; Not bound
     "`find-file-other-frame', but use file under cursor as default (`M-n')."
     (interactive (diredp-find-a-file-read-args "Find file: " nil))
     (find-file-other-frame filename wildcards))
-  
+
   (defun diredp-find-a-file-other-window (filename &optional wildcards) ; Not bound
     "`find-file-other-window', but use file under cursor as default (`M-n')."
     (interactive (diredp-find-a-file-read-args "Find file: " nil))
     (find-file-other-window filename wildcards))
-  
+
   (defun diredp-find-a-file-read-args (prompt mustmatch) ; Not bound
     (list (let ((find-file-default  (abbreviate-file-name (dired-get-file-for-visit))))
             (minibuffer-with-setup-hook (lambda () (setq minibuffer-default  find-file-default))
@@ -3351,7 +3358,7 @@ choice described for `diredp-do-grep'."
 (defun diredp-w32-list-mapped-drives () ; Not bound
   "List network connection information for shared MS Windows resources.
 This just invokes the Windows `NET USE' command."
-  (interactive) 
+  (interactive)
   (unless (eq system-type 'windows-nt) (error "This command is for use only on MS Windows"))
   (shell-command "net use")
   (display-buffer "*Shell Command Output*"))
@@ -4973,7 +4980,7 @@ General
 
 * \\[diredp-toggle-find-file-reuse-dir]\t- Toggle reuse of directories
 * \\[diredp-marked-other-window]\t- Open Dired on marked
-* \\[diredp-fileset]\t- Open Dired on files in a fileset 
+* \\[diredp-fileset]\t- Open Dired on files in a fileset
 * \\[diredp-dired-for-files]\t- Open Dired on specific files
 * \\[diredp-dired-union]\t- Create union of some Dired buffers
 "
@@ -5098,7 +5105,7 @@ Marked (or next prefix arg) files/subdirs
 
     (and (fboundp 'diredp-do-tag) ; In `bookmark+-1.el'.
          "* \\[diredp-do-tag]\t- Add some tags to marked
-* \\[diredp-do-untag]\t- Remove some tags from marked 
+* \\[diredp-do-untag]\t- Remove some tags from marked
 * \\[diredp-do-remove-all-tags]\t- Remove all tags from marked
 * \\[diredp-do-paste-add-tags]\t- Paste (add) copied tags to marked
 * \\[diredp-do-paste-replace-tags]\t- Paste (replace) tags for marked
@@ -5139,7 +5146,7 @@ Tagging
 * \\[diredp-paste-replace-tags-this-file]\t- Paste (replace) tags for this
 * \\[diredp-set-tag-value-this-file]\t- Set a tag value for this
 * \\[diredp-do-tag]\t- Add some tags to marked
-* \\[diredp-do-untag]\t- Remove some tags from marked 
+* \\[diredp-do-untag]\t- Remove some tags from marked
 * \\[diredp-do-remove-all-tags]\t- Remove all tags from marked
 * \\[diredp-do-paste-add-tags]\t- Paste (add) copied tags to marked
 * \\[diredp-do-paste-replace-tags]\t- Paste (replace) tags for marked

@@ -1,5 +1,5 @@
 (deftheme zenburn
-  "Created 2011-10-01.")
+  "Created 2011-10-24.")
 
 (custom-theme-set-variables
  'zenburn
@@ -18,7 +18,7 @@
  '(escape-glyph-face ((((class color) (min-colors 89)) (:foreground "#cc9393"))))
  '(fringe ((((class color) (min-colors 89)) (:foreground "#dcdccc" :background "#4f4f4f"))))
  '(header-line ((((class color) (min-colors 89)) (:foreground "#f0dfaf" :background "#2b2b2b"))))
- '(highlight ((((class color) (min-colors 89)) (:background "#2b2b2b"))))
+ '(highlight ((t (:background "#2b2b2b"))))
  '(compilation-column-face ((((class color) (min-colors 89)) (:foreground "#f0dfaf"))))
  '(compilation-enter-directory-face ((((class color) (min-colors 89)) (:foreground "#7f9f7f"))))
  '(compilation-error-face ((((class color) (min-colors 89)) (:foreground "#bc8383" :weight bold :underline t))))
@@ -43,7 +43,7 @@
  '(mode-line ((((class color) (min-colors 89)) (:foreground "#8fb28f" :background "#2b2b2b"))))
  '(mode-line-buffer-id ((((class color) (min-colors 89)) (:foreground "#f0dfaf" :weight bold))))
  '(mode-line-inactive ((((class color) (min-colors 89)) (:foreground "#5f7f5f" :background "#2b2b2b"))))
- '(region ((t (:background "#88b090"))))
+ '(region ((t (:background "#2e3330" :foreground "#88b090"))))
  '(secondary-selection ((t (:background "#5f5f5f"))))
  '(trailing-whitespace ((((class color) (min-colors 89)) (:background "#cc9393"))))
  '(vertical-border ((((class color) (min-colors 89)) (:foreground "#dcdccc"))))
