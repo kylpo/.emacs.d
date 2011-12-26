@@ -13,3 +13,6 @@
 [submodule "vendor/campfire"]
 	path = vendor/campfire
 	url = https://github.com/timcharper/campfire-el.git
+[submodule "vendor/js3-mode"]
+	path = vendor/js3-mode
+	url = https://github.com/thomblake/js3-mode.git
