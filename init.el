@@ -9,7 +9,12 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(unless (file-exists-p (format "/tmp/emacs%d/server" (user-uid)))
+;; (unless (file-exists-p (format "/tmp/emacs%d/server" (user-uid)))
+;;   (server-start))
+
+;; Emacs server
+(require 'server)
+(unless (server-running-p)
   (server-start))
 
 (setq frame-title-format '("Emacs @ " system-name ": %b %+%+ %f")) ;set window title to full file name
@@ -80,14 +85,19 @@
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
 (add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
+(add-to-list 'load-path "~/.emacs.d/vendor/js3-mode/")
+(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
+(add-to-list 'load-path "~/.emacs.d/vendor/")
+
 
 ;; (when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
 ;;   (load "~/.emacs.d/kylpo-secrets-file"))
 
 (require 'cl)				; common lisp goodies, loop
 (require 'tinyeat)
-
+;;(require 'org-velocity)
 (require 'tramp)
+
 
 ;;=elpa+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 (require 'package)
@@ -142,6 +152,12 @@
                       markdown-mode
                       textmate
                       full-ack
+                      flymake-jshint
+                      ;; ruby-block
+                      worklog
+                      projectile
+                      ;; sr-speedbar
+                      anything
                       ))
 
 (dolist (p my-packages)
@@ -155,6 +171,8 @@
 (require 'buffer-move)
 (require 'idle-highlight-mode)
 (require 'starter-kit-defuns) ;must require after idle-highlight
+;; (require 'ruby-block)
+(require 'projectile)
 
 (when (require 'yasnippet nil 'noerror)
   (yas/initialize)
@@ -209,8 +227,8 @@
             ;; (ruby-electric-mode t)
 ))
 
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-(add-hook 'text-mode-hook 'turn-on-flyspell)
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; (add-hook 'text-mode-hook 'turn-on-flyspell)
 
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'emacs-lisp-mode-hook 'esk-prog-mode-hook)
@@ -302,9 +320,19 @@
    sunrise-commander
    nav
    rinari
-   nxhtml
+   ;; nxhtml
    coffee-mode
+   ace-jump-mode
+   mustache-mode
+   evil
+   deft
+   sr-speedbar
+   tree-mode
+   windata
    ))
+
+(setq stack-trace-on-error t)
+(require 'ecb)
 
 (setq my:el-get-packages
       (append
@@ -313,6 +341,8 @@
 
 ;; install new packages and init already installed packages
 (el-get 'sync my:el-get-packages)
+
+(load-file "~/.emacs.d/vendor/emacs-dirtree/dirtree.el")
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -326,7 +356,7 @@
 
 ;;=color
 ;; (add-to-list 'custom-theme-load-path "~/.emacs.d/vendor/themes/zenburn-emacs")
-(load-theme 'zenburn)
+;; (load-theme 'zenburn)
 ;;(set-face-foreground 'erc-pal-face "#8cd0d3")
 ;;(setq term-default-bg-color "#3f3f3f")        ;; background color (black)
 ;;(setq term-default-fg-color "#dcdccc")       ;; foreground color (yellow)
@@ -391,6 +421,29 @@
 ;;------------------------------------------------
 ;; == INIT & CONFIG
 ;;------------------------------------------------
+
+;;=speedbar
+(setq speedbar-use-images nil)
+
+;;=deft
+(setq deft-extension "txt")
+(setq deft-directory "~/Dropbox/notes")
+(setq deft-text-mode 'markdown-mode)
+;; (setq deft-extension "org")
+;; (setq deft-text-mode 'org-mode)
+(setq deft-use-filename-as-title t)
+(global-set-key [f8] 'deft)
+
+
+(setq visible-bell nil)
+;;ctags
+(setq path-to-ctags "/usr/local/bin/ctags") ;; <- your ctags path her
+(defun create-tags (dir-name)
+  "Create tags file."
+  (interactive "DDirectory: ")
+  (shell-command
+   (format "%s -f %s/TAGS -e -R %s" path-to-ctags dir-name (directory-file-name dir-name)))
+  )
 
 ;; smart indenting and pairing for all
 (electric-pair-mode t)
@@ -633,7 +686,12 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (zenburn)))
  '(custom-safe-themes (quote ("4920f9add5c557ae792965db34fc6f104ba24675" "1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
+ '(ecb-options-version "2.40")
+ '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-jsinfo org-irc org-mew org-mhe org-rmail org-vm org-wl org-w3m org-velocity)))
  '(sr-show-file-attributes nil)
+ '(sr-speedbar-right-side nil)
+ '(sr-speedbar-width-console 40)
+ '(sr-speedbar-width-x 40)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(wg-morph-on nil)
  '(wg-switch-on-load nil))
@@ -645,11 +703,11 @@
  ;; If there is more than one, they won't work right.
  '(elscreen-tab-background-face ((t nil)))
  '(elscreen-tab-other-screen-face ((t nil)))
- '(mumamo-background-chunk-major ((t (:background "#3f3f3f"))))
- '(mumamo-background-chunk-submode1 ((t (:background "#2f2f2f")))))
+ '(mumamo-background-chunk-major ((t (:background "#3f3f3f"))) t)
+ '(mumamo-background-chunk-submode1 ((t (:background "#2f2f2f"))) t))
 
 ;;------------------------------------------------
-;;== Custom Functions
+;;=Functions
 ;;------------------------------------------------
 
 ;;TAKEN FROM ___
@@ -1503,6 +1561,8 @@ by using nxml's indentation rules."
       ;; (setq elscreen-tab-display-control nil)
       (global-set-key (kbd "s-p") 'elscreen-previous)
       (global-set-key (kbd "s-n") 'elscreen-next)
+     (global-set-key (kbd "C-S-<tab>") 'elscreen-previous)
+     (global-set-key (kbd "C-<tab>") 'elscreen-next)
       (global-set-key (kbd "s-t") 'elscreen-clone))
   (message "INSTALL elscreen"))
 
@@ -1637,11 +1697,11 @@ by using nxml's indentation rules."
 ;;---------------------------------------------------------
 ;; Random bindings
 ;;---------------------------------------------------------
-(global-set-key (kbd "C-c p") 'planner)
+;; (global-set-key (kbd "C-c p") 'planner)
 (global-set-key (kbd "C-c j") 'journal)
 (global-set-key (kbd "C-c h") 'hotkeys)
 (global-set-key [f7] 'ansi-term)
-(global-set-key [f8] 'org-agenda-clock-cancel)
+;; (global-set-key [f8] 'org-agenda-clock-cancel)
 (global-set-key [f9] 'org-agenda-clock-in)
 (global-set-key [f10] 'org-agenda-clock-out)
 (global-set-key [f11] 'switch-full-screen-toggle)
@@ -1730,7 +1790,7 @@ by using nxml's indentation rules."
 (global-set-key (kbd "M-v") 'sfp-page-up)
 
 (global-set-key (kbd "M-d") 'tinyeat-forward)
-(global-set-key "\C-w" 'backward-kill-word)
+;; (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key (kbd "M-Z") 'kylpo-zap-back-to-char)
 
 (global-set-key (kbd "s--") 'text-scale-decrease)
@@ -1739,7 +1799,7 @@ by using nxml's indentation rules."
 ;; (global-set-key (kbd "s-n") 'wg-switch-left)
 ;; (global-set-key (kbd "s-p") 'wg-switch-left)
 (global-set-key (kbd "M-#") 'isearch-forward-at-point)
-(global-set-key (kbd "C-j") 'join-line)
+;;TODO (global-set-key (kbd "C-j") 'join-line)
 ;; (global-set-key (kbd "C-o") 'open-next-line)
 ;; (global-set-key (kbd "M-o") 'open-previous-line)
 
@@ -1780,3 +1840,42 @@ by using nxml's indentation rules."
 
 ;;; start search at top of buffer
 (bind "C-S-s" (lambda () (interactive) (beginning-of-buffer) (isearch-forward)))
+
+(global-set-key (kbd "s-+") 'text-scale-increase)
+(global-set-key (kbd "C-j") 'ace-jump-mode)
+(global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
+
+
+    ;; Behave like vi's o command
+    (defun open-next-line (arg)
+      "Move to the next line and then opens a line.
+    See also `newline-and-indent'."
+      (interactive "p")
+      (end-of-line)
+      (open-line arg)
+      (next-line 1)
+      (when newline-and-indent
+        (indent-according-to-mode)))
+    (global-set-key (kbd "C-o") 'open-next-line)
+    ;; Behave like vi's O command
+    (defun open-previous-line (arg)
+      "Open a new line before the current one.
+     See also `newline-and-indent'."
+      (interactive "p")
+      (beginning-of-line)
+      (open-line arg)
+      (when newline-and-indent
+        (indent-according-to-mode)))
+    (global-set-key (kbd "M-o") 'open-previous-line)
+
+    ;; Autoindent open-*-lines
+    (defvar newline-and-indent t
+      "Modify the behavior of the open-*-line functions to cause them to autoindent.")
+
+;; kill region if active, otherwise kill backward word
+(defun kill-region-or-backward-word ()
+  (interactive)
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end))
+    (backward-kill-word 1)))
+(global-set-key (kbd "C-w") 'kill-region-or-backward-word)
