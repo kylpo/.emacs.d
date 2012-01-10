@@ -82,19 +82,14 @@
 ;;== LOAD PATH, AUTOLOADS, REQUIRES AND FILE ASSOCIATIONS
 ;;------------------------------------------------
 (setq emacs-dir (file-name-directory (or (buffer-file-name) load-file-name)))
-(add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
-(add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
-(add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
-(add-to-list 'load-path "~/.emacs.d/vendor/js3-mode/")
-(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
-(add-to-list 'load-path "~/.emacs.d/vendor/")
+
 
 
 ;; (when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
 ;;   (load "~/.emacs.d/kylpo-secrets-file"))
 
 (require 'cl)				; common lisp goodies, loop
-(require 'tinyeat)
+
 ;;(require 'org-velocity)
 (require 'tramp)
 
@@ -173,6 +168,9 @@
 (require 'starter-kit-defuns) ;must require after idle-highlight
 ;; (require 'ruby-block)
 (require 'projectile)
+
+
+
 
 (when (require 'yasnippet nil 'noerror)
   (yas/initialize)
@@ -326,13 +324,13 @@
    mustache-mode
    evil
    deft
-   sr-speedbar
-   tree-mode
-   windata
+;;   sr-speedbar
+;;   tree-mode
+;;   windata
    ))
 
 (setq stack-trace-on-error t)
-(require 'ecb)
+
 
 (setq my:el-get-packages
       (append
@@ -342,7 +340,15 @@
 ;; install new packages and init already installed packages
 (el-get 'sync my:el-get-packages)
 
-(load-file "~/.emacs.d/vendor/emacs-dirtree/dirtree.el")
+;;(load-file "~/.emacs.d/vendor/emacs-dirtree/dirtree.el")
+(add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
+(add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
+(add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
+(add-to-list 'load-path "~/.emacs.d/vendor/js3-mode/")
+;;(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
+(add-to-list 'load-path "~/.emacs.d/vendor/")
+(require 'tinyeat)
+;;(require 'ecb)
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -685,7 +691,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (zenburn)))
- '(custom-safe-themes (quote ("4920f9add5c557ae792965db34fc6f104ba24675" "1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
+ '(custom-safe-themes (quote ("59df2ce8018002886b07ed8a1406a53494ec3caaa8bf87c9820250cc5c7fcc2d" "4920f9add5c557ae792965db34fc6f104ba24675" "1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
  '(ecb-options-version "2.40")
  '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-jsinfo org-irc org-mew org-mhe org-rmail org-vm org-wl org-w3m org-velocity)))
  '(sr-show-file-attributes nil)
