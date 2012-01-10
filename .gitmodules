@@ -16,3 +16,9 @@
 [submodule "vendor/js3-mode"]
 	path = vendor/js3-mode
 	url = https://github.com/thomblake/js3-mode.git
+[submodule "vendor/ecb"]
+	path = vendor/ecb
+	url = https://github.com/emacsmirror/ecb.git
+[submodule "vendor/emacs-dirtree"]
+	path = vendor/emacs-dirtree
+	url = https://github.com/zkim/emacs-dirtree.git

@@ -83,14 +83,10 @@
 ;;------------------------------------------------
 (setq emacs-dir (file-name-directory (or (buffer-file-name) load-file-name)))
 
-
-
 ;; (when (file-exists-p "~/.emacs.d/kylpo-secrets-file")
 ;;   (load "~/.emacs.d/kylpo-secrets-file"))
 
 (require 'cl)				; common lisp goodies, loop
-
-;;(require 'org-velocity)
 (require 'tramp)
 
 
@@ -324,9 +320,9 @@
    mustache-mode
    evil
    deft
-;;   sr-speedbar
-;;   tree-mode
-;;   windata
+   sr-speedbar
+   tree-mode
+   windata
    ))
 
 (setq stack-trace-on-error t)
@@ -340,15 +336,15 @@
 ;; install new packages and init already installed packages
 (el-get 'sync my:el-get-packages)
 
-;;(load-file "~/.emacs.d/vendor/emacs-dirtree/dirtree.el")
+(load-file "~/.emacs.d/vendor/emacs-dirtree/dirtree.el")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
 (add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
 (add-to-list 'load-path "~/.emacs.d/vendor/js3-mode/")
-;;(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
+(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 (require 'tinyeat)
-;;(require 'ecb)
+(require 'ecb)
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
