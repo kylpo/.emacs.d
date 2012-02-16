@@ -22,3 +22,6 @@
 [submodule "vendor/emacs-dirtree"]
 	path = vendor/emacs-dirtree
 	url = https://github.com/zkim/emacs-dirtree.git
+[submodule "vendor/emacs-prelude"]
+	path = vendor/emacs-prelude
+	url = https://github.com/bbatsov/emacs-prelude.git

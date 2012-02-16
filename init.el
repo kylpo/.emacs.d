@@ -1,8 +1,7 @@
 ;;Done at start to load faster
 (cond
  ((string-match "linux" system-configuration)
-  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-  );;end windows
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1)))
  ((string-match "apple" system-configuration)
   ;; (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   ))
@@ -123,11 +122,14 @@
                       less-css-mode
                       rvm
                       ;; erc-hl-nicks
-;                      sunrise-commander
+                      sunrise-commander
+                      sunrise-x-tree
                       rainbow-mode
                       wrap-region
                       yari
                       flymake-ruby
+                      flymake-jshint
+                      flymake-coffee
                       haml-mode
                       sass-mode
                       yasnippet
@@ -143,7 +145,6 @@
                       markdown-mode
                       textmate
                       full-ack
-                      flymake-jshint
                       ;; ruby-block
                       worklog
                       projectile
@@ -164,6 +165,8 @@
 (require 'starter-kit-defuns) ;must require after idle-highlight
 ;; (require 'ruby-block)
 (require 'projectile)
+(require 'sunrise-commander)
+(require 'sunrise-x-tree)
 
 
 
@@ -287,13 +290,13 @@
                    (set-face-background 'column-marker-1 "#2b2b2b")
                    (set-face-background 'column-marker-2 "red")))
 
-   (:name elscreen
-          :description "Screen Manager for Emacsen"
-          :type http-tar
-          :depends apel
-          :options ("xzf")
-          :url "ftp://210.155.141.202/pub/morishima.net/naoto/ElScreen/elscreen-1.4.6.tar.gz"
-          :features elscreen)
+   ;; (:name elscreen
+   ;;        :description "Screen Manager for Emacsen"
+   ;;        :type http-tar
+   ;;        :depends apel
+   ;;        :options ("xzf")
+   ;;        :url "ftp://210.155.141.202/pub/morishima.net/naoto/ElScreen/elscreen-1.4.6.tar.gz"
+   ;;        :features elscreen)
    ))
 
 (setq
@@ -311,16 +314,17 @@
    ;; scala-mode
    ;; zencoding-mode			;
    ;; http://www.emacswiki.org/emacs/ZenCoding
-   sunrise-commander
+   ;; sunrise-commander
+   ;; sunrise-x-tree
    nav
    rinari
    ;; nxhtml
    coffee-mode
    ace-jump-mode
    mustache-mode
-   evil
+   ;; evil
    deft
-   sr-speedbar
+  ;; sr-speedbar
    tree-mode
    windata
    ))
@@ -336,15 +340,21 @@
 ;; install new packages and init already installed packages
 (el-get 'sync my:el-get-packages)
 
+
 (load-file "~/.emacs.d/vendor/emacs-dirtree/dirtree.el")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-tiny-tools/lisp/tiny")
 (add-to-list 'load-path "~/.emacs.d/vendor/emacs-starter-kit/")
 (add-to-list 'load-path "~/.emacs.d/vendor/campfire/")
 (add-to-list 'load-path "~/.emacs.d/vendor/js3-mode/")
-(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
+;;(add-to-list 'load-path "~/.emacs.d/vendor/ecb/")
+(add-to-list 'load-path "~/.emacs.d/vendor/emacs-prelude/modules/")
+(require 'prelude-coffee)
 (add-to-list 'load-path "~/.emacs.d/vendor/")
+(require 'sr-speedbar)
 (require 'tinyeat)
-(require 'ecb)
+;;(require 'ecb)
+
+
 
 
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -355,6 +365,16 @@
 ;; Deal with colors in shell mode correctly
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+(autoload 'markdown-mode "markdown-mode.el" "Major mode for editing Markdown files" t)
+(setq auto-mode-alist (cons '("\\.text" . markdown-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist))
+
+(defun coffee-custom ()
+  "coffee-mode-hook"
+  (set (make-local-variable 'tab-width) 2))
+(add-hook 'coffee-mode-hook
+            '(lambda() (coffee-custom)))
 
 ;;=color
 ;; (add-to-list 'custom-theme-load-path "~/.emacs.d/vendor/themes/zenburn-emacs")
@@ -423,6 +443,8 @@
 ;;------------------------------------------------
 ;; == INIT & CONFIG
 ;;------------------------------------------------
+
+
 
 ;;=speedbar
 (setq speedbar-use-images nil)
@@ -629,11 +651,20 @@
       )
 (ido-mode t) ; User ido mode for both buffers and files
 
+
 ;; when using ido, the confirmation is rather annoying...
 (setq confirm-nonexistent-file-or-buffer nil)
 
 ;; Display ido results vertically, rather than horizontally
 (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+
+;; Since it is veritcal, use C-n/p to navigate, not C-s/r
+(add-hook 'ido-setup-hook
+          (lambda ()
+            (define-key ido-file-dir-completion-map (kbd "C-n")
+              'ido-next-match)
+            (define-key ido-file-dir-completion-map (kbd "C-p")
+              'ido-prev-match)))
 
 (defun ido-disable-line-trucation () (set (make-local-variable 'truncate-lines) nil))
 (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-trucation)
@@ -688,7 +719,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (zenburn)))
  '(custom-safe-themes (quote ("59df2ce8018002886b07ed8a1406a53494ec3caaa8bf87c9820250cc5c7fcc2d" "4920f9add5c557ae792965db34fc6f104ba24675" "1bd6e2ae006ae5982ece6f4c5189d541671b366b" "b1ca0ce11f45aaa5c0edea1a6b6b918b7dee6aa0" default)))
+ '(dirtree-windata (quote (frame left 0.2 delete)))
  '(ecb-options-version "2.40")
+ '(js-indent-level 2)
  '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-jsinfo org-irc org-mew org-mhe org-rmail org-vm org-wl org-w3m org-velocity)))
  '(sr-show-file-attributes nil)
  '(sr-speedbar-right-side nil)
@@ -869,9 +902,9 @@
   (when newline-and-indent
     (indent-according-to-mode)))
 
-;; Autoindent open-*-lines
-(defvar newline-and-indent t
-  "Modify the behavior of the open-*-line functions to autoindent.")
+;; ;; Autoindent open-*-lines
+;; (defvar newline-and-indent t
+;;   "Modify the behavior of the open-*-line functions to autoindent.")
 
 (defun my-delete-backward-to-ws ()
   (interactive)
@@ -1715,6 +1748,7 @@ by using nxml's indentation rules."
 (global-set-key (kbd "M-H") 'previous-buffer)
 (global-set-key (kbd "M-/") 'hippie-expand)
 (global-set-key "\r" 'newline-and-indent)
+;; (global-set-key [return] 'newline-and-indent)
                                         ;(global-set-key (kbd "C-M-p") 'enlarge-window-horizontally)
                                         ;(global-set-key (kbd "C-M-o") 'shrink-window-horizontally)
 (global-set-key "\C-xj" 'join-line)
@@ -1846,6 +1880,8 @@ by using nxml's indentation rules."
 (global-set-key (kbd "s-+") 'text-scale-increase)
 (global-set-key (kbd "C-j") 'ace-jump-mode)
 (global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
+(global-set-key (kbd "M-;") 'ace-jump-mode)
+
 
 
     ;; Behave like vi's o command
@@ -1870,9 +1906,9 @@ by using nxml's indentation rules."
         (indent-according-to-mode)))
     (global-set-key (kbd "M-o") 'open-previous-line)
 
-    ;; Autoindent open-*-lines
-    (defvar newline-and-indent t
-      "Modify the behavior of the open-*-line functions to cause them to autoindent.")
+    ;; ;; Autoindent open-*-lines
+    ;; (defvar newline-and-indent t
+    ;;   "Modify the behavior of the open-*-line functions to cause them to autoindent.")
 
 ;; kill region if active, otherwise kill backward word
 (defun kill-region-or-backward-word ()
@@ -1881,3 +1917,24 @@ by using nxml's indentation rules."
       (kill-region (region-beginning) (region-end))
     (backward-kill-word 1)))
 (global-set-key (kbd "C-w") 'kill-region-or-backward-word)
+
+
+
+
+
+
+
+
+
+
+(defun copy-from-osx ()
+  (shell-command-to-string "pbpaste"))
+
+(defun paste-to-osx (text &optional push)
+  (let ((process-connection-type nil))
+      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+        (process-send-string proc text)
+        (process-send-eof proc))))
+
+(setq interprogram-cut-function 'paste-to-osx)
+(setq interprogram-paste-function 'copy-from-osx)
